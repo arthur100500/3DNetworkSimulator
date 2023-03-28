@@ -101,7 +101,7 @@ public class PlayerCableInteract : MonoBehaviour
             name = "Wire"
         };
         wireRenderer = wireHldr.AddComponent<WireRenderer>();
-        wireRenderer.width = 0.01f;
+        wireRenderer.width = 0.006f;
         wireRenderer.p1 = firstTarget.transform;
         wireRenderer.p2 = inHandTarget.transform.GetChild(0).transform;
         wireRenderer.floor = floor.transform;
@@ -115,7 +115,8 @@ public class PlayerCableInteract : MonoBehaviour
         IWire provided = firstTarget.GetComponent<IWire>();
 
         if (expected.GetInputType() == provided.GetOutputType()
-            && expected.IsAvailable() && provided.IsAvailable())
+            && expected.IsAvailable() && provided.IsAvailable()
+            && expected != provided)
         {
             wireRenderer.p2 = target.transform;
             expected.wireRenderer = wireRenderer.gameObject;

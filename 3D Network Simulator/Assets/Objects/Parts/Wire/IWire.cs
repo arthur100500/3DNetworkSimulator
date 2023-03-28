@@ -35,6 +35,7 @@ public abstract class IWire : MonoBehaviour
     {
         visualPlug = GetPlug();
         visualPlug.transform.parent = gameObject.transform;
+        visualPlug.transform.localScale = new Vector3(1, 1, 1);
         visualPlug.transform.localPosition = GetPlugOffset();
         visualPlug.transform.localRotation = Quaternion.Euler(0, GetPlugRotation(), 0);
     }
