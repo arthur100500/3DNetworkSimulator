@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum WireType
+namespace Wire
 {
-    WireC14,
-    WireSocketPlug,
-    Ethernet,
+    public enum WireType
+    {
+        WireC14,
+        WireSocketPlug,
+        Ethernet,
+    }
 }

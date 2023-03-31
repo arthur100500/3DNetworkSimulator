@@ -2,36 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCam : MonoBehaviour
+namespace Player
 {
-    public float sens;
-
-    public Transform orientation;
-
-    float xRot;
-    float yRot;
-
-    // Start is called before the first frame update
-    void Start()
+    public class PlayerCam : MonoBehaviour
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        public float sens;
 
-    }
+        public Transform orientation;
 
-    // Update is called once per frame
-    void Update()
-    {
-        var mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sens;
-        var mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sens;
+        float xRot;
+        float yRot;
 
-        yRot += mouseX;
-        xRot -= mouseY;
+        // Start is called before the first frame update
+        void Start()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
 
-        xRot = Mathf.Clamp(xRot, -90, 90);
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            var mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sens;
+            var mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sens;
+
+            yRot += mouseX;
+            xRot -= mouseY;
+
+            xRot = Mathf.Clamp(xRot, -90, 90);
 
 
-        transform.localRotation = Quaternion.Euler(xRot, yRot, 0);
-        orientation.rotation = Quaternion.Euler(0, yRot, 0);
+            transform.localRotation = Quaternion.Euler(xRot, yRot, 0);
+            orientation.rotation = Quaternion.Euler(0, yRot, 0);
+        }
     }
 }

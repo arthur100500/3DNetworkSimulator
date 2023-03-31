@@ -1,27 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Wire;
 
-public class SampleSwitch : MonoBehaviour
+namespace Device
 {
-    public ISwitchable powerIndicator;
-    public IWire powerPort;
-
-    public void Start()
+    public class SampleSwitch : MonoBehaviour
     {
-        powerPort.ConnectEvent += Enable;
-        powerPort.DisconnectEvent += Disable;
-    }
+        public ISwitchable powerIndicator;
+        public AWire powerPort;
 
-    public void Enable()
-    {
-        Debug.Log("Switch enabled!");
-        powerIndicator.SwitchOn();
-    }
+        public void Start()
+        {
+            powerPort.ConnectEvent += Enable;
+            powerPort.DisconnectEvent += Disable;
+        }
 
-    public void Disable()
-    {
-        Debug.Log("Switch disabled!");
-        powerIndicator.SwitchOff();
+        public void Enable()
+        {
+            Debug.Log("Switch enabled!");
+            powerIndicator.SwitchOn();
+        }
+
+        public void Disable()
+        {
+            Debug.Log("Switch disabled!");
+            powerIndicator.SwitchOff();
+        }
     }
 }

@@ -1,8 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Wire;
 
-public class Laptop : MonoBehaviour
+namespace Device
 {
-    public IWire ethernetPort;
+    public class Laptop : MonoBehaviour
+    {
+        public AWire ethernetPort;
+    }
 }
