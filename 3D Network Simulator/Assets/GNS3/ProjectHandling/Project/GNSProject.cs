@@ -25,19 +25,10 @@ namespace GNSHandling
             this.config = config;
             addrBegin = "http://" + config.Address + ":" + config.Port + "/v2/";
 
-            // Create project
-            /*
-            curl -X POST "http://localhost:3080/v2/projects" -d '{"name": "test"}'
-            {
-                "name": "test",
-                "project_id": "b8c070f7-f34c-4b7b-ba6f-be3d26ed073f",
-            }
-            */
-            // Check if the project with the name alreay exists:
             var allProjects = GetAllProjects();
             var existingProject = allProjects.Find(p => p.name == name);
 
-            var res = "Nothing =(";
+            var res = "";
 
             if (existingProject is null)
                 res = MakePostRequest("projects", "{\"name\": \"" + name + "\"}");

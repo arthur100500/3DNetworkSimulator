@@ -1,21 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
-namespace UI
+namespace UI.NotificationConsole
 {
     public class NotificationConsole : MonoBehaviour
     {
-        // Start is called before the first frame update
-        void Start()
-        {
+        private readonly List<NotificationText> notifications = new();
 
+        public void Start()
+        {
+            AddNotification("Message Notification 12 3");
         }
 
-        // Update is called once per frame
-        void Update()
+        public void AddNotification(string text)
         {
-
+            GameObject textObj = new();
+            var nt = textObj.AddComponent<NotificationText>();
+            nt.Text = text;
+            notifications.Add(nt);
+            textObj.transform.SetParent(gameObject.transform);
         }
     }
 }
