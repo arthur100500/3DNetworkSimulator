@@ -44,8 +44,11 @@ namespace Player
                 inHandTarget = new GameObject();
                 var gennedPlug = wire.ConnectedWire.GetHandObject();
 
+                wire.SingleDisconnect(wire.ConnectedWire);
+
                 wire.ConnectedWire.Disconnect(wire);
                 wire.Disconnect(wire.ConnectedWire);
+
 
                 gennedPlug.transform.parent = inHandTarget.transform;
                 gennedPlug.transform.localPosition = handStride;

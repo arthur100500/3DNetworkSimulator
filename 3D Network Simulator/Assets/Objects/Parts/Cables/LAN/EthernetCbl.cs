@@ -8,8 +8,9 @@ namespace Wire
     {
         public GameObject en;
         public Material cableMaterial;
-        public int portID = 0;
+        public int portID;
         public override int GetPortNumber() => portID;
+
         public override GameObject GetHandObject()
         {
             return Instantiate(en);

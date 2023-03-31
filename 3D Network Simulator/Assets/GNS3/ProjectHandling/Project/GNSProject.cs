@@ -45,13 +45,23 @@ namespace GNSHandling
 
         public string MakeGetRequest(string endpoint)
         {
-            using var request = new HttpRequestMessage(new HttpMethod("GET"), addrBegin + endpoint);
+            return MakeCustomRequest(endpoint, "GET");
+        }
+
+        public string MakeDeleteRequest(string endpoint)
+        {
+            return MakeCustomRequest(endpoint, "DELETE");
+        }
+
+        private string MakeCustomRequest(string endpoint, string type)
+        {
+            using var request = new HttpRequestMessage(new HttpMethod(type), addrBegin + endpoint);
             var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes(config.User + ":" + config.Password));
             request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
 
             var response = httpClient.SendAsync(request);
             var toString = response.Result.Content.ReadAsStringAsync().Result;
-            Debug.Log("GET  " + addrBegin + endpoint + ": \n" + toString);
+            Debug.Log(type + "  " + addrBegin + endpoint + ": \n" + toString);
             return toString;
         }
 
@@ -77,6 +87,11 @@ namespace GNSHandling
         public string MakeProjectPostRequest(string endpoint, string data)
         {
             return MakePostRequest("projects/" + JProject.project_id + "/" + endpoint, data);
+        }
+
+        public string MakeProjectDeleteRequest(string endpoint)
+        {
+            return MakeDeleteRequest("projects/" + JProject.project_id + "/" + endpoint);
         }
 
         private List<GNSJProject> GetAllProjects()

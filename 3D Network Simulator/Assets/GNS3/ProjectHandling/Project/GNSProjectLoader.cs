@@ -20,7 +20,6 @@ namespace GNSHandling
             if (project is null)
             {
                 project = new(GNSProjectConfig.LocalGNSProjectConfig(), "unity_project");
-                Debug.Log("Created project");
             }
             return project;
         }

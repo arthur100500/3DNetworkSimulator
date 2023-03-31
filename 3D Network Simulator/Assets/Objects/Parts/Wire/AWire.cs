@@ -13,6 +13,10 @@ namespace Wire
         public event DisconnectEv DisconnectEvent;
         public delegate void SingleConnectEv(AWire other);
         public event SingleConnectEv SingleConnectEvent;
+        public delegate void SingleDisconnectEv(AWire other);
+        public event SingleConnectEv SingleDisconnectEvent;
+
+
         // Components
         public abstract GameObject GetSelf();
         public abstract GameObject GetHandObject();
@@ -43,6 +47,10 @@ namespace Wire
         public void SingleConnect(AWire other)
         {
             SingleConnectEvent?.Invoke(other);
+        }
+        public void SingleDisconnect(AWire other)
+        {
+            SingleDisconnectEvent?.Invoke(other);
         }
         public virtual void VisualConnect()
         {

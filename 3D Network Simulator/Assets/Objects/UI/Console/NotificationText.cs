@@ -11,7 +11,7 @@ namespace UI.NotificationConsole
 
         public void Start()
         {
-            Destroy(gameObject, 10);
+            Destroy(gameObject, 100);
 
             // Gen TextMeshPro text
             gameObject.AddComponent<CanvasRenderer>();
@@ -20,7 +20,13 @@ namespace UI.NotificationConsole
             tmproComponent.fontSize = 16;
             var rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.sizeDelta = new Vector2(1000, 30);
-            rectTransform.position = new Vector3(500, 30, 0);
+            rectTransform.position = new Vector3(510, 20, 0);
+        }
+
+        public void ShiftUp(int amnt)
+        {
+            var rectTransform = gameObject.GetComponent<RectTransform>();
+            rectTransform.position = new(rectTransform.position.x, rectTransform.position.y + amnt, rectTransform.position.z);
         }
     }
 }
