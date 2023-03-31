@@ -9,7 +9,7 @@ namespace Wire
         public GameObject plug;
         public GameObject c14model;
         public Material cableMaterial;
-
+        public override int GetPortNumber() => 0;
         public override GameObject GetHandObject()
         {
             return Instantiate(plug);

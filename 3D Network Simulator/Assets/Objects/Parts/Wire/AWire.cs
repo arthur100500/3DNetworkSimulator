@@ -11,8 +11,8 @@ namespace Wire
         public event ConnectEv ConnectEvent;
         public delegate void DisconnectEv();
         public event DisconnectEv DisconnectEvent;
-
-
+        public delegate void SingleConnectEv(AWire other);
+        public event SingleConnectEv SingleConnectEvent;
         // Components
         public abstract GameObject GetSelf();
         public abstract GameObject GetHandObject();
@@ -26,12 +26,23 @@ namespace Wire
         [HideInInspector] public GameObject wireRenderer;
         protected bool isAvailable = true;
         [HideInInspector] public AWire ConnectedWire;
+        public abstract int GetPortNumber();
+
+        // Methods
+        public virtual GameObject GetParent()
+        {
+            return gameObject.transform.parent.gameObject;
+        }
 
         public virtual void Connect(AWire other)
         {
             isAvailable = false;
             ConnectedWire = other;
             ConnectEvent?.Invoke();
+        }
+        public void SingleConnect(AWire other)
+        {
+            SingleConnectEvent?.Invoke(other);
         }
         public virtual void VisualConnect()
         {

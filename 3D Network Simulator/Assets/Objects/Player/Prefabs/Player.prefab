@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7566320384122362151}
   - component: {fileID: 7566320384122362148}
   - component: {fileID: 7566320384122362149}
+  - component: {fileID: 418230618877232258}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -90,16 +91,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3979a45bd1f1bc145a3e676d882c7cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firstTarget: {fileID: 0}
-  inHandTarget: {fileID: 0}
-  lastWireJoint: {fileID: 0}
   PortLayer:
     serializedVersion: 2
     m_Bits: 256
   floor: {fileID: 0}
   nCamera: {fileID: 0}
   handStride: {x: 0.2, y: -0.2, z: 0}
-  MaxDist: 2
+--- !u!114 &418230618877232258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7566320384122362206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2513130100c5114499b9a1e1a7534bd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PortLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &7566320384347963451
 GameObject:
   m_ObjectHideFlags: 0

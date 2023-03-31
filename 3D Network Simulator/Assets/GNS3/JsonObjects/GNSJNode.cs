@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GNSJsonObject
 {
-    public class GNSJNode : MonoBehaviour
+    public class GNSJVPCSNode
     {
         public string compute_id { get; set; }
         public int console { get; set; }

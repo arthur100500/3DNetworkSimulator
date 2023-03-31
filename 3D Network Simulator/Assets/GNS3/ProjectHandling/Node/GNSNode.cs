@@ -1,19 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GNSJsonObject;
 
 namespace GNSHandling
 {
-    public class GNSNode
+    public abstract class GNSNode
     {
-        public GNSJNode JNode;
-        private GNSProject project;
-
-        public GNSNode(GNSProject project)
-        {
-            this.project = project;
-            project.MakeRequest("");
-        }
+        public string node_id;
+        public abstract void ConnectTo(GNSNode other, int selfAdapterID, int otherAdapterID);
+        public GNSJLink link;
+        public string Name;
+        public abstract void Start();
     }
 }

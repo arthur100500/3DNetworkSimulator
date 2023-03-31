@@ -64,10 +64,6 @@ namespace Player
 
             // update item in hand position
             inHandTarget.transform.position = nCamera.transform.position + (nCamera.transform.forward + (nCamera.transform.rotation * handStride));
-
-            Debug.DrawLine(nCamera.transform.position, nCamera.transform.position + nCamera.transform.forward, Color.cyan);
-            Debug.DrawLine(nCamera.transform.position, nCamera.transform.position + nCamera.transform.forward, Color.red);
-
             inHandTarget.transform.rotation = nCamera.transform.rotation;
         }
 
@@ -120,8 +116,11 @@ namespace Player
                 wireRenderer.p2 = target.transform;
                 expected.wireRenderer = wireRenderer.gameObject;
                 provided.wireRenderer = wireRenderer.gameObject;
+                // Both ends get an event
                 expected.Connect(provided);
                 provided.Connect(expected);
+                // Only 1 side is getting an event
+                expected.SingleConnect(provided);
                 Destroy(inHandTarget);
                 isActive = false;
                 expected.VisualConnect();
