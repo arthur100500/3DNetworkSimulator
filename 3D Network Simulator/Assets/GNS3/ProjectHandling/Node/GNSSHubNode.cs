@@ -1,16 +1,15 @@
+using System.Collections;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using GNSJsonObject;
-using System;
-using GNSThread;
-using UI.NotificationConsole;
+using UnityEngine;
 
 namespace GNSHandling
 {
-    public class GNSVPCSNode : GNSNode
+    public class GNSSHubNode : GNSNode
     {
-        public GNSJVPCSNode JNode;
-
-        public GNSVPCSNode(GNSProject project, string name)
+        public GNSJSHubNode JNode;
+        public GNSSHubNode(GNSProject project, string name)
         {
             Init(name, project);
 
@@ -21,8 +20,10 @@ namespace GNSHandling
 
         private void InitializeNode()
         {
-            var res = project.MakeProjectPostRequest("nodes", "{\"name\": \"" + Name + "\", \"node_type\": \"vpcs\", \"compute_id\": \"local\"}");
-            JNode = JsonConvert.DeserializeObject<GNSJVPCSNode>(res);
+            var res = project.MakeProjectPostRequest("nodes", "{\"name\": \"" + Name + "\", \"node_type\": \"ethernet_hub\", \"compute_id\": \"local\"}");
+
+            JNode = JsonConvert.DeserializeObject<GNSJSHubNode>(res);
+
             node_id = JNode.node_id;
             IsReady = true;
         }
