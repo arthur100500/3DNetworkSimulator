@@ -17,11 +17,10 @@ namespace GNSHandling
             this.project = project;
             links = new();
 
-            // Create Node
             GNSThread.GNSThread.EnqueueAction(InitializeNode);
         }
 
-        private string InitializeNode()
+        private void InitializeNode()
         {
             GlobalNotificationManager.AddMessage("Started creating node " + Name);
             var res = project.MakeProjectPostRequest("nodes", "{\"name\": \"" + Name + "\", \"node_type\": \"vpcs\", \"compute_id\": \"local\"}");
@@ -30,7 +29,6 @@ namespace GNSHandling
 
             node_id = JNode.node_id;
             IsReady = true;
-            return "";
         }
 
         public override void Start()
@@ -38,12 +36,11 @@ namespace GNSHandling
             GNSThread.GNSThread.EnqueueAction(StartNode);
         }
 
-        private string StartNode()
+        private void StartNode()
         {
             GlobalNotificationManager.AddMessage("Started starting node " + Name);
             MakeNodePostRequest("start", "{}");
             GlobalNotificationManager.AddMessage("Finished starting node " + Name);
-            return "";
         }
         public string MakeNodePostRequest(string endpoint, string data)
         {
@@ -57,17 +54,17 @@ namespace GNSHandling
 
         public override void ConnectTo(GNSNode other, int selfAdapterID, int otherAdapterID)
         {
-            string func() => ConnectToFunc(other, selfAdapterID, otherAdapterID);
+            void func() => ConnectToFunc(other, selfAdapterID, otherAdapterID);
             GNSThread.GNSThread.EnqueueAction(func);
         }
 
         public override void DisconnectFrom(GNSNode other, int selfAdapterID, int otherAdapterID)
         {
-            string func() => DeleteFromFunc(other, selfAdapterID, otherAdapterID);
+            void func() => DeleteFromFunc(other, selfAdapterID, otherAdapterID);
             GNSThread.GNSThread.EnqueueAction(func);
         }
 
-        private string DeleteFromFunc(GNSNode other, int selfAdapterID, int otherAdapterID)
+        private void DeleteFromFunc(GNSNode other, int selfAdapterID, int otherAdapterID)
         {
             // Get Link ID
             // TOP 10 LAMBDA EXPRESSIONS!!!!
@@ -89,10 +86,9 @@ namespace GNSHandling
 
             other.links.Remove(selectedLink);
             links.Remove(selectedLink);
-            return "";
         }
 
-        private string ConnectToFunc(GNSNode other, int selfAdapterID, int otherAdapterID)
+        private void ConnectToFunc(GNSNode other, int selfAdapterID, int otherAdapterID)
         {
             // https://gns3-server.readthedocs.io/en/stable/curl.html
             var link_json = "{\"nodes\": [{\"adapter_number\": " + selfAdapterID + ", \"node_id\": \"" + node_id + "\", \"port_number\": 0}, {\"adapter_number\": " + otherAdapterID + ", \"node_id\": \"" + other.node_id + "\", \"port_number\": 0}]}";
@@ -104,7 +100,6 @@ namespace GNSHandling
             var link = JsonConvert.DeserializeObject<GNSJLink>(res);
             other.links.Add(link);
             links.Add(link);
-            return "";
         }
     }
 }

@@ -8,7 +8,7 @@ namespace GNSThread
     {
         private static Thread thread;
         private static bool started;
-        private static readonly Queue<(Func<string>, Action<string>)> actions = new();
+        private static readonly Queue<Action> actions = new();
         public static Thread Thread { get { thread ??= new(ThreadWork); return thread; } }
 
         public static void Run()
@@ -17,16 +17,10 @@ namespace GNSThread
             Thread.Start();
         }
 
-        public static void EnqueueAction(Func<string> action, Action<string> callback)
+        public static void EnqueueAction(Action action)
         {
             if (!started) Run();
-            actions.Enqueue((action, callback));
-        }
-
-        public static void EnqueueAction(Func<string> action)
-        {
-            if (!started) Run();
-            actions.Enqueue((action, _ => { }));
+            actions.Enqueue(action);
         }
 
         private static void ThreadWork()
@@ -35,8 +29,7 @@ namespace GNSThread
             {
                 Thread.Sleep(300);
                 if (actions.Count == 0) continue;
-                (Func<string> action, Action<string> callback) = actions.Dequeue();
-                callback(action());
+                actions.Dequeue()();
             }
         }
     }
