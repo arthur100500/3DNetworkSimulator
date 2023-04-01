@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using TMPro;
 
 namespace UI.NotificationConsole
 {
@@ -21,6 +22,8 @@ namespace UI.NotificationConsole
         private readonly Queue<(string, Guid)> loadingMessageQueue = new();
         private readonly Queue<(Guid, float)> removeMessageQueue = new();
         private readonly int shiftAmnt = 30;
+
+        public TMP_FontAsset MessageMaterial;
 
         // Usually called from another thread!!!
         // Removes message after delay seconds
@@ -44,7 +47,7 @@ namespace UI.NotificationConsole
             var nt = textObj.AddComponent<NotificationText>();
             nt.Text = text;
             textObj.transform.SetParent(gameObject.transform);
-            nt.Configure();
+            nt.Configure(this);
 
             // Shift all messages
             notifications = notifications.FindAll(a => a != null);
@@ -66,7 +69,7 @@ namespace UI.NotificationConsole
                 nt.Text = text;
                 nt.guid = guid;
                 textObj.transform.SetParent(gameObject.transform);
-                nt.Configure();
+                nt.Configure(this);
 
                 // Shift all messages
                 notifications = notifications.FindAll(a => a != null);

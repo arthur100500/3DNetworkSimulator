@@ -17,8 +17,8 @@ namespace GNSHandling
             this.project = project;
             links = new();
 
-            var onStart = "Creating node " + Name;
-            var onEnd = "Created node " + Name;
+            var onStart = "[..] Creating node " + Name;
+            var onEnd = "[OK] Creating node " + Name;
             GNSThread.GNSThread.EnqueueActionWithNotifications(InitializeNode, onStart, onEnd, 4);
         }
 
@@ -32,8 +32,8 @@ namespace GNSHandling
 
         public override void Start()
         {
-            var onStart = "Starting node " + Name;
-            var onEnd = "Started node " + Name;
+            var onStart = "[..] Starting node " + Name;
+            var onEnd = "[OK] Starting node " + Name;
             GNSThread.GNSThread.EnqueueActionWithNotifications(StartNode, onStart, onEnd, 4);
         }
 
@@ -53,8 +53,8 @@ namespace GNSHandling
 
         public override void ConnectTo(GNSNode other, int selfAdapterID, int otherAdapterID)
         {
-            var onStart = "Linking " + Name + " and " + other.Name;
-            var onEnd = "Linked " + Name + " and " + other.Name;
+            var onStart = "[..] Linking " + Name + " and " + other.Name;
+            var onEnd = "[OK] Linking " + Name + " and " + other.Name;
 
             void func() => ConnectToFunc(other, selfAdapterID, otherAdapterID);
             GNSThread.GNSThread.EnqueueActionWithNotifications(func, onStart, onEnd, 4);
@@ -62,8 +62,8 @@ namespace GNSHandling
 
         public override void DisconnectFrom(GNSNode other, int selfAdapterID, int otherAdapterID)
         {
-            var onStart = "Unlinking " + Name + " and " + other.Name;
-            var onEnd = "Unlinked " + Name + " and " + other.Name;
+            var onStart = "[..] Unlinking " + Name + " and " + other.Name;
+            var onEnd = "[OK] Unlinking " + Name + " and " + other.Name;
 
             void func() => DeleteFromFunc(other, selfAdapterID, otherAdapterID);
             GNSThread.GNSThread.EnqueueActionWithNotifications(func, onStart, onEnd, 4);
@@ -83,7 +83,7 @@ namespace GNSHandling
                 a.nodes[0].node_id == other.node_id &&
                 a.nodes[1].port_number == selfAdapterID &&
                 a.nodes[0].port_number == otherAdapterID)
-                );
+            );
             var res = project.MakeProjectDeleteRequest("links/" + selectedLink.link_id);
             other.links.Remove(selectedLink);
             links.Remove(selectedLink);

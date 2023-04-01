@@ -27,8 +27,8 @@ namespace GNSHandling
             this.config = config;
             addrBegin = "http://" + config.Address + ":" + config.Port + "/v2/";
 
-            var onStart = "Creating project " + Name;
-            var onEnd = "Created project " + Name;
+            var onStart = "[..] Creating project " + Name;
+            var onEnd = "[OK] Creating project " + Name;
             GNSThread.GNSThread.EnqueueActionWithNotifications(InnerProjectCreate, onStart, onEnd, 4);
         }
 

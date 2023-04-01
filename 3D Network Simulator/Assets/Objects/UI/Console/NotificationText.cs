@@ -7,7 +7,7 @@ namespace UI.NotificationConsole
 {
     public class NotificationText : ANotification
     {
-        public override void Configure()
+        public override void Configure(NotificationConsole self)
         {
             Destroy(gameObject, 100);
 
@@ -16,6 +16,7 @@ namespace UI.NotificationConsole
             var tmproComponent = gameObject.AddComponent<TextMeshProUGUI>();
             tmproComponent.text = Text;
             tmproComponent.fontSize = 16;
+            tmproComponent.font = self.MessageMaterial;
             var rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.sizeDelta = new Vector2(1000, 30);
             rectTransform.position = new Vector3(510, 20, 0);
