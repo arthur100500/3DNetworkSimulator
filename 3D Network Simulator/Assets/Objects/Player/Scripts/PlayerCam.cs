@@ -7,7 +7,7 @@ namespace Player
     public class PlayerCam : MonoBehaviour
     {
         public float sens;
-
+        private PlayerMovement playerMovement;
         public Transform orientation;
 
         float xRot;
@@ -18,12 +18,13 @@ namespace Player
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-
+            playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
         }
 
         // Update is called once per frame
         void Update()
         {
+            if (!playerMovement.InControl) return;
             var mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sens;
             var mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sens;
 

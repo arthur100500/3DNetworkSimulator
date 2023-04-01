@@ -7,6 +7,23 @@ namespace Player
 {
     public class PlayerMovement : MonoBehaviour
     {
+        private bool inControl = true;
+        public bool InControl
+        {
+            get
+            {
+                return inControl;
+            }
+            set
+            {
+                if (value)
+                    Cursor.lockState = CursorLockMode.Locked;
+                else
+                    Cursor.lockState = CursorLockMode.None;
+                inControl = value;
+            }
+        }
+
         [Header("Movement")]
         public float moveSpeed;
 
@@ -47,6 +64,8 @@ namespace Player
 
         public void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Escape)) InControl = !InControl;
+            if (!inControl) return;
             // ground check
             grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f);
 
@@ -62,6 +81,7 @@ namespace Player
 
         public void FixedUpdate()
         {
+            if (!inControl) return;
             MovePlayer();
         }
 

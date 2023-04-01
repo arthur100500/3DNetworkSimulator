@@ -16,7 +16,7 @@ namespace GNSHandling
         {
             return new GNSProjectConfig()
             {
-                Address = "localhost",
+                Address = "127.0.0.1",
                 Port = 3080,
                 User = "admin",
                 Password = "666"

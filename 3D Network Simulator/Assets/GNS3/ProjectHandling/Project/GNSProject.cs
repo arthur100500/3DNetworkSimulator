@@ -24,11 +24,12 @@ namespace GNSHandling
             Name = name;
             // Establish constants
             httpClient = new();
+
             this.config = config;
             addrBegin = "http://" + config.Address + ":" + config.Port + "/v2/";
 
             var onStart = "[..] Creating project " + Name;
-            var onEnd = "[OK] Creating project " + Name;
+            var onEnd = "[<color=green>OK</color>] Creating project " + Name;
             GNSThread.GNSThread.EnqueueActionWithNotifications(InnerProjectCreate, onStart, onEnd, 4);
         }
 
@@ -82,7 +83,7 @@ namespace GNSHandling
             request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
             var response = await httpClient.SendAsync(request).ConfigureAwait(false);
             var toString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Debug.Log(type + "  " + addrBegin + endpoint + ": \n" + toString);
+            //Debug.Log(type + "  " + addrBegin + endpoint + ": \n" + toString);
             return toString;
         }
 
@@ -96,7 +97,7 @@ namespace GNSHandling
 
             var response = await httpClient.SendAsync(request).ConfigureAwait(false);
             var toString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Debug.Log("POST " + addrBegin + endpoint + " -d " + data + ": \n" + toString);
+            //Debug.Log("POST " + addrBegin + endpoint + " -d " + data + ": \n" + toString);
             return toString;
         }
 
