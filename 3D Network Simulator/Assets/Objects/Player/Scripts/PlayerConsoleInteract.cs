@@ -10,7 +10,7 @@ namespace Player
         [SerializeField] private LayerMask PortLayer;
         public void Update()
         {
-            if (!Input.GetMouseButtonDown(0))
+            if (!Input.GetKeyDown(KeyCode.E))
                 return;
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
