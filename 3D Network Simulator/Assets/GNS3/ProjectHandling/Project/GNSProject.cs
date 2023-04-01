@@ -6,16 +6,18 @@ using System.Net.Http.Headers;
 using GNSJsonObject;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using UI.NotificationConsole;
 
 namespace GNSHandling
 {
     public class GNSProject : IDisposable
     {
         public GNSJProject JProject;
-        public string Name { get; private set; }
-        private GNSProjectConfig config;
-        private HttpClient httpClient;
-        private string addrBegin;
+        public string Name { get; }
+        private readonly GNSProjectConfig config;
+        private readonly HttpClient httpClient;
+        private readonly string addrBegin;
 
         public GNSProject(GNSProjectConfig config, string name)
         {
@@ -25,13 +27,22 @@ namespace GNSHandling
             this.config = config;
             addrBegin = "http://" + config.Address + ":" + config.Port + "/v2/";
 
+            var onStart = "Creating project " + Name;
+            var onEnd = "Created project " + Name;
+            GNSThread.GNSThread.EnqueueActionWithNotifications(InnerProjectCreate, onStart, onEnd, 4);
+        }
+
+        public void InnerProjectCreate()
+        {
+            var msgID = Guid.NewGuid();
+
             var allProjects = GetAllProjects();
-            var existingProject = allProjects.Find(p => p.name == name);
+            var existingProject = allProjects.Find(p => p.name == Name);
 
             var res = "";
 
             if (existingProject is null)
-                res = MakePostRequest("projects", "{\"name\": \"" + name + "\"}");
+                res = MakePostRequest("projects", "{\"name\": \"" + Name + "\"}");
             else
                 res = MakePostRequest("projects/" + existingProject.project_id + "/open", "{}");
 
@@ -53,19 +64,29 @@ namespace GNSHandling
             return MakeCustomRequest(endpoint, "DELETE");
         }
 
+        private string MakePostRequest(string endpoint, string type)
+        {
+            var task = MakePostRequestAsync(endpoint, type);
+            return task.GetAwaiter().GetResult();
+        }
+
         private string MakeCustomRequest(string endpoint, string type)
+        {
+            var task = MakeCustomRequestAsync(endpoint, type);
+            return task.GetAwaiter().GetResult();
+        }
+        private async Task<string> MakeCustomRequestAsync(string endpoint, string type)
         {
             using var request = new HttpRequestMessage(new HttpMethod(type), addrBegin + endpoint);
             var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes(config.User + ":" + config.Password));
             request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
-
-            var response = httpClient.SendAsync(request);
-            var toString = response.Result.Content.ReadAsStringAsync().Result;
+            var response = await httpClient.SendAsync(request).ConfigureAwait(false);
+            var toString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             Debug.Log(type + "  " + addrBegin + endpoint + ": \n" + toString);
             return toString;
         }
 
-        public string MakePostRequest(string endpoint, string data)
+        public async Task<string> MakePostRequestAsync(string endpoint, string data)
         {
             using var request = new HttpRequestMessage(new HttpMethod("POST"), addrBegin + endpoint);
             var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes(config.User + ":" + config.Password));
@@ -73,8 +94,8 @@ namespace GNSHandling
             request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
             request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
 
-            var response = httpClient.SendAsync(request);
-            var toString = response.Result.Content.ReadAsStringAsync().Result;
+            var response = await httpClient.SendAsync(request).ConfigureAwait(false);
+            var toString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             Debug.Log("POST " + addrBegin + endpoint + " -d " + data + ": \n" + toString);
             return toString;
         }

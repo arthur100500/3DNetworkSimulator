@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System;
+using UI.NotificationConsole;
 
 namespace GNSThread
 {
@@ -23,10 +24,24 @@ namespace GNSThread
             actions.Enqueue(action);
         }
 
+        public static void EnqueueActionWithNotifications(Action action, string onStart, string onEnd, float delay)
+        {
+            if (!started) Run();
+            actions.Enqueue(() =>
+            {
+                var mguid = Guid.NewGuid();
+                GlobalNotificationManager.AddLoadingMessage(onStart, mguid);
+                action();
+                GlobalNotificationManager.AddLoadingMessage(onEnd, mguid);
+                GlobalNotificationManager.StartRemovingMessage(mguid, delay);
+            });
+        }
+
         private static void ThreadWork()
         {
             while (true)
             {
+                // Thread yield??
                 Thread.Sleep(300);
                 if (actions.Count == 0) continue;
                 actions.Dequeue()();

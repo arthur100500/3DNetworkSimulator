@@ -17,11 +17,7 @@ namespace GNSHandling
         }
         public static GNSProject GetProject()
         {
-            if (project is null)
-            {
-                project = new(GNSProjectConfig.LocalGNSProjectConfig(), "unity_project");
-            }
-            return project;
+            return project ??= new(GNSProjectConfig.LocalGNSProjectConfig(), "unity_project");
         }
     }
 }

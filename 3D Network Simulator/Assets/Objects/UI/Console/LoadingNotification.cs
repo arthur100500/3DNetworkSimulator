@@ -5,12 +5,10 @@ using TMPro;
 
 namespace UI.NotificationConsole
 {
-    public class NotificationText : ANotification
+    public class LoadingNotification : ANotification
     {
         public override void Configure()
         {
-            Destroy(gameObject, 100);
-
             // Gen TextMeshPro text
             gameObject.AddComponent<CanvasRenderer>();
             var tmproComponent = gameObject.AddComponent<TextMeshProUGUI>();
@@ -26,6 +24,7 @@ namespace UI.NotificationConsole
             var tmproComponent = gameObject.GetComponent<TextMeshProUGUI>();
             tmproComponent.text = text;
         }
+
         public override void DestroyAfterDelay(float delay)
         {
             Destroy(gameObject, delay);

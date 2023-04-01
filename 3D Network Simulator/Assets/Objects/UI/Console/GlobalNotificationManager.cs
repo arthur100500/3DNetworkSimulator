@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +11,16 @@ namespace UI.NotificationConsole
         public static void AddMessage(string message)
         {
             console.EnqueueMessage(message);
+        }
+
+        public static void AddLoadingMessage(string messageText, Guid messageID)
+        {
+            console.EnqueueLoadingMessage(messageText, messageID);
+        }
+
+        public static void StartRemovingMessage(Guid messageID, float delay)
+        {
+            console.EnqueueRemovingLoadingMessage(messageID, delay);
         }
 
         [RuntimeInitializeOnLoadMethod]
