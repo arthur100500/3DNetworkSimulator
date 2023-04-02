@@ -83,7 +83,7 @@ namespace GNSHandling
             request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
             var response = await httpClient.SendAsync(request).ConfigureAwait(false);
             var toString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            // Debug.Log(type + "  " + addrBegin + endpoint + ": \n" + toString);
+            Debug.Log(type + "  " + addrBegin + endpoint + ": \n" + toString);
             return toString;
         }
 
@@ -97,7 +97,7 @@ namespace GNSHandling
 
             var response = await httpClient.SendAsync(request).ConfigureAwait(false);
             var toString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            // Debug.Log("POST " + addrBegin + endpoint + " -d " + data + ": \n" + toString);
+            Debug.Log("POST " + addrBegin + endpoint + " -d " + data + ": \n" + toString);
             return toString;
         }
 
