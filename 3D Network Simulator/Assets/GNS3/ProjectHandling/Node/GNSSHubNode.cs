@@ -13,9 +13,8 @@ namespace GNSHandling
         {
             Init(name, project);
 
-            var onStart = "[..] Creating node " + Name;
-            var onEnd = "[<color=green>OK</color>] Creating node " + Name;
-            GNSThread.GNSThread.EnqueueActionWithNotifications(InitializeNode, onStart, onEnd, 4);
+            var notification = "Creating node " + Name;
+            GNSThread.GNSThread.EnqueueActionWithNotification(InitializeNode, notification, 4);
         }
 
         private void InitializeNode()

@@ -1,8 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using UnityEngine;
 using System;
 using TMPro;
+using System.Linq;
 
 namespace UI.NotificationConsole
 {
@@ -18,10 +19,11 @@ namespace UI.NotificationConsole
         * To send notification use GlobalNotifications
         */
         private List<ANotification> notifications = new();
-        private readonly Queue<string> messageQueue = new();
-        private readonly Queue<(string, Guid)> loadingMessageQueue = new();
-        private readonly Queue<(Guid, float)> removeMessageQueue = new();
+        private readonly ConcurrentQueue<string> messageQueue = new();
+        private readonly ConcurrentQueue<(string, Guid)> loadingMessageQueue = new();
+        private readonly ConcurrentQueue<(Guid, float)> removeMessageQueue = new();
         private readonly int shiftAmnt = 30;
+        private readonly List<Guid> messagesToRemove = new();
 
         public TMP_FontAsset MessageMaterial;
 
@@ -68,6 +70,7 @@ namespace UI.NotificationConsole
                 var nt = textObj.AddComponent<LoadingNotification>();
                 nt.Text = text;
                 nt.guid = guid;
+
                 textObj.transform.SetParent(gameObject.transform);
                 nt.Configure(this);
 
@@ -95,24 +98,30 @@ namespace UI.NotificationConsole
 
         private void UpdateRemoveMessageQueue()
         {
-            if (removeMessageQueue.Count == 0) return;
-            (var guidToRemove, var delay) = removeMessageQueue.Dequeue();
+            foreach (var item in notifications.Where(a => messagesToRemove.Contains(a.guid)))
+            {
+                messagesToRemove.Remove(item.guid);
+                item.DestroyAfterDelay(4);
+            }
+
+            if (!removeMessageQueue.TryDequeue(out var tuple)) return;
+            (var guidToRemove, var delay) = tuple;
             var existingMessage = notifications.Find(a => a.guid == guidToRemove);
-            if (existingMessage is null) return;
+
+            if (existingMessage is null) { messagesToRemove.Add(guidToRemove); return; }
             existingMessage.DestroyAfterDelay(delay);
         }
 
         private void UpdateMessageQueue()
         {
-            if (messageQueue.Count == 0) return;
-            var message = messageQueue.Dequeue();
+            if (!messageQueue.TryDequeue(out var message)) return;
             AddNotification(message);
         }
 
         private void UpdateLoadingMessageQueue()
         {
-            if (loadingMessageQueue.Count == 0) return;
-            (var message, var guid) = loadingMessageQueue.Dequeue();
+            if (!loadingMessageQueue.TryDequeue(out var tuple)) return;
+            (var message, var guid) = tuple;
             UpdateLoadingMessage(message, guid);
         }
     }

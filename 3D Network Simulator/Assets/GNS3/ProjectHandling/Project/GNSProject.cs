@@ -15,7 +15,8 @@ namespace GNSHandling
     {
         public GNSJProject JProject;
         public string Name { get; }
-        private readonly GNSProjectConfig config;
+        public string ID { get { return JProject.project_id; } }
+        public GNSProjectConfig Config;
         private readonly HttpClient httpClient;
         private readonly string addrBegin;
 
@@ -25,12 +26,11 @@ namespace GNSHandling
             // Establish constants
             httpClient = new();
 
-            this.config = config;
+            this.Config = config;
             addrBegin = "http://" + config.Address + ":" + config.Port + "/v2/";
 
-            var onStart = "[..] Creating project " + Name;
-            var onEnd = "[<color=green>OK</color>] Creating project " + Name;
-            GNSThread.GNSThread.EnqueueActionWithNotifications(InnerProjectCreate, onStart, onEnd, 4);
+            var notification = "Creating project " + Name;
+            GNSThread.GNSThread.EnqueueActionWithNotification(InnerProjectCreate, notification, 4);
         }
 
         public void InnerProjectCreate()
@@ -79,7 +79,7 @@ namespace GNSHandling
         private async Task<string> MakeCustomRequestAsync(string endpoint, string type)
         {
             using var request = new HttpRequestMessage(new HttpMethod(type), addrBegin + endpoint);
-            var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes(config.User + ":" + config.Password));
+            var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes(Config.User + ":" + Config.Password));
             request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
             var response = await httpClient.SendAsync(request).ConfigureAwait(false);
             var toString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -90,15 +90,19 @@ namespace GNSHandling
         public async Task<string> MakePostRequestAsync(string endpoint, string data)
         {
             using var request = new HttpRequestMessage(new HttpMethod("POST"), addrBegin + endpoint);
-            var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes(config.User + ":" + config.Password));
+            var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes(Config.User + ":" + Config.Password));
             request.Content = new StringContent(data);
             request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
             request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
 
             var response = await httpClient.SendAsync(request).ConfigureAwait(false);
             var toString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Debug.Log("POST " + addrBegin + endpoint + " -d " + data + ": \n" + toString);
-            return toString;
+            if ((int)response.StatusCode >= 200 || (int)response.StatusCode < 300)
+            {
+                Debug.Log("POST " + addrBegin + endpoint + " -d " + data + ": \n" + toString);
+                return toString;
+            }
+            throw new BadResponseException();
         }
 
         public string MakeProjectGetRequest(string endpoint)

@@ -11,6 +11,7 @@ namespace GNSHandling
         public string Name;
         public bool IsReady;
         protected GNSProject project;
+        public string GNSWsUrl { get { return "ws://" + project.Config.Address + ":" + project.Config.Port + "/v2/projects/" + project.ID + "/nodes/" + node_id; } }
 
         public string MakeNodePostRequest(string endpoint, string data)
         {
@@ -31,16 +32,14 @@ namespace GNSHandling
 
         public void Start()
         {
-            var onStart = "[..] Starting node " + Name;
-            var onEnd = "[<color=green>OK</color>] Starting node " + Name;
-            GNSThread.GNSThread.EnqueueActionWithNotifications(StartNode, onStart, onEnd, 4);
+            var notification = "Starting node " + Name;
+            GNSThread.GNSThread.EnqueueActionWithNotification(StartNode, notification, 4);
         }
 
         public void Stop()
         {
-            var onStart = "[..] Stoping node " + Name;
-            var onEnd = "[<color=green>OK</color>] Stoping node " + Name;
-            GNSThread.GNSThread.EnqueueActionWithNotifications(StopNode, onStart, onEnd, 4);
+            var notification = "Stoping node " + Name;
+            GNSThread.GNSThread.EnqueueActionWithNotification(StopNode, notification, 4);
         }
 
         private void StartNode()
@@ -55,20 +54,18 @@ namespace GNSHandling
 
         public void ConnectTo(GNSNode other, int selfAdapterID, int otherAdapterID)
         {
-            var onStart = "[..] Linking " + Name + " and " + other.Name;
-            var onEnd = "[<color=green>OK</color>] Linking " + Name + " and " + other.Name;
+            var notification = "Linking " + Name + " and " + other.Name;
 
             void func() => ConnectToFunc(other, selfAdapterID, otherAdapterID);
-            GNSThread.GNSThread.EnqueueActionWithNotifications(func, onStart, onEnd, 4);
+            GNSThread.GNSThread.EnqueueActionWithNotification(func, notification, 4);
         }
 
         public void DisconnectFrom(GNSNode other, int selfAdapterID, int otherAdapterID)
         {
-            var onStart = "[..] Unlinking " + Name + " and " + other.Name;
-            var onEnd = "[<color=green>OK</color>] Unlinking " + Name + " and " + other.Name;
+            var notification = "Unlinking " + Name + " and " + other.Name;
 
             void func() => DeleteFromFunc(other, selfAdapterID, otherAdapterID);
-            GNSThread.GNSThread.EnqueueActionWithNotifications(func, onStart, onEnd, 4);
+            GNSThread.GNSThread.EnqueueActionWithNotification(func, notification, 4);
         }
 
         private void DeleteFromFunc(GNSNode other, int selfAdapterID, int otherAdapterID)
