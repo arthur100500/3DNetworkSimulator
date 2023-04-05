@@ -79,6 +79,8 @@ namespace UI.Terminal
 
         private void Hide()
         {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
             gameObject.GetComponent<CanvasGroup>().alpha = 0;
         }
 
@@ -162,7 +164,9 @@ namespace UI.Terminal
             TerminalInput.Select();
 
             // Freeze the player
-            //playerMovement.InControl = false;
+            playerMovement.InControl = false;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
 
         private void Send(string msg)
