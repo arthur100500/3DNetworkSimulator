@@ -14,11 +14,13 @@ namespace Device
         public AWire ethernetPort;
         private GNSConsole.GNSConsole console;
         private TerminalManager UITerminal;
+
         [SerializeField] private GameObject UITerminalPrefab;
+        [SerializeField] private Canvas ParentCanvas;
 
         public void Start()
         {
-            UITerminal = Instantiate(UITerminalPrefab).GetComponent<TerminalManager>();
+            UITerminal = Instantiate(UITerminalPrefab, ParentCanvas.transform).GetComponent<TerminalManager>();
             Node = new GNSVPCSNode(GlobalGNSParameters.GetProject(), "VPCS" + GlobalGNSParameters.GetNextFreeID());
             ethernetPort.SingleConnectEvent += Connect;
             ethernetPort.SingleDisconnectEvent += Disconnect;
