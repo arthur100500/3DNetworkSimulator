@@ -11,6 +11,7 @@ namespace UI.Terminal
     /*
     * Creates the process and uses it's input and output with unity
     */
+    [RequireComponent(typeof(CanvasGroup))]
     public class TerminalManager : MonoBehaviour
     {
         [SerializeField] private GameObject DirectoryLine;
@@ -27,6 +28,8 @@ namespace UI.Terminal
         private const int messageHeight = 25;
         private string lastInput = "";
         private PlayerMovement playerMovement;
+        private Canvas baseCanvas;
+        private CanvasGroup canvasGroup;
 
         public void SetTitle(string title)
         {
@@ -35,7 +38,11 @@ namespace UI.Terminal
 
         private void Start()
         {
-            gameObject.GetComponent<CanvasGroup>().alpha = 0;
+            canvasGroup = gameObject.GetComponent<CanvasGroup>();
+
+            baseCanvas = gameObject.transform.parent.gameObject.GetComponent<Canvas>();
+
+            Hide();
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(MessageList.GetComponent<RectTransform>());
 
@@ -79,9 +86,9 @@ namespace UI.Terminal
 
         private void Hide()
         {
+            SetVisible(false);
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            gameObject.GetComponent<CanvasGroup>().alpha = 0;
         }
 
         private void UpdateMessagesHeight()
@@ -159,7 +166,8 @@ namespace UI.Terminal
 
         public void Show()
         {
-            gameObject.GetComponent<CanvasGroup>().alpha = 1;
+            SetVisible(true);
+
             TerminalInput.ActivateInputField();
             TerminalInput.Select();
 
@@ -167,6 +175,13 @@ namespace UI.Terminal
             playerMovement.InControl = false;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
+        }
+
+        private void SetVisible(bool state)
+        {
+            canvasGroup.interactable = state;
+            canvasGroup.alpha = state ? 1 : 0;
+            canvasGroup.blocksRaycasts = state;
         }
 
         private void Send(string msg)

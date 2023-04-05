@@ -20,7 +20,6 @@ namespace UI.TelnetConsole
         {
             connection = new("localhost", 5000);
             connection.Open();
-            //connection.ReadStringEvent += GetTelnetMessage;
         }
 
         void Update()
@@ -30,15 +29,8 @@ namespace UI.TelnetConsole
 
         private void RenderMessages()
         {
-            //Debug.Log(prev.Count);
             message.text = messagesConcat;
         }
-
-        // private void GetTelnetMessage(string message)
-        // {
-        //     prev.Add(message);
-        //     Debug.Log(message);
-        // }
 
         public void SendTelnetMessage(string message)
         {
