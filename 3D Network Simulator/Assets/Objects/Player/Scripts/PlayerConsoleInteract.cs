@@ -17,8 +17,7 @@ namespace Player
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, PortLayer) && hit.collider != null)
             {
-                var RaycastReturn = hit.collider.gameObject.name;
-                var FoundObject = GameObject.Find(RaycastReturn);
+                var FoundObject = hit.collider.gameObject;
 
                 FoundObject.GetComponent<AConsoleDevice>().OpenTelnet();
             }
