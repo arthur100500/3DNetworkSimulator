@@ -17,10 +17,13 @@ namespace Device
 
         [SerializeField] private GameObject UITerminalPrefab;
         [SerializeField] private Canvas ParentCanvas;
+        [SerializeField] private Canvas ScreenCanvas;
 
         public void Start()
         {
             UITerminal = Instantiate(UITerminalPrefab, ParentCanvas.transform).GetComponent<TerminalManager>();
+            UITerminal.Initialize(ScreenCanvas);
+
             Node = new GNSVPCSNode(GlobalGNSParameters.GetProject(), "VPCS" + GlobalGNSParameters.GetNextFreeID());
             ethernetPort.SingleConnectEvent += Connect;
             ethernetPort.SingleDisconnectEvent += Disconnect;

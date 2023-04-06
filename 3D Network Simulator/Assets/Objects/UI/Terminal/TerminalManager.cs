@@ -29,25 +29,28 @@ namespace UI.Terminal
         private string lastInput = "";
         private PlayerMovement playerMovement;
         private Canvas baseCanvas;
+        private RectTransform baseCanvasRectTransform;
+        private Vector3 CachedPosition;
+        private Vector3 CachedScale;
         private CanvasGroup canvasGroup;
+        public Canvas ScreenCanvas { private get; set; }
 
         public void SetTitle(string title)
         {
             TitleText.text = title;
         }
 
-        private void Start()
+        public void Initialize(Canvas screenCanvas)
         {
+            ScreenCanvas = screenCanvas;
             canvasGroup = gameObject.GetComponent<CanvasGroup>();
-
             baseCanvas = gameObject.transform.parent.gameObject.GetComponent<Canvas>();
-
+            baseCanvasRectTransform = gameObject.GetComponent<RectTransform>();
+            CachedPosition = baseCanvasRectTransform.localPosition;
+            CachedScale = baseCanvasRectTransform.localScale;
             Hide();
-
             LayoutRebuilder.ForceRebuildLayoutImmediate(MessageList.GetComponent<RectTransform>());
-
             CloseButton.onClick.AddListener(Hide);
-
             playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
         }
 
@@ -71,15 +74,6 @@ namespace UI.Terminal
 
             if (Input.GetKeyDown(KeyCode.T))
                 Hide();
-
-            /*if (updated)
-            {
-                if (Input.GetKeyDown(KeyCode.UpArrow))
-                    Send("[A");
-                if (Input.GetKeyDown(KeyCode.DownArrow))
-                    Send("[B");
-                updated = false;
-            }*/
 
             UserInputLine.transform.SetAsLastSibling();
         }
@@ -180,8 +174,31 @@ namespace UI.Terminal
         private void SetVisible(bool state)
         {
             canvasGroup.interactable = state;
-            canvasGroup.alpha = state ? 1 : 0;
+            // canvasGroup.alpha = state ? 1 : 0;
+            ChangeCanvas(state);
             canvasGroup.blocksRaycasts = state;
+        }
+
+        private void ChangeCanvas(bool active)
+        {
+            if (active)
+            {
+                gameObject.transform.SetParent(baseCanvas.transform);
+
+                transform.SetLocalPositionAndRotation(CachedPosition, Quaternion.Euler(Vector3.zero));
+                transform.localScale = CachedScale;
+
+                baseCanvasRectTransform.localPosition = CachedPosition;
+                baseCanvasRectTransform.localScale = CachedScale;
+            }
+            else
+            {
+                gameObject.transform.SetParent(ScreenCanvas.transform);
+
+                transform.localScale = Vector3.one * 1.5f;
+                transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.Euler(Vector3.zero);
+            }
         }
 
         private void Send(string msg)
