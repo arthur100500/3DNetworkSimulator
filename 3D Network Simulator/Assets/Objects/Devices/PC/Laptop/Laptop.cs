@@ -6,6 +6,7 @@ using System.Diagnostics;
 using UnityEngine;
 using GNSConsole;
 using UI.Terminal;
+using UI.NotificationConsole;
 
 namespace Device
 {
@@ -42,7 +43,12 @@ namespace Device
 
         public override void OpenTelnet()
         {
-            //Process.Start("telnet", ((GNSVPCSNode)Node).JNode.console_host + " " + ((GNSVPCSNode)Node).JNode.console);
+            if (!Node.IsReady)
+            {
+                GlobalNotificationManager.AddMessage("[<color=red>FAIL</color>]Can't connect to " + Node.Name + " as it is not loaded");
+                return;
+            }
+
             if (console is null)
             {
                 console = new(Node);
