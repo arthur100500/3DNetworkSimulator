@@ -13,7 +13,6 @@ namespace Player
         float xRot;
         float yRot;
 
-        // Start is called before the first frame update
         void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -21,7 +20,6 @@ namespace Player
             playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (!playerMovement.InControl) return;
