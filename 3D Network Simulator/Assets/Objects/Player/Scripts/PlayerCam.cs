@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Player
@@ -7,20 +5,20 @@ namespace Player
     public class PlayerCam : MonoBehaviour
     {
         public float sens;
-        private PlayerMovement playerMovement;
         public Transform orientation;
+        private PlayerMovement playerMovement;
 
-        float xRot;
-        float yRot;
+        private float xRot;
+        private float yRot;
 
-        void Start()
+        private void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
         }
 
-        void Update()
+        private void Update()
         {
             if (!playerMovement.InControl) return;
             var mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sens;

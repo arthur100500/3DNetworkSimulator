@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Wire
@@ -9,7 +7,11 @@ namespace Wire
         public GameObject en;
         public Material cableMaterial;
         public int portID;
-        public override int GetPortNumber() => portID;
+
+        public override int GetPortNumber()
+        {
+            return portID;
+        }
 
         public override GameObject GetHandObject()
         {
@@ -31,8 +33,15 @@ namespace Wire
             return Instantiate(en);
         }
 
-        public override int GetPlugRotation() => 0;
-        public override Vector3 GetPlugOffset() => new(-0.007F, -0.0015F, 0.001F);
+        public override int GetPlugRotation()
+        {
+            return 0;
+        }
+
+        public override Vector3 GetPlugOffset()
+        {
+            return new(-0.007F, -0.0015F, 0.001F);
+        }
 
         public override GameObject GetSelf()
         {

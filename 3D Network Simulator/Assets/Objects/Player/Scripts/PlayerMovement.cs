@@ -1,19 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 namespace Player
 {
     public class PlayerMovement : MonoBehaviour
     {
+        [Header("Movement")] public float moveSpeed;
+
+        public float groundDrag;
+
+        public float jumpForce;
+        public float jumpCooldown;
+        public float airMultiplier;
+
+        [HideInInspector] public float walkSpeed;
+        [HideInInspector] public float sprintSpeed;
+
+        [Header("Keybinds")] public KeyCode jumpKey = KeyCode.Space;
+
+        [Header("Ground Check")] public float playerHeight;
+
+        public LayerMask ground;
+
+        public Transform orientation;
+        private bool grounded;
+
+        private float horizontalInput;
         private bool inControl = true;
+
+        private Vector3 moveDirection;
+
+        private Rigidbody rb;
+        private bool readyToJump;
+        private float verticalInput;
+
         public bool InControl
         {
-            get
-            {
-                return inControl;
-            }
+            get => inControl;
             set
             {
                 if (value)
@@ -23,36 +45,6 @@ namespace Player
                 inControl = value;
             }
         }
-
-        [Header("Movement")]
-        public float moveSpeed;
-
-        public float groundDrag;
-
-        public float jumpForce;
-        public float jumpCooldown;
-        public float airMultiplier;
-        bool readyToJump;
-
-        [HideInInspector] public float walkSpeed;
-        [HideInInspector] public float sprintSpeed;
-
-        [Header("Keybinds")]
-        public KeyCode jumpKey = KeyCode.Space;
-
-        [Header("Ground Check")]
-        public float playerHeight;
-        public LayerMask ground;
-        bool grounded;
-
-        public Transform orientation;
-
-        float horizontalInput;
-        float verticalInput;
-
-        Vector3 moveDirection;
-
-        Rigidbody rb;
 
         public void Start()
         {
@@ -117,12 +109,12 @@ namespace Player
 
         private void SpeedControl()
         {
-            Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            var flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
             // limit velocity if needed
             if (flatVel.magnitude > moveSpeed)
             {
-                Vector3 limitedVel = flatVel.normalized * moveSpeed;
+                var limitedVel = flatVel.normalized * moveSpeed;
                 rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
             }
         }

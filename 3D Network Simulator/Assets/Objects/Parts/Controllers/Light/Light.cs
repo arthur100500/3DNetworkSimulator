@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Light : ISwitchable
@@ -13,6 +11,7 @@ public class Light : ISwitchable
     {
         renderer = gameObject.GetComponent<MeshRenderer>();
     }
+
     public override void SwitchOff()
     {
         renderer.material = unlit;

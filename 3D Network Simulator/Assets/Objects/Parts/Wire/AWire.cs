@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Wire
@@ -8,12 +6,22 @@ namespace Wire
     {
         // Delegates
         public delegate void ConnectEv();
-        public event ConnectEv ConnectEvent;
+
         public delegate void DisconnectEv();
-        public event DisconnectEv DisconnectEvent;
+
         public delegate void SingleConnectEv(AWire other);
-        public event SingleConnectEv SingleConnectEvent;
+
         public delegate void SingleDisconnectEv(AWire other);
+
+        [HideInInspector] public GameObject wireRenderer;
+        [HideInInspector] public AWire ConnectedWire;
+        protected bool isAvailable = true;
+
+        // Logic
+        protected GameObject visualPlug;
+        public event ConnectEv ConnectEvent;
+        public event DisconnectEv DisconnectEvent;
+        public event SingleConnectEv SingleConnectEvent;
         public event SingleConnectEv SingleDisconnectEvent;
 
 
@@ -24,12 +32,6 @@ namespace Wire
         public abstract Material GetWireMaterial();
         public abstract WireType GetInputType();
         public abstract WireType GetOutputType();
-
-        // Logic
-        protected GameObject visualPlug;
-        [HideInInspector] public GameObject wireRenderer;
-        protected bool isAvailable = true;
-        [HideInInspector] public AWire ConnectedWire;
         public abstract int GetPortNumber();
 
         // Methods
@@ -44,14 +46,17 @@ namespace Wire
             ConnectedWire = other;
             ConnectEvent?.Invoke();
         }
+
         public void SingleConnect(AWire other)
         {
             SingleConnectEvent?.Invoke(other);
         }
+
         public void SingleDisconnect(AWire other)
         {
             SingleDisconnectEvent?.Invoke(other);
         }
+
         public virtual void VisualConnect()
         {
             visualPlug = GetPlug();
@@ -60,6 +65,7 @@ namespace Wire
             visualPlug.transform.localPosition = GetPlugOffset();
             visualPlug.transform.localRotation = Quaternion.Euler(0, GetPlugRotation(), 0);
         }
+
         public virtual void VisualDisconnect()
         {
             if (visualPlug is not null)
@@ -67,7 +73,12 @@ namespace Wire
             if (wireRenderer is not null)
                 Destroy(wireRenderer);
         }
-        public bool IsAvailable() => isAvailable;
+
+        public bool IsAvailable()
+        {
+            return isAvailable;
+        }
+
         public virtual void Disconnect(AWire other)
         {
             isAvailable = true;

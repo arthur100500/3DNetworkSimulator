@@ -1,8 +1,5 @@
-using Newtonsoft.Json;
 using GNSJsonObject;
-using System;
-using GNSThread;
-using UI.NotificationConsole;
+using Newtonsoft.Json;
 
 namespace GNSHandling
 {
@@ -20,7 +17,8 @@ namespace GNSHandling
 
         private void InitializeNode()
         {
-            var res = project.MakeProjectPostRequest("nodes", "{\"name\": \"" + Name + "\", \"node_type\": \"vpcs\", \"compute_id\": \"local\"}");
+            var res = project.MakeProjectPostRequest("nodes",
+                "{\"name\": \"" + Name + "\", \"node_type\": \"vpcs\", \"compute_id\": \"local\"}");
             JNode = JsonConvert.DeserializeObject<GNSJVPCSNode>(res);
             node_id = JNode.node_id;
             IsReady = true;

@@ -1,18 +1,24 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using System;
 
 namespace GNSHandling
 {
     public abstract class GNSNode : IDisposable
     {
-        public string node_id;
+        public bool IsReady;
         public List<GNSJLink> links;
         public string Name;
-        public bool IsReady;
+        public string node_id;
         protected GNSProject project;
-        public string GNSWsUrl { get { return "ws://" + project.Config.Address + ":" + project.Config.Port + "/v2/projects/" + project.ID + "/nodes/" + node_id; } }
+
+        public string GNSWsUrl => "ws://" + project.Config.Address + ":" + project.Config.Port + "/v2/projects/" +
+                                  project.ID + "/nodes/" + node_id;
+
+        public void Dispose()
+        {
+            project.MakeDeleteRequest("nodes/" + node_id + "");
+        }
 
         public string MakeNodePostRequest(string endpoint, string data)
         {
@@ -28,7 +34,7 @@ namespace GNSHandling
         {
             Name = name;
             this.project = project;
-            links = new();
+            links = new List<GNSJLink>();
         }
 
         public void Start()
@@ -57,7 +63,11 @@ namespace GNSHandling
         {
             var notification = "Linking " + Name + " and " + other.Name;
 
-            void func() => ConnectToFunc(other, selfAdapterID, otherAdapterID);
+            void func()
+            {
+                ConnectToFunc(other, selfAdapterID, otherAdapterID);
+            }
+
             GNSThread.GNSThread.EnqueueActionWithNotification(func, notification, 4);
         }
 
@@ -65,7 +75,11 @@ namespace GNSHandling
         {
             var notification = "Unlinking " + Name + " and " + other.Name;
 
-            void func() => DeleteFromFunc(other, selfAdapterID, otherAdapterID);
+            void func()
+            {
+                DeleteFromFunc(other, selfAdapterID, otherAdapterID);
+            }
+
             GNSThread.GNSThread.EnqueueActionWithNotification(func, notification, 4);
         }
 
@@ -75,14 +89,14 @@ namespace GNSHandling
             // TOP 10 LAMBDA EXPRESSIONS!!!!
             var selectedLink = links.Find(a =>
                 (a.nodes[0].node_id == node_id &&
-                a.nodes[1].node_id == other.node_id &&
-                a.nodes[0].port_number == selfAdapterID &&
-                a.nodes[1].port_number == otherAdapterID)
+                 a.nodes[1].node_id == other.node_id &&
+                 a.nodes[0].port_number == selfAdapterID &&
+                 a.nodes[1].port_number == otherAdapterID)
                 ||
                 (a.nodes[1].node_id == node_id &&
-                a.nodes[0].node_id == other.node_id &&
-                a.nodes[1].port_number == selfAdapterID &&
-                a.nodes[0].port_number == otherAdapterID)
+                 a.nodes[0].node_id == other.node_id &&
+                 a.nodes[1].port_number == selfAdapterID &&
+                 a.nodes[0].port_number == otherAdapterID)
             );
 
             var res = project.MakeProjectDeleteRequest("links/" + selectedLink.link_id);
@@ -92,16 +106,13 @@ namespace GNSHandling
 
         private void ConnectToFunc(GNSNode other, int selfAdapterID, int otherAdapterID)
         {
-            var link_json = "{\"nodes\": [{\"adapter_number\": 0, \"node_id\": \"" + node_id + "\", \"port_number\": " + selfAdapterID + "}, {\"adapter_number\": 0, \"node_id\": \"" + other.node_id + "\", \"port_number\": " + otherAdapterID + "}]}";
+            var link_json = "{\"nodes\": [{\"adapter_number\": 0, \"node_id\": \"" + node_id + "\", \"port_number\": " +
+                            selfAdapterID + "}, {\"adapter_number\": 0, \"node_id\": \"" + other.node_id +
+                            "\", \"port_number\": " + otherAdapterID + "}]}";
             var res = project.MakeProjectPostRequest("links", link_json);
             var link = JsonConvert.DeserializeObject<GNSJLink>(res);
             other.links.Add(link);
             links.Add(link);
-        }
-
-        public void Dispose()
-        {
-            project.MakeDeleteRequest("nodes/" + node_id + "");
         }
     }
 }

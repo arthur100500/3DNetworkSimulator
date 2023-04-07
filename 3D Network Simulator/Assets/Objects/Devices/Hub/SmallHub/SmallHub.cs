@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Wire;
 using GNSHandling;
+using Wire;
 
 namespace Device.Hub
 {
@@ -15,7 +12,8 @@ namespace Device.Hub
 
         public void Start()
         {
-            Node = new GNSSHubNode(GlobalGNSParameters.GetProject(), "Small Hub " + GlobalGNSParameters.GetNextFreeID());
+            Node = new GNSSHubNode(GlobalGNSParameters.GetProject(),
+                "Small Hub " + GlobalGNSParameters.GetNextFreeID());
 
             power.ConnectEvent += Enable;
             power.DisconnectEvent += Disable;
@@ -23,9 +21,11 @@ namespace Device.Hub
             foreach (var en in ethernets)
             {
                 en.SingleConnectEvent += other =>
-                    Node.ConnectTo(other.GetParent().GetComponent<ADevice>().Node, en.GetPortNumber(), other.GetPortNumber());
+                    Node.ConnectTo(other.GetParent().GetComponent<ADevice>().Node, en.GetPortNumber(),
+                        other.GetPortNumber());
                 en.SingleDisconnectEvent += other =>
-                    Node.DisconnectFrom(other.GetParent().GetComponent<ADevice>().Node, en.GetPortNumber(), other.GetPortNumber());
+                    Node.DisconnectFrom(other.GetParent().GetComponent<ADevice>().Node, en.GetPortNumber(),
+                        other.GetPortNumber());
             }
         }
 
@@ -40,6 +40,5 @@ namespace Device.Hub
             powerIndicator.SwitchOff();
             Node.Stop();
         }
-
     }
 }

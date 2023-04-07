@@ -1,6 +1,3 @@
-
-using Newtonsoft.Json;
-
 namespace GNSJsonObject
 {
     public class GNSJProject

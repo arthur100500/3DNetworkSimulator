@@ -1,10 +1,10 @@
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
+using Player;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using Player;
 
 namespace UI.Terminal
 {
@@ -14,6 +14,7 @@ namespace UI.Terminal
     [RequireComponent(typeof(CanvasGroup))]
     public class TerminalManager : MonoBehaviour
     {
+        private const int messageHeight = 25;
         [SerializeField] private GameObject DirectoryLine;
         [SerializeField] private GameObject ResponseLine;
         [SerializeField] private TMP_InputField TerminalInput;
@@ -22,18 +23,41 @@ namespace UI.Terminal
         [SerializeField] private GameObject MessageList;
         [SerializeField] private TextMeshProUGUI TitleText;
         [SerializeField] private Button CloseButton;
-
-        private GNSConsole.GNSConsole console;
         private readonly Queue<string> messages = new();
-        private const int messageHeight = 25;
-        private string lastInput = "";
-        private PlayerMovement playerMovement;
         private Canvas baseCanvas;
         private RectTransform baseCanvasRectTransform;
         private Vector3 CachedPosition;
         private Vector3 CachedScale;
         private CanvasGroup canvasGroup;
+
+        private GNSConsole.GNSConsole console;
+        private string lastInput = "";
+        private PlayerMovement playerMovement;
         public Canvas ScreenCanvas { private get; set; }
+
+        private void OnGUI()
+        {
+            InstantiateMessages();
+
+            if (TerminalInput.isFocused && TerminalInput.text != "" && Input.GetKeyDown(KeyCode.Return))
+            {
+                var userInput = TerminalInput.text;
+                ClearInputField();
+                AddDirectoryLine(userInput);
+                Send(userInput);
+                lastInput = userInput;
+                UserInputLine.transform.SetAsLastSibling();
+                TerminalInput.ActivateInputField();
+                TerminalInput.Select();
+                UserInputLine.SetActive(false);
+                UpdateMessagesHeight();
+            }
+
+            if (Input.GetKeyDown(KeyCode.T))
+                Hide();
+
+            UserInputLine.transform.SetAsLastSibling();
+        }
 
         public void SetTitle(string title)
         {
@@ -54,30 +78,6 @@ namespace UI.Terminal
             playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
         }
 
-        private void OnGUI()
-        {
-            InstantiateMessages();
-
-            if (TerminalInput.isFocused && TerminalInput.text != "" && Input.GetKeyDown(KeyCode.Return))
-            {
-                string userInput = TerminalInput.text;
-                ClearInputField();
-                AddDirectoryLine(userInput);
-                Send(userInput);
-                lastInput = userInput;
-                UserInputLine.transform.SetAsLastSibling();
-                TerminalInput.ActivateInputField();
-                TerminalInput.Select();
-                UserInputLine.SetActive(false);
-                UpdateMessagesHeight();
-            }
-
-            if (Input.GetKeyDown(KeyCode.T))
-                Hide();
-
-            UserInputLine.transform.SetAsLastSibling();
-        }
-
         private void Hide()
         {
             SetVisible(false);
@@ -87,8 +87,9 @@ namespace UI.Terminal
 
         private void UpdateMessagesHeight()
         {
-            Vector2 msgListSize = MessageList.GetComponent<RectTransform>().sizeDelta;
-            MessageList.GetComponent<RectTransform>().sizeDelta = new Vector2(msgListSize.x, MessageList.transform.childCount * messageHeight);
+            var msgListSize = MessageList.GetComponent<RectTransform>().sizeDelta;
+            MessageList.GetComponent<RectTransform>().sizeDelta =
+                new Vector2(msgListSize.x, MessageList.transform.childCount * messageHeight);
             ScrollRect.content.GetComponent<VerticalLayoutGroup>().CalculateLayoutInputVertical();
             ScrollRect.verticalNormalizedPosition = 0;
         }
@@ -112,6 +113,7 @@ namespace UI.Terminal
                 msg.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = stringText;
                 msg.transform.SetAsLastSibling();
             }
+
             ScrollRect.content.GetComponent<VerticalLayoutGroup>().CalculateLayoutInputVertical();
             ScrollRect.verticalNormalizedPosition = 0;
 
@@ -142,12 +144,8 @@ namespace UI.Terminal
             var stringText = Encoding.ASCII.GetString(text);
 
             foreach (var line in stringText.Split('\n'))
-            {
                 if (ValidateLine(line))
-                {
                     messages.Enqueue(ReplaceCVTS(line));
-                }
-            }
         }
 
         private bool ValidateLine(string line)

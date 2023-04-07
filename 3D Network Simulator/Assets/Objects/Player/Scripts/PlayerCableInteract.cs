@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Wire;
 
@@ -6,19 +5,34 @@ namespace Player
 {
     public class PlayerCableInteract : MonoBehaviour
     {
-        // Start is called before the first frame update
-        private GameObject firstTarget;
-        private GameObject inHandTarget;
         [SerializeField] private LayerMask PortLayer;
         [SerializeField] private GameObject floor;
         [SerializeField] private GameObject nCamera;
-        [SerializeField] private Vector3 handStride;
-        bool isActive;
-        WireRenderer wireRenderer;
 
-        void SetActive(GameObject first)
+        [SerializeField] private Vector3 handStride;
+
+        // Start is called before the first frame update
+        private GameObject firstTarget;
+        private GameObject inHandTarget;
+        private bool isActive;
+        private WireRenderer wireRenderer;
+
+        public void Update()
         {
-            AWire wire = first.GetComponent<AWire>();
+            CheckInteract();
+
+            if (!isActive)
+                return;
+
+            // update item in hand position
+            inHandTarget.transform.position = nCamera.transform.position +
+                                              (nCamera.transform.forward + nCamera.transform.rotation * handStride);
+            inHandTarget.transform.rotation = nCamera.transform.rotation;
+        }
+
+        private void SetActive(GameObject first)
+        {
+            var wire = first.GetComponent<AWire>();
 
             // If wire is available connect to it and give opposite end
             if (wire.IsAvailable())
@@ -58,21 +72,9 @@ namespace Player
             }
         }
 
-        public void Update()
+        private void CheckInteract()
         {
-            CheckInteract();
-
-            if (!isActive)
-                return;
-
-            // update item in hand position
-            inHandTarget.transform.position = nCamera.transform.position + (nCamera.transform.forward + (nCamera.transform.rotation * handStride));
-            inHandTarget.transform.rotation = nCamera.transform.rotation;
-        }
-
-        void CheckInteract()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             if (Input.GetMouseButtonDown(1) && isActive)
                 Discard();
@@ -80,7 +82,7 @@ namespace Player
             if (!Input.GetMouseButtonDown(0))
                 return;
 
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, PortLayer) && hit.collider != null)
+            if (Physics.Raycast(ray, out var hit, Mathf.Infinity, PortLayer) && hit.collider != null)
             {
                 var FoundObject = hit.collider.gameObject;
 
@@ -91,7 +93,7 @@ namespace Player
             }
         }
 
-        void CreateWireRenderer(AWire wire)
+        private void CreateWireRenderer(AWire wire)
         {
             GameObject wireHldr = new()
             {
@@ -106,10 +108,10 @@ namespace Player
             wireRenderer.GetComponent<Renderer>().material = wire.GetWireMaterial();
         }
 
-        void TryConnect(GameObject target)
+        private void TryConnect(GameObject target)
         {
-            AWire expected = target.GetComponent<AWire>();
-            AWire provided = firstTarget.GetComponent<AWire>();
+            var expected = target.GetComponent<AWire>();
+            var provided = firstTarget.GetComponent<AWire>();
 
             if (expected.GetInputType() == provided.GetOutputType()
                 && expected.IsAvailable() && provided.IsAvailable()
@@ -129,7 +131,7 @@ namespace Player
             }
         }
 
-        void Discard()
+        private void Discard()
         {
             firstTarget.GetComponent<AWire>().VisualDisconnect();
             Destroy(inHandTarget);

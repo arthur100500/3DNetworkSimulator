@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Wire
@@ -9,7 +7,12 @@ namespace Wire
         public GameObject plug;
         public GameObject c14model;
         public Material cableMaterial;
-        public override int GetPortNumber() => 0;
+
+        public override int GetPortNumber()
+        {
+            return 0;
+        }
+
         public override GameObject GetHandObject()
         {
             return Instantiate(c14model);
@@ -40,7 +43,14 @@ namespace Wire
             return WireType.WireC14;
         }
 
-        public override int GetPlugRotation() => 180;
-        public override Vector3 GetPlugOffset() => new(0, 0, -0.01f);
+        public override int GetPlugRotation()
+        {
+            return 180;
+        }
+
+        public override Vector3 GetPlugOffset()
+        {
+            return new(0, 0, -0.01f);
+        }
     }
 }

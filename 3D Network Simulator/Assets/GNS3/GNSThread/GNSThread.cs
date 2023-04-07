@@ -1,7 +1,6 @@
-using System.Collections.Generic;
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using System;
 using UI.NotificationConsole;
 
 namespace GNSThread
@@ -11,7 +10,15 @@ namespace GNSThread
         private static Thread thread;
         private static bool started;
         private static readonly ConcurrentQueue<Action> actions = new();
-        public static Thread Thread { get { thread ??= new(ThreadWork); return thread; } }
+
+        public static Thread Thread
+        {
+            get
+            {
+                thread ??= new Thread(ThreadWork);
+                return thread;
+            }
+        }
 
         public static void Run()
         {
@@ -52,8 +59,10 @@ namespace GNSThread
                 }
                 catch (Exception ex)
                 {
-                    GlobalNotificationManager.AddLoadingMessage("[<color=red>FAIL</color>] " + notification + " due to " + ex.Message, mguid);
+                    GlobalNotificationManager.AddLoadingMessage(
+                        "[<color=red>FAIL</color>] " + notification + " due to " + ex.Message, mguid);
                 }
+
                 // TODO: Write something working here
                 Thread.Sleep(10);
                 GlobalNotificationManager.StartRemovingMessage(mguid, delay);

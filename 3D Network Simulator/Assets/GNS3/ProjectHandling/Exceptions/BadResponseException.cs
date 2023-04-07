@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GNSHandling
 {
     public class BadResponseException : Exception
     {
-        public BadResponseException() : base()
+        public BadResponseException()
         {
         }
 
