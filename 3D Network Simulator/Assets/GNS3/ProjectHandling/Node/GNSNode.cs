@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 namespace GNSHandling
 {
-    public abstract class GNSNode
+    public abstract class GNSNode : IDisposable
     {
         public string node_id;
         public List<GNSJLink> links;
@@ -96,6 +97,11 @@ namespace GNSHandling
             var link = JsonConvert.DeserializeObject<GNSJLink>(res);
             other.links.Add(link);
             links.Add(link);
+        }
+
+        public void Dispose()
+        {
+            project.MakeDeleteRequest("nodes/" + node_id + "");
         }
     }
 }

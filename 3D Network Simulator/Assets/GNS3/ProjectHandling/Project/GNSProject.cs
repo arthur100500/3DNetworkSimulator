@@ -128,7 +128,7 @@ namespace GNSHandling
 
         public void Dispose()
         {
-
+            MakeProjectDeleteRequest("");
         }
     }
 }
