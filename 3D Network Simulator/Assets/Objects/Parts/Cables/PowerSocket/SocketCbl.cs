@@ -50,7 +50,7 @@ namespace Wire
 
         public override Vector3 GetPlugOffset()
         {
-            return new(0, 0, -0.01f);
+            return new Vector3(0, 0, -0.01f);
         }
     }
 }

@@ -40,7 +40,7 @@ namespace Wire
 
         public override Vector3 GetPlugOffset()
         {
-            return new(-0.007F, -0.0015F, 0.001F);
+            return new Vector3(-0.007F, -0.0015F, 0.001F);
         }
 
         public override GameObject GetSelf()
