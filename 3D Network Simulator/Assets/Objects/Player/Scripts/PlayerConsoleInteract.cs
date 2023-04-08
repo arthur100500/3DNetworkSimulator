@@ -1,25 +1,27 @@
-using Device;
+using Objects.Devices.Common.ConsoleDevice;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace Player
+namespace Objects.Player.Scripts
 {
     public class PlayerConsoleInteract : MonoBehaviour
     {
-        [SerializeField] private LayerMask PortLayer;
+        [FormerlySerializedAs("PortLayer")] [SerializeField]
+        private LayerMask portLayer;
 
         public void Update()
         {
             if (!Input.GetKeyDown(KeyCode.E))
                 return;
 
+            if (Camera.main == null) return;
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray, out var hit, Mathf.Infinity, PortLayer) && hit.collider != null)
-            {
-                var FoundObject = hit.collider.gameObject;
+            if (!Physics.Raycast(ray, out var hit, Mathf.Infinity, portLayer) || hit.collider == null) return;
 
-                FoundObject.GetComponent<AConsoleDevice>().OpenTelnet();
-            }
+            var foundObject = hit.collider.gameObject;
+
+            foundObject.GetComponent<AConsoleDevice>().OpenConsole();
         }
     }
 }

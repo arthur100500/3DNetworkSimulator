@@ -1,31 +1,31 @@
 using System;
 using UnityEngine;
 
-namespace UI.NotificationConsole
+namespace UI.Console
 {
     public static class GlobalNotificationManager
     {
-        private static NotificationConsole console;
+        private static NotificationConsole _console;
 
         public static void AddMessage(string message)
         {
-            console.EnqueueMessage(message);
+            _console.EnqueueMessage(message);
         }
 
         public static void AddLoadingMessage(string messageText, Guid messageID)
         {
-            console.EnqueueLoadingMessage(messageText, messageID);
+            _console.EnqueueLoadingMessage(messageText, messageID);
         }
 
         public static void StartRemovingMessage(Guid messageID, float delay)
         {
-            console.EnqueueRemovingLoadingMessage(messageID, delay);
+            _console.EnqueueRemovingLoadingMessage(messageID, delay);
         }
 
         [RuntimeInitializeOnLoadMethod]
         private static void Init()
         {
-            console = GameObject.Find("Notifications").GetComponent<NotificationConsole>();
+            _console = GameObject.Find("Notifications").GetComponent<NotificationConsole>();
         }
     }
 }

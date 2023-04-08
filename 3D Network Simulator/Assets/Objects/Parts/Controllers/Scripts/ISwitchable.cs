@@ -1,16 +1,18 @@
 using UnityEngine;
 
-public abstract class ISwitchable : MonoBehaviour
+namespace Objects.Parts.Controllers.Scripts
 {
-    public abstract void SwitchOn();
-    public abstract void SwitchOff();
-
-
-    public virtual void Switch(bool s)
+    public abstract class Switchable : MonoBehaviour
     {
-        if (s)
-            SwitchOn();
-        else
-            SwitchOff();
+        public abstract void SwitchOn();
+        public abstract void SwitchOff();
+
+        public void Switch(bool s)
+        {
+            if (s)
+                SwitchOn();
+            else
+                SwitchOff();
+        }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 public class TextureResize : MonoBehaviour
 {
     public float scaleFactor = 5.0f;
-    private Material mat;
+    private Material _mat;
 
     private void Start()
     {

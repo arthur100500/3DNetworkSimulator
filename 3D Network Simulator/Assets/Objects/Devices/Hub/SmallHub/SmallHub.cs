@@ -1,24 +1,28 @@
-using GNSHandling;
-using Wire;
+using GNS3.ProjectHandling.Node;
+using GNS3.ProjectHandling.Project;
+using Objects.Devices.Common.ADevice;
+using Objects.Parts.Controllers.Scripts;
+using Objects.Parts.Wire;
+using UnityEngine;
 
-namespace Device.Hub
+namespace Objects.Devices.Hub.SmallHub
 {
     public class SmallHub : ADevice
     {
         // Start is called before the first frame update
-        public AWire[] ethernets = new AWire[8];
-        public AWire power;
-        public ISwitchable powerIndicator;
+        [SerializeField] private AWire[] ethernetCables = new AWire[8];
+        [SerializeField] private AWire power;
+        [SerializeField] private Switchable powerIndicator;
 
         public void Start()
         {
-            Node = new GNSSHubNode(GlobalGNSParameters.GetProject(),
-                "Small Hub " + GlobalGNSParameters.GetNextFreeID());
+            Node = new GnsSHubNode(GlobalGnsParameters.GetProject(),
+                "Small Hub " + GlobalGnsParameters.GetNextFreeID());
 
             power.ConnectEvent += Enable;
             power.DisconnectEvent += Disable;
 
-            foreach (var en in ethernets)
+            foreach (var en in ethernetCables)
             {
                 en.SingleConnectEvent += other =>
                     Node.ConnectTo(other.GetParent().GetComponent<ADevice>().Node, en.GetPortNumber(),
@@ -29,13 +33,13 @@ namespace Device.Hub
             }
         }
 
-        public void Enable()
+        private void Enable()
         {
             powerIndicator.SwitchOn();
             Node.Start();
         }
 
-        public void Disable()
+        private void Disable()
         {
             powerIndicator.SwitchOff();
             Node.Stop();

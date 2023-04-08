@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace UI.NotificationConsole
+namespace UI.Console
 {
     public class NotificationText : ANotification
     {
@@ -11,10 +11,10 @@ namespace UI.NotificationConsole
 
             // Gen TextMeshPro text
             gameObject.AddComponent<CanvasRenderer>();
-            var tmproComponent = gameObject.AddComponent<TextMeshProUGUI>();
-            tmproComponent.text = Text;
-            tmproComponent.fontSize = 16;
-            tmproComponent.font = self.MessageMaterial;
+            var tmpComponent = gameObject.AddComponent<TextMeshProUGUI>();
+            tmpComponent.text = message;
+            tmpComponent.fontSize = 16;
+            tmpComponent.font = self.messageMaterial;
             var rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.sizeDelta = new Vector2(1000, 30);
             rectTransform.position = new Vector3(510, 20, 0);
@@ -22,8 +22,10 @@ namespace UI.NotificationConsole
 
         public override void SetText(string text)
         {
-            var tmproComponent = gameObject.GetComponent<TextMeshProUGUI>();
-            tmproComponent.text = text;
+            if (text is null) return;
+
+            var tmpComponent = gameObject.GetComponent<TextMeshProUGUI>();
+            tmpComponent.text = text;
         }
 
         public override void DestroyAfterDelay(float delay)
@@ -31,11 +33,13 @@ namespace UI.NotificationConsole
             Destroy(gameObject, delay);
         }
 
-        public override void ShiftUp(int amnt)
+        public override void ShiftUp(int amount)
         {
             var rectTransform = gameObject.GetComponent<RectTransform>();
-            rectTransform.position = new Vector3(rectTransform.position.x, rectTransform.position.y + amnt,
-                rectTransform.position.z);
+            var position = rectTransform.position;
+            position = new Vector3(position.x, position.y + amount,
+                position.z);
+            rectTransform.position = position;
         }
     }
 }

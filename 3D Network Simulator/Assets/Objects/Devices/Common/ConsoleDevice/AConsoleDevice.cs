@@ -1,7 +1,7 @@
-namespace Device
+namespace Objects.Devices.Common.ConsoleDevice
 {
-    public abstract class AConsoleDevice : ADevice
+    public abstract class AConsoleDevice : ADevice.ADevice
     {
-        public abstract void OpenTelnet();
+        public abstract void OpenConsole();
     }
 }

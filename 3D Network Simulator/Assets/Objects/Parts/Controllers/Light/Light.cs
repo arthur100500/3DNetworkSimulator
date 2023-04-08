@@ -1,24 +1,28 @@
+using Objects.Parts.Controllers.Scripts;
 using UnityEngine;
 
-public class Light : ISwitchable
+namespace Objects.Parts.Controllers.Light
 {
-    public Material lit;
-    public Material unlit;
-
-    private new MeshRenderer renderer;
-
-    public void Start()
+    public class Light : Switchable
     {
-        renderer = gameObject.GetComponent<MeshRenderer>();
-    }
+        public Material lit;
+        public Material unlit;
 
-    public override void SwitchOff()
-    {
-        renderer.material = unlit;
-    }
+        private MeshRenderer _renderer;
 
-    public override void SwitchOn()
-    {
-        renderer.material = lit;
+        public void Start()
+        {
+            _renderer = gameObject.GetComponent<MeshRenderer>();
+        }
+
+        public override void SwitchOff()
+        {
+            _renderer.material = unlit;
+        }
+
+        public override void SwitchOn()
+        {
+            _renderer.material = lit;
+        }
     }
 }

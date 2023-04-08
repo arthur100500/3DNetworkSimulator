@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Wire
+namespace Objects.Parts.Wire
 {
     public abstract class AWire : MonoBehaviour
     {
@@ -14,11 +14,11 @@ namespace Wire
         public delegate void SingleDisconnectEv(AWire other);
 
         [HideInInspector] public GameObject wireRenderer;
-        [HideInInspector] public AWire ConnectedWire;
-        protected bool isAvailable = true;
+        [HideInInspector] public AWire connectedWire;
+        private bool _isAvailable = true;
 
         // Logic
-        protected GameObject visualPlug;
+        private GameObject _visualPlug;
         public event ConnectEv ConnectEvent;
         public event DisconnectEv DisconnectEvent;
         public event SingleConnectEv SingleConnectEvent;
@@ -28,22 +28,22 @@ namespace Wire
         // Components
         public abstract GameObject GetSelf();
         public abstract GameObject GetHandObject();
-        public abstract GameObject GetPlug();
+        protected abstract GameObject GetPlug();
         public abstract Material GetWireMaterial();
         public abstract WireType GetInputType();
         public abstract WireType GetOutputType();
         public abstract int GetPortNumber();
 
         // Methods
-        public virtual GameObject GetParent()
+        public GameObject GetParent()
         {
             return gameObject.transform.parent.gameObject;
         }
 
-        public virtual void Connect(AWire other)
+        public void Connect(AWire other)
         {
-            isAvailable = false;
-            ConnectedWire = other;
+            _isAvailable = false;
+            connectedWire = other;
             ConnectEvent?.Invoke();
         }
 
@@ -57,36 +57,36 @@ namespace Wire
             SingleDisconnectEvent?.Invoke(other);
         }
 
-        public virtual void VisualConnect()
+        public void VisualConnect()
         {
-            visualPlug = GetPlug();
-            visualPlug.transform.parent = gameObject.transform;
-            visualPlug.transform.localScale = new Vector3(1, 1, 1);
-            visualPlug.transform.localPosition = GetPlugOffset();
-            visualPlug.transform.localRotation = Quaternion.Euler(0, GetPlugRotation(), 0);
+            _visualPlug = GetPlug();
+            _visualPlug.transform.parent = gameObject.transform;
+            _visualPlug.transform.localScale = new Vector3(1, 1, 1);
+            _visualPlug.transform.localPosition = GetPlugOffset();
+            _visualPlug.transform.localRotation = Quaternion.Euler(0, GetPlugRotation(), 0);
         }
 
-        public virtual void VisualDisconnect()
+        public void VisualDisconnect()
         {
-            if (visualPlug is not null)
-                Destroy(visualPlug);
+            if (_visualPlug is not null)
+                Destroy(_visualPlug);
             if (wireRenderer is not null)
                 Destroy(wireRenderer);
         }
 
         public bool IsAvailable()
         {
-            return isAvailable;
+            return _isAvailable;
         }
 
-        public virtual void Disconnect(AWire other)
+        public void Disconnect(AWire other)
         {
-            isAvailable = true;
-            ConnectedWire = null;
+            _isAvailable = true;
+            connectedWire = null;
             DisconnectEvent?.Invoke();
         }
 
-        public abstract int GetPlugRotation();
-        public abstract Vector3 GetPlugOffset();
+        protected abstract int GetPlugRotation();
+        protected abstract Vector3 GetPlugOffset();
     }
 }

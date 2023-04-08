@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Player
+namespace Objects.Player.Scripts
 {
     public class PlayerMovement : MonoBehaviour
     {
@@ -15,77 +15,77 @@ namespace Player
         [HideInInspector] public float walkSpeed;
         [HideInInspector] public float sprintSpeed;
 
-        [Header("Keybinds")] public KeyCode jumpKey = KeyCode.Space;
+        [Header("Key Binds")] public KeyCode jumpKey = KeyCode.Space;
 
         [Header("Ground Check")] public float playerHeight;
 
         public LayerMask ground;
 
         public Transform orientation;
-        private bool grounded;
+        private bool _grounded;
 
-        private float horizontalInput;
-        private bool inControl = true;
+        private float _horizontalInput;
+        private bool _inControl = true;
 
-        private Vector3 moveDirection;
+        private Vector3 _moveDirection;
 
-        private Rigidbody rb;
-        private bool readyToJump;
-        private float verticalInput;
+        private Rigidbody _rb;
+        private bool _readyToJump;
+        private float _verticalInput;
 
         public bool InControl
         {
-            get => inControl;
+            get => _inControl;
             set
             {
                 if (value)
                     Cursor.lockState = CursorLockMode.Locked;
                 else
                     Cursor.lockState = CursorLockMode.None;
-                inControl = value;
+                _inControl = value;
             }
         }
 
         public void Start()
         {
-            rb = GetComponent<Rigidbody>();
-            rb.freezeRotation = true;
+            _rb = GetComponent<Rigidbody>();
+            _rb.freezeRotation = true;
 
-            readyToJump = true;
+            _readyToJump = true;
         }
 
         public void Update()
         {
             if (Input.GetKeyDown(KeyCode.Escape)) InControl = !InControl;
-            if (!inControl) return;
+            if (!_inControl) return;
             // ground check
-            grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f);
+            _grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f);
 
             MyInput();
             SpeedControl();
 
             // handle drag
-            if (grounded)
-                rb.drag = groundDrag;
+            if (_grounded)
+                _rb.drag = groundDrag;
             else
-                rb.drag = 0;
+                _rb.drag = 0;
         }
 
         public void FixedUpdate()
         {
-            if (!inControl) return;
+            if (!_inControl) return;
             MovePlayer();
         }
 
         private void MyInput()
         {
-            horizontalInput = Input.GetAxisRaw("Horizontal");
-            verticalInput = Input.GetAxisRaw("Vertical");
+            _horizontalInput = Input.GetAxisRaw("Horizontal");
+            _verticalInput = Input.GetAxisRaw("Vertical");
 
             // when to jump
-            if (Input.GetKey(jumpKey) && readyToJump && grounded)
+            if (Input.GetKey(jumpKey) && _readyToJump && _grounded)
             {
-                readyToJump = false;
+                _readyToJump = false;
 
                 Jump();
 
@@ -96,40 +96,47 @@ namespace Player
         private void MovePlayer()
         {
             // calculate movement direction
-            moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+            _moveDirection = orientation.forward * _verticalInput + orientation.right * _horizontalInput;
 
-            // on ground
-            if (grounded)
-                rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+            switch (_grounded)
+            {
+                // on ground
+                case true:
+                    _rb.AddForce(_moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+                    break;
 
-            // in air
-            else if (!grounded)
-                rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+                // in air
+                case false:
+                    _rb.AddForce(_moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+                    break;
+            }
         }
 
         private void SpeedControl()
         {
-            var flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            var velocity = _rb.velocity;
+            var flatVel = new Vector3(velocity.x, 0f, velocity.z);
 
             // limit velocity if needed
-            if (flatVel.magnitude > moveSpeed)
-            {
-                var limitedVel = flatVel.normalized * moveSpeed;
-                rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
-            }
+            if (!(flatVel.magnitude > moveSpeed)) return;
+
+            var limitedVel = flatVel.normalized * moveSpeed;
+            _rb.velocity = new Vector3(limitedVel.x, _rb.velocity.y, limitedVel.z);
         }
 
         private void Jump()
         {
             // reset y velocity
-            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            var velocity = _rb.velocity;
+            velocity = new Vector3(velocity.x, 0f, velocity.z);
+            _rb.velocity = velocity;
 
-            rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+            _rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         }
 
         private void ResetJump()
         {
-            readyToJump = true;
+            _readyToJump = true;
         }
     }
 }

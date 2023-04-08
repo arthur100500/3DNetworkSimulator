@@ -1,4 +1,4 @@
-namespace Wire
+namespace Objects.Parts.Wire
 {
     public enum WireType
     {

@@ -1,53 +1,53 @@
 using System.Text;
-using GNSHandling;
-using HybridWebSocket;
+using GNS3.GNSConsole.WebSocket;
+using GNS3.ProjectHandling.Node;
 
-namespace GNSConsole
+namespace GNS3.GNSConsole
 {
-    public class GNSConsole
+    public class GnsConsole : IEventConsole
     {
-        private WebSocket socket;
+        private WebSocket.WebSocket _socket;
 
         //v2/projects/f922c93a-5cc5-43b1-b2fb-1f8b3bb92bff/nodes/6894c0b2-7fb5-481c-9f97-7ff63fac7827/console/ws
-        private string url;
+        private string _url;
 
-        public GNSConsole(GNSNode node)
+        public GnsConsole(GnsNode node)
         {
             Open(node);
         }
 
-        private void Open(GNSNode node)
-        {
-            url = node.GNSWsUrl + "/console/ws";
-
-            socket = WebSocketFactory.CreateInstance(url);
-
-            socket.Connect();
-        }
-
         public void AddOnOpenListener(WebSocketOpenEventHandler action)
         {
-            socket.OnOpen += action;
+            _socket.OnOpen += action;
         }
 
         public void AddOnCloseListener(WebSocketCloseEventHandler action)
         {
-            socket.OnClose += action;
+            _socket.OnClose += action;
         }
 
         public void AddOnMessageListener(WebSocketMessageEventHandler action)
         {
-            socket.OnMessage += action;
+            _socket.OnMessage += action;
         }
 
         public void AddOnErrorListener(WebSocketErrorEventHandler action)
         {
-            socket.OnError += action;
+            _socket.OnError += action;
         }
 
         public void SendMessage(string message)
         {
-            socket.Send(Encoding.ASCII.GetBytes(message));
+            _socket.Send(Encoding.ASCII.GetBytes(message));
+        }
+
+        private void Open(GnsNode node)
+        {
+            _url = node.GnsWsUrl + "/console/ws";
+
+            _socket = WebSocketFactory.CreateInstance(_url);
+
+            _socket.Connect();
         }
     }
 }

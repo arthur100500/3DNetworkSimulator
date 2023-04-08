@@ -1,6 +1,6 @@
-namespace GNSJsonObject
+namespace GNS3.JsonObjects
 {
-    public class GNSJVPCSNode
+    public class GnsVpcsJNode
     {
         public string compute_id { get; set; }
         public int console { get; set; }

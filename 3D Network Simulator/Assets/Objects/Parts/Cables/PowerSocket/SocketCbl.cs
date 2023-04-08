@@ -1,11 +1,13 @@
+using Objects.Parts.Wire;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace Wire
+namespace Objects.Parts.Cables.PowerSocket
 {
     public class SocketCbl : AWire
     {
         public GameObject plug;
-        public GameObject c14model;
+        [FormerlySerializedAs("c14model")] public GameObject c14Model;
         public Material cableMaterial;
 
         public override int GetPortNumber()
@@ -15,10 +17,10 @@ namespace Wire
 
         public override GameObject GetHandObject()
         {
-            return Instantiate(c14model);
+            return Instantiate(c14Model);
         }
 
-        public override GameObject GetPlug()
+        protected override GameObject GetPlug()
         {
             return Instantiate(plug);
         }
@@ -43,12 +45,12 @@ namespace Wire
             return WireType.WireC14;
         }
 
-        public override int GetPlugRotation()
+        protected override int GetPlugRotation()
         {
             return 180;
         }
 
-        public override Vector3 GetPlugOffset()
+        protected override Vector3 GetPlugOffset()
         {
             return new Vector3(0, 0, -0.01f);
         }

@@ -8,7 +8,7 @@
 
 using System;
 
-namespace HybridWebSocket
+namespace GNS3.GNSConsole.WebSocket
 {
     /// <summary>
     ///     Handler for WebSocket Open event.

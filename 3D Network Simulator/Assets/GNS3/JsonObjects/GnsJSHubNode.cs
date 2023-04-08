@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GNSJsonObject
+namespace GNS3.JsonObjects
 {
     public class DataLinkTypes
     {
@@ -37,7 +37,7 @@ namespace GNSJsonObject
         public List<PortsMapping> ports_mapping { get; set; }
     }
 
-    public class GNSJSHubNode
+    public class GnsJSHubNode
     {
         public object command_line { get; set; }
         public string compute_id { get; set; }

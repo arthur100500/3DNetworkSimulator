@@ -1,6 +1,6 @@
-namespace GNSJsonObject
+namespace GNS3.JsonObjects
 {
-    public class GNSJProject
+    public class GnsJProject
     {
         public string name { get; set; }
         public string project_id { get; set; }

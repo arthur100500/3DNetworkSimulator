@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using Player;
+using GNS3.GNSConsole;
+using Objects.Player.Scripts;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,68 +15,69 @@ namespace UI.Terminal
     [RequireComponent(typeof(CanvasGroup))]
     public class TerminalManager : MonoBehaviour
     {
-        private const int messageHeight = 25;
-        [SerializeField] private GameObject DirectoryLine;
-        [SerializeField] private GameObject ResponseLine;
-        [SerializeField] private TMP_InputField TerminalInput;
-        [SerializeField] private GameObject UserInputLine;
-        [SerializeField] private ScrollRect ScrollRect;
-        [SerializeField] private GameObject MessageList;
-        [SerializeField] private TextMeshProUGUI TitleText;
-        [SerializeField] private Button CloseButton;
-        private readonly Queue<string> messages = new();
-        private Canvas baseCanvas;
-        private RectTransform baseCanvasRectTransform;
-        private Vector3 CachedPosition;
-        private Vector3 CachedScale;
-        private CanvasGroup canvasGroup;
+        private const int MessageHeight = 25;
+        [SerializeField] private GameObject directoryLine;
+        [SerializeField] private GameObject responseLine;
+        [SerializeField] private TMP_InputField terminalInput;
+        [SerializeField] private GameObject userInputLine;
+        [SerializeField] private ScrollRect scrollRect;
+        [SerializeField] private GameObject messageList;
+        [SerializeField] private TextMeshProUGUI titleText;
+        [SerializeField] private Button closeButton;
+        private readonly Queue<string> _messages = new();
+        private Canvas _baseCanvas;
+        private RectTransform _baseCanvasRectTransform;
+        private Vector3 _cachedPosition;
+        private Vector3 _cachedScale;
+        private CanvasGroup _canvasGroup;
 
-        private GNSConsole.GNSConsole console;
-        private string lastInput = "";
-        private PlayerMovement playerMovement;
+        private IEventConsole _console;
+        private string _lastInput = "";
+        private PlayerMovement _playerMovement;
         public Canvas ScreenCanvas { private get; set; }
 
         private void OnGUI()
         {
             InstantiateMessages();
 
-            if (TerminalInput.isFocused && TerminalInput.text != "" && Input.GetKeyDown(KeyCode.Return))
+            if (terminalInput.isFocused && terminalInput.text != "" && Input.GetKeyDown(KeyCode.Return))
             {
-                var userInput = TerminalInput.text;
+                var userInput = terminalInput.text;
                 ClearInputField();
                 AddDirectoryLine(userInput);
                 Send(userInput);
-                lastInput = userInput;
-                UserInputLine.transform.SetAsLastSibling();
-                TerminalInput.ActivateInputField();
-                TerminalInput.Select();
-                UserInputLine.SetActive(false);
+                _lastInput = userInput;
+                userInputLine.transform.SetAsLastSibling();
+                terminalInput.ActivateInputField();
+                terminalInput.Select();
+                userInputLine.SetActive(false);
                 UpdateMessagesHeight();
             }
 
             if (Input.GetKeyDown(KeyCode.T))
                 Hide();
 
-            UserInputLine.transform.SetAsLastSibling();
+            userInputLine.transform.SetAsLastSibling();
         }
 
         public void SetTitle(string title)
         {
-            TitleText.text = title;
+            titleText.text = title;
         }
 
         public void Initialize(Canvas screenCanvas)
         {
             ScreenCanvas = screenCanvas;
-            canvasGroup = gameObject.GetComponent<CanvasGroup>();
-            baseCanvas = gameObject.transform.parent.gameObject.GetComponent<Canvas>();
-            baseCanvasRectTransform = gameObject.GetComponent<RectTransform>();
-            CachedPosition = baseCanvasRectTransform.localPosition;
-            CachedScale = baseCanvasRectTransform.localScale;
+            _canvasGroup = gameObject.GetComponent<CanvasGroup>();
+            _baseCanvas = gameObject.transform.parent.gameObject.GetComponent<Canvas>();
+            _baseCanvasRectTransform = gameObject.GetComponent<RectTransform>();
+            _cachedPosition = _baseCanvasRectTransform.localPosition;
+            _cachedScale = _baseCanvasRectTransform.localScale;
+            closeButton.onClick.AddListener(Hide);
+            _playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
+
             Hide();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(MessageList.GetComponent<RectTransform>());
-            CloseButton.onClick.AddListener(Hide);
-            playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(messageList.GetComponent<RectTransform>());
         }
 
         private void Hide()
@@ -85,60 +87,60 @@ namespace UI.Terminal
             // Unfreeze the player
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            playerMovement.InControl = true;
+            _playerMovement.InControl = true;
         }
 
         private void UpdateMessagesHeight()
         {
-            var msgListSize = MessageList.GetComponent<RectTransform>().sizeDelta;
-            MessageList.GetComponent<RectTransform>().sizeDelta =
-                new Vector2(msgListSize.x, MessageList.transform.childCount * messageHeight);
-            ScrollRect.content.GetComponent<VerticalLayoutGroup>().CalculateLayoutInputVertical();
-            ScrollRect.verticalNormalizedPosition = 0;
+            var msgListSize = messageList.GetComponent<RectTransform>().sizeDelta;
+            messageList.GetComponent<RectTransform>().sizeDelta =
+                new Vector2(msgListSize.x, messageList.transform.childCount * MessageHeight);
+            scrollRect.content.GetComponent<VerticalLayoutGroup>().CalculateLayoutInputVertical();
+            scrollRect.verticalNormalizedPosition = 0;
         }
 
         private void InstantiateMessages()
         {
-            if (messages.Count == 0) return;
+            if (_messages.Count == 0) return;
 
-            while (messages.Count > 0)
+            while (_messages.Count > 0)
             {
-                var stringText = messages.Dequeue();
+                var stringText = _messages.Dequeue();
 
                 if (stringText.Trim().EndsWith(">"))
                 {
-                    UserInputLine.GetComponentsInChildren<TextMeshProUGUI>()[0].text = stringText;
-                    UserInputLine.SetActive(true);
+                    userInputLine.GetComponentsInChildren<TextMeshProUGUI>()[0].text = stringText;
+                    userInputLine.SetActive(true);
                     continue;
                 }
 
-                var msg = Instantiate(ResponseLine, MessageList.transform);
+                var msg = Instantiate(responseLine, messageList.transform);
                 msg.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = stringText;
                 msg.transform.SetAsLastSibling();
             }
 
-            ScrollRect.content.GetComponent<VerticalLayoutGroup>().CalculateLayoutInputVertical();
-            ScrollRect.verticalNormalizedPosition = 0;
+            scrollRect.content.GetComponent<VerticalLayoutGroup>().CalculateLayoutInputVertical();
+            scrollRect.verticalNormalizedPosition = 0;
 
             UpdateMessagesHeight();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(MessageList.GetComponent<RectTransform>());
+            LayoutRebuilder.ForceRebuildLayoutImmediate(messageList.GetComponent<RectTransform>());
         }
 
         private void ClearInputField()
         {
-            TerminalInput.text = "";
+            terminalInput.text = "";
         }
 
         private void AddDirectoryLine(string userInput)
         {
-            var msg = Instantiate(DirectoryLine, MessageList.transform);
-            msg.transform.SetSiblingIndex(MessageList.transform.childCount - 1);
+            var msg = Instantiate(directoryLine, messageList.transform);
+            msg.transform.SetSiblingIndex(messageList.transform.childCount - 1);
             msg.GetComponentsInChildren<TextMeshProUGUI>()[1].text = userInput;
         }
 
-        public void LinkTo(GNSConsole.GNSConsole console)
+        public void LinkTo(GnsConsole console)
         {
-            this.console = console;
+            _console = console;
             console.AddOnMessageListener(DisplayMessage);
         }
 
@@ -148,12 +150,12 @@ namespace UI.Terminal
 
             foreach (var line in stringText.Split('\n'))
                 if (ValidateLine(line))
-                    messages.Enqueue(ReplaceCVTS(line));
+                    _messages.Enqueue(ReplaceCVTS(line));
         }
 
         private bool ValidateLine(string line)
         {
-            if (line.Trim() == lastInput.Trim()) return false;
+            if (line.Trim() == _lastInput.Trim()) return false;
             if (line.Contains("??????")) return false;
 
             return true;
@@ -163,49 +165,51 @@ namespace UI.Terminal
         {
             SetVisible(true);
 
-            TerminalInput.ActivateInputField();
-            TerminalInput.Select();
+            terminalInput.ActivateInputField();
+            terminalInput.Select();
 
             // Freeze the player
-            playerMovement.InControl = false;
+            _playerMovement.InControl = false;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
 
         private void SetVisible(bool state)
         {
-            canvasGroup.interactable = state;
+            _canvasGroup.interactable = state;
             // canvasGroup.alpha = state ? 1 : 0;
             ChangeCanvas(state);
-            canvasGroup.blocksRaycasts = state;
+            _canvasGroup.blocksRaycasts = state;
         }
 
         private void ChangeCanvas(bool active)
         {
             if (active)
             {
-                gameObject.transform.SetParent(baseCanvas.transform);
+                gameObject.transform.SetParent(_baseCanvas.transform);
 
-                transform.SetLocalPositionAndRotation(CachedPosition, Quaternion.Euler(Vector3.zero));
-                transform.localScale = CachedScale;
+                Transform transform1;
+                (transform1 = transform).SetLocalPositionAndRotation(_cachedPosition, Quaternion.Euler(Vector3.zero));
+                transform1.localScale = _cachedScale;
 
-                baseCanvasRectTransform.localPosition = CachedPosition;
-                baseCanvasRectTransform.localScale = CachedScale;
+                _baseCanvasRectTransform.localPosition = _cachedPosition;
+                _baseCanvasRectTransform.localScale = _cachedScale;
             }
             else
             {
                 gameObject.transform.SetParent(ScreenCanvas.transform);
 
-                transform.localScale = Vector3.one * 1.5f;
-                transform.localPosition = Vector3.zero;
+                var transform1 = transform;
+                transform1.localScale = Vector3.one * 1.5f;
+                transform1.localPosition = Vector3.zero;
                 transform.localRotation = Quaternion.Euler(Vector3.zero);
             }
         }
 
         private void Send(string msg)
         {
-            console.SendMessage(msg);
-            console.SendMessage("\n");
+            _console.SendMessage(msg);
+            _console.SendMessage("\n");
         }
 
         private string ReplaceCVTS(string response)

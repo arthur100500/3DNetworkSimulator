@@ -1,21 +1,21 @@
-namespace GNSHandling
+namespace GNS3.ProjectHandling.Project
 {
     /*
     Class for containg global parameters like project, last node name id etc
     */
-    internal static class GlobalGNSParameters
+    internal static class GlobalGnsParameters
     {
-        private static int nid = 1;
-        private static GNSProject project;
+        private static int _nid = 1;
+        private static GnsProject _project;
 
         public static int GetNextFreeID()
         {
-            return nid++;
+            return _nid++;
         }
 
-        public static GNSProject GetProject()
+        public static GnsProject GetProject()
         {
-            return project ??= new GNSProject(GNSProjectConfig.LocalGNSProjectConfig(), "unity_project");
+            return _project ??= new GnsProject(GnsProjectConfig.LocalGnsProjectConfig(), "unity_project");
         }
     }
 }

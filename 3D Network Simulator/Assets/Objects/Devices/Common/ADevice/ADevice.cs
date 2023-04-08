@@ -1,10 +1,10 @@
-using GNSHandling;
+using GNS3.ProjectHandling.Node;
 using UnityEngine;
 
-namespace Device
+namespace Objects.Devices.Common.ADevice
 {
     public abstract class ADevice : MonoBehaviour
     {
-        public GNSNode Node;
+        public GnsNode Node;
     }
 }

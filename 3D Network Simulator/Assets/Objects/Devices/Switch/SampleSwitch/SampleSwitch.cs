@@ -1,12 +1,13 @@
+using Objects.Parts.Controllers.Scripts;
+using Objects.Parts.Wire;
 using UnityEngine;
-using Wire;
 
-namespace Device
+namespace Objects.Devices.Switch.SampleSwitch
 {
     public class SampleSwitch : MonoBehaviour
     {
-        public ISwitchable powerIndicator;
-        public AWire powerPort;
+        [SerializeField] private Switchable powerIndicator;
+        [SerializeField] private AWire powerPort;
 
         public void Start()
         {
@@ -14,13 +15,13 @@ namespace Device
             powerPort.DisconnectEvent += Disable;
         }
 
-        public void Enable()
+        private void Enable()
         {
             Debug.Log("Switch enabled!");
             powerIndicator.SwitchOn();
         }
 
-        public void Disable()
+        private void Disable()
         {
             Debug.Log("Switch disabled!");
             powerIndicator.SwitchOff();

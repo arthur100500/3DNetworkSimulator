@@ -4,18 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace UI.NotificationConsole
+namespace UI.Console
 {
     public class NotificationConsole : MonoBehaviour
     {
-        public TMP_FontAsset MessageMaterial;
-        private readonly ConcurrentQueue<(string, Guid)> loadingMessageQueue = new();
-        private readonly ConcurrentQueue<string> messageQueue = new();
-        private readonly List<Guid> messagesToRemove = new();
-        private readonly ConcurrentQueue<(Guid, float)> removeMessageQueue = new();
+        private const int ShiftAmount = 30;
 
-        private readonly int shiftAmnt = 30;
+        [FormerlySerializedAs("MessageMaterial")]
+        public TMP_FontAsset messageMaterial;
+
+        private readonly ConcurrentQueue<(string, Guid)> _loadingMessageQueue = new();
+        private readonly ConcurrentQueue<string> _messageQueue = new();
+        private readonly List<Guid> _messagesToRemove = new();
+        private readonly ConcurrentQueue<(Guid, float)> _removeMessageQueue = new();
 
         /*
         * This is a class to show messages on screen.
@@ -26,7 +29,7 @@ namespace UI.NotificationConsole
         *
         * To send notification use GlobalNotifications
         */
-        private List<ANotification> notifications = new();
+        private List<ANotification> _notifications = new();
 
         public void FixedUpdate()
         {
@@ -39,13 +42,13 @@ namespace UI.NotificationConsole
         // Removes message after delay seconds
         public void EnqueueRemovingLoadingMessage(Guid messageID, float delay)
         {
-            removeMessageQueue.Enqueue((messageID, delay));
+            _removeMessageQueue.Enqueue((messageID, delay));
         }
 
         // Usually called from another thread!!!
         public void EnqueueMessage(string message)
         {
-            messageQueue.Enqueue(message);
+            _messageQueue.Enqueue(message);
         }
 
         /* 
@@ -54,42 +57,42 @@ namespace UI.NotificationConsole
         */
         public void EnqueueLoadingMessage(string messageText, Guid messageID)
         {
-            loadingMessageQueue.Enqueue((messageText, messageID));
+            _loadingMessageQueue.Enqueue((messageText, messageID));
         }
 
         private void AddNotification(string text)
         {
             GameObject textObj = new();
             var nt = textObj.AddComponent<NotificationText>();
-            nt.Text = text;
+            nt.message = text;
             textObj.transform.SetParent(gameObject.transform);
             nt.Configure(this);
 
             // Shift all messages
-            notifications = notifications.FindAll(a => a != null);
-            foreach (var message in notifications) message.ShiftUp(shiftAmnt);
+            _notifications = _notifications.FindAll(a => a != null);
+            foreach (var message in _notifications) message.ShiftUp(ShiftAmount);
 
-            notifications.Add(nt);
+            _notifications.Add(nt);
         }
 
         private void UpdateLoadingMessage(string text, Guid guid)
         {
-            var existingMessage = notifications.Find(a => a.guid == guid);
+            var existingMessage = _notifications.Find(a => a.Guid == guid);
             if (existingMessage is null)
             {
                 GameObject textObj = new();
                 var nt = textObj.AddComponent<LoadingNotification>();
-                nt.Text = text;
-                nt.guid = guid;
+                nt.message = text;
+                nt.Guid = guid;
 
                 textObj.transform.SetParent(gameObject.transform);
                 nt.Configure(this);
 
                 // Shift all messages
-                notifications = notifications.FindAll(a => a != null);
-                foreach (var message in notifications) message.ShiftUp(shiftAmnt);
+                _notifications = _notifications.FindAll(a => a != null);
+                foreach (var message in _notifications) message.ShiftUp(ShiftAmount);
 
-                notifications.Add(nt);
+                _notifications.Add(nt);
             }
             else
             {
@@ -99,19 +102,19 @@ namespace UI.NotificationConsole
 
         private void UpdateRemoveMessageQueue()
         {
-            foreach (var item in notifications.Where(a => messagesToRemove.Contains(a.guid)))
+            foreach (var item in _notifications.Where(a => _messagesToRemove.Contains(a.Guid)))
             {
-                messagesToRemove.Remove(item.guid);
+                _messagesToRemove.Remove(item.Guid);
                 item.DestroyAfterDelay(4);
             }
 
-            if (!removeMessageQueue.TryDequeue(out var tuple)) return;
+            if (!_removeMessageQueue.TryDequeue(out var tuple)) return;
             var (guidToRemove, delay) = tuple;
-            var existingMessage = notifications.Find(a => a.guid == guidToRemove);
+            var existingMessage = _notifications.Find(a => a.Guid == guidToRemove);
 
             if (existingMessage is null)
             {
-                messagesToRemove.Add(guidToRemove);
+                _messagesToRemove.Add(guidToRemove);
                 return;
             }
 
@@ -120,13 +123,13 @@ namespace UI.NotificationConsole
 
         private void UpdateMessageQueue()
         {
-            if (!messageQueue.TryDequeue(out var message)) return;
+            if (!_messageQueue.TryDequeue(out var message)) return;
             AddNotification(message);
         }
 
         private void UpdateLoadingMessageQueue()
         {
-            if (!loadingMessageQueue.TryDequeue(out var tuple)) return;
+            if (!_loadingMessageQueue.TryDequeue(out var tuple)) return;
             var (message, guid) = tuple;
             UpdateLoadingMessage(message, guid);
         }

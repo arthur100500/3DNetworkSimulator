@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace GNSHandling
+namespace GNS3.ProjectHandling.Link
 {
-    public class GNSJLink
+    public class GnsJLink
     {
         public object capture_file_name { get; set; }
         public object capture_file_path { get; set; }

@@ -1,13 +1,13 @@
 using System;
 using UnityEngine;
 
-namespace UI.NotificationConsole
+namespace UI.Console
 {
     public abstract class ANotification : MonoBehaviour
     {
-        public string Text;
-        public Guid guid;
-        public abstract void ShiftUp(int amnt);
+        public string message;
+        public Guid Guid;
+        public abstract void ShiftUp(int amount);
         public abstract void Configure(NotificationConsole source);
         public abstract void DestroyAfterDelay(float delay);
         public abstract void SetText(string text);

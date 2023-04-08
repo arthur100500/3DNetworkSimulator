@@ -1,12 +1,13 @@
+using Objects.Parts.Wire;
 using UnityEngine;
 
-namespace Wire
+namespace Objects.Parts.Cables.LAN
 {
     public class EthernetCbl : AWire
     {
-        public GameObject en;
-        public Material cableMaterial;
-        public int portID;
+        [SerializeField] private GameObject en;
+        [SerializeField] private Material cableMaterial;
+        [SerializeField] private int portID;
 
         public override int GetPortNumber()
         {
@@ -28,17 +29,17 @@ namespace Wire
             return WireType.Ethernet;
         }
 
-        public override GameObject GetPlug()
+        protected override GameObject GetPlug()
         {
             return Instantiate(en);
         }
 
-        public override int GetPlugRotation()
+        protected override int GetPlugRotation()
         {
             return 0;
         }
 
-        public override Vector3 GetPlugOffset()
+        protected override Vector3 GetPlugOffset()
         {
             return new Vector3(-0.007F, -0.0015F, 0.001F);
         }
