@@ -81,8 +81,11 @@ namespace UI.Terminal
         private void Hide()
         {
             SetVisible(false);
+
+            // Unfreeze the player
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
+            playerMovement.InControl = true;
         }
 
         private void UpdateMessagesHeight()
