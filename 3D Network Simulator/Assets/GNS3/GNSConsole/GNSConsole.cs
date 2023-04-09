@@ -7,8 +7,6 @@ namespace GNS3.GNSConsole
     public class GnsConsole : IEventConsole
     {
         private WebSocket.WebSocket _socket;
-
-        //v2/projects/f922c93a-5cc5-43b1-b2fb-1f8b3bb92bff/nodes/6894c0b2-7fb5-481c-9f97-7ff63fac7827/console/ws
         private string _url;
 
         public GnsConsole(GnsNode node)
