@@ -19,9 +19,7 @@ namespace GNS3.ProjectHandling.Node
 
         private void InitializeNode()
         {
-            var res = Project.MakeProjectPostRequest("nodes",
-                "{\"name\": \"" + Name + "\", \"node_type\": \"vpcs\", \"compute_id\": \"local\"}");
-            _jNode = JsonConvert.DeserializeObject<GnsVpcsJNode>(res);
+            _jNode = Project.CreateNode<GnsVpcsJNode>(Name, "vpcs");
             NodeID = _jNode.node_id;
             IsReady = true;
         }

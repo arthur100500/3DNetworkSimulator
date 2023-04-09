@@ -20,17 +20,7 @@ namespace GNS3.ProjectHandling.Node
 
         public void Dispose()
         {
-            Project.MakeDeleteRequest("nodes/" + NodeID + "");
-        }
-
-        private string MakeNodePostRequest(string endpoint, string data)
-        {
-            return Project.MakeProjectPostRequest("nodes/" + NodeID + "/" + endpoint, data);
-        }
-
-        public string MakeNodeGetRequest(string endpoint)
-        {
-            return Project.MakeGetRequest("nodes/" + NodeID + "/" + endpoint);
+            Project.DeleteNode(NodeID);
         }
 
         protected void Init(string name, GnsProject project)
@@ -54,12 +44,12 @@ namespace GNS3.ProjectHandling.Node
 
         private void StartNode()
         {
-            MakeNodePostRequest("start", "{}");
+            Project.StartNode(NodeID);
         }
 
         private void StopNode()
         {
-            MakeNodePostRequest("stop", "{}");
+            Project.StopNode(NodeID);
         }
 
         public void ConnectTo(GnsNode other, int selfAdapterID, int otherAdapterID)
@@ -100,7 +90,8 @@ namespace GNS3.ProjectHandling.Node
                  a.nodes[0].port_number == otherAdapterID)
             );
 
-            Project.MakeProjectDeleteRequest("links/" + selectedLink.link_id);
+            
+            Project.RemoveLink(selectedLink.link_id);
             other._links.Remove(selectedLink);
             _links.Remove(selectedLink);
         }
@@ -110,9 +101,7 @@ namespace GNS3.ProjectHandling.Node
             var linkJson = "{\"nodes\": [{\"adapter_number\": 0, \"node_id\": \"" + NodeID + "\", \"port_number\": " +
                            selfAdapterID + "}, {\"adapter_number\": 0, \"node_id\": \"" + other.NodeID +
                            "\", \"port_number\": " + otherAdapterID + "}]}";
-            if (linkJson == null) throw new ArgumentNullException(nameof(linkJson));
-            var res = Project.MakeProjectPostRequest("links", linkJson);
-            var link = JsonConvert.DeserializeObject<GnsJLink>(res);
+            var link = Project.AddLink(linkJson);
             other._links.Add(link);
             _links.Add(link);
         }
