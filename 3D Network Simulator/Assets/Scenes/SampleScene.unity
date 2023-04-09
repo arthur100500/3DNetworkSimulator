@@ -181,6 +181,10 @@ PrefabInstance:
       propertyPath: ParentCanvas
       value: 
       objectReference: {fileID: 638198446}
+    - target: {fileID: 8475686634712828782, guid: 6ea708a3ef43ccd459eff9db4cea3b81, type: 3}
+      propertyPath: parentCanvas
+      value: 
+      objectReference: {fileID: 638198446}
     - target: {fileID: 8475686634712828783, guid: 6ea708a3ef43ccd459eff9db4cea3b81, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -344,9 +348,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   plug: {fileID: 919132149155446097, guid: c7f8c65fb5e5d1149876977d6f666e12, type: 3}
-  c14model: {fileID: 919132149155446097, guid: 432c1d60bcddefb489ae91b4eb3460fd, type: 3}
+  c14Model: {fileID: 0}
   cableMaterial: {fileID: 2100000, guid: 49a3c485e5e892247b4c1db11fc0a567, type: 2}
 --- !u!1001 &373710350
 PrefabInstance:
@@ -361,6 +365,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8475686634712828782, guid: 6ea708a3ef43ccd459eff9db4cea3b81, type: 3}
       propertyPath: ParentCanvas
+      value: 
+      objectReference: {fileID: 638198446}
+    - target: {fileID: 8475686634712828782, guid: 6ea708a3ef43ccd459eff9db4cea3b81, type: 3}
+      propertyPath: parentCanvas
       value: 
       objectReference: {fileID: 638198446}
     - target: {fileID: 8475686634712828783, guid: 6ea708a3ef43ccd459eff9db4cea3b81, type: 3}
@@ -530,9 +538,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   plug: {fileID: 919132149155446097, guid: c7f8c65fb5e5d1149876977d6f666e12, type: 3}
-  c14model: {fileID: 919132149155446097, guid: 432c1d60bcddefb489ae91b4eb3460fd, type: 3}
+  c14Model: {fileID: 919132149155446097, guid: 432c1d60bcddefb489ae91b4eb3460fd, type: 3}
   cableMaterial: {fileID: 2100000, guid: 49a3c485e5e892247b4c1db11fc0a567, type: 2}
 --- !u!65 &510233185
 BoxCollider:
@@ -928,7 +936,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   en: {fileID: 919132149155446097, guid: 6e11f690c19518b42ba8a67fd6c6b6aa, type: 3}
   cableMaterial: {fileID: 2100000, guid: 5648489ac371946458e4db89bf73a4b0, type: 2}
   portID: 7
@@ -1146,9 +1154,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   plug: {fileID: 919132149155446097, guid: c7f8c65fb5e5d1149876977d6f666e12, type: 3}
-  c14model: {fileID: 919132149155446097, guid: 432c1d60bcddefb489ae91b4eb3460fd, type: 3}
+  c14Model: {fileID: 919132149155446097, guid: 432c1d60bcddefb489ae91b4eb3460fd, type: 3}
   cableMaterial: {fileID: 2100000, guid: 49a3c485e5e892247b4c1db11fc0a567, type: 2}
 --- !u!65 &877656372
 BoxCollider:
@@ -1281,7 +1289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   en: {fileID: 919132149155446097, guid: 6e11f690c19518b42ba8a67fd6c6b6aa, type: 3}
   cableMaterial: {fileID: 2100000, guid: 5648489ac371946458e4db89bf73a4b0, type: 2}
   portID: 0
@@ -1600,7 +1608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   en: {fileID: 919132149155446097, guid: 6e11f690c19518b42ba8a67fd6c6b6aa, type: 3}
   cableMaterial: {fileID: 2100000, guid: 5648489ac371946458e4db89bf73a4b0, type: 2}
   portID: 5
@@ -1814,7 +1822,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   en: {fileID: 919132149155446097, guid: 6e11f690c19518b42ba8a67fd6c6b6aa, type: 3}
   cableMaterial: {fileID: 2100000, guid: 5648489ac371946458e4db89bf73a4b0, type: 2}
   portID: 3
@@ -1935,6 +1943,10 @@ PrefabInstance:
       propertyPath: ParentCanvas
       value: 
       objectReference: {fileID: 638198446}
+    - target: {fileID: 8475686634712828782, guid: 6ea708a3ef43ccd459eff9db4cea3b81, type: 3}
+      propertyPath: parentCanvas
+      value: 
+      objectReference: {fileID: 638198446}
     - target: {fileID: 8475686634712828783, guid: 6ea708a3ef43ccd459eff9db4cea3b81, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -2037,15 +2049,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f68ca3f0f27ec04189eaca1acdd848d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ethernets:
-  - {fileID: 1007090449}
-  - {fileID: 1763516349}
-  - {fileID: 1243866085}
-  - {fileID: 1726649872}
-  - {fileID: 1223927732}
-  - {fileID: 1901742328}
-  - {fileID: 721484976}
-  - {fileID: 2097833905}
+  ethernetCables:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   power: {fileID: 242106491}
   powerIndicator: {fileID: 8272148722213779818}
 --- !u!1001 &1527219888
@@ -2381,7 +2393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bae44fd180e64b4c83840827d68f54d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MessageMaterial: {fileID: 11400000, guid: 21a4c45874232234f86d1bea92dea195, type: 2}
+  messageMaterial: {fileID: 11400000, guid: 21a4c45874232234f86d1bea92dea195, type: 2}
 --- !u!1001 &1726649868
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2495,7 +2507,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   en: {fileID: 919132149155446097, guid: 6e11f690c19518b42ba8a67fd6c6b6aa, type: 3}
   cableMaterial: {fileID: 2100000, guid: 5648489ac371946458e4db89bf73a4b0, type: 2}
   portID: 2
@@ -2617,7 +2629,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   en: {fileID: 919132149155446097, guid: 6e11f690c19518b42ba8a67fd6c6b6aa, type: 3}
   cableMaterial: {fileID: 2100000, guid: 5648489ac371946458e4db89bf73a4b0, type: 2}
   portID: 1
@@ -2849,7 +2861,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   en: {fileID: 919132149155446097, guid: 6e11f690c19518b42ba8a67fd6c6b6aa, type: 3}
   cableMaterial: {fileID: 2100000, guid: 5648489ac371946458e4db89bf73a4b0, type: 2}
   portID: 4
@@ -3051,7 +3063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   en: {fileID: 919132149155446097, guid: 6e11f690c19518b42ba8a67fd6c6b6aa, type: 3}
   cableMaterial: {fileID: 2100000, guid: 5648489ac371946458e4db89bf73a4b0, type: 2}
   portID: 6

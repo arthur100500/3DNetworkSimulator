@@ -182,9 +182,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ethernetPort: {fileID: 8475686634754665137}
-  UITerminalPrefab: {fileID: 1502494338806491635, guid: a4745fa91a0b93e47a7833a66364ec34, type: 3}
-  ParentCanvas: {fileID: 0}
-  ScreenCanvas: {fileID: 1530418786241212379}
+  uiTerminalPrefab: {fileID: 1502494338806491635, guid: a4745fa91a0b93e47a7833a66364ec34, type: 3}
+  parentCanvas: {fileID: 0}
+  screenCanvas: {fileID: 1530418786241212379}
 --- !u!65 &8475686634712828781
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -390,7 +390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireRenderer: {fileID: 0}
-  ConnectedWire: {fileID: 0}
+  connectedWire: {fileID: 0}
   en: {fileID: 919132149155446097, guid: 6e11f690c19518b42ba8a67fd6c6b6aa, type: 3}
   cableMaterial: {fileID: 2100000, guid: 5648489ac371946458e4db89bf73a4b0, type: 2}
   portID: 0
