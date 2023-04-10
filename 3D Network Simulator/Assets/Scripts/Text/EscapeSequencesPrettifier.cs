@@ -64,11 +64,10 @@ namespace Text
         {
             var result = new StringBuilder((int)(input.Length * 1.5f));
             
-            Debug.Log(input);
             for (var index = 0; index < input.Length; index++)
             {
                 var style = CheckForStyleSequence(input, index);
-                if (style == StyleSequenceType.None)
+                if (style == StyleSequenceType.None && input[index] != '')
                 {
                     result.Append(input[index]);
                     continue;
@@ -87,7 +86,6 @@ namespace Text
                 index += skipAmount;
             }
 
-            Debug.Log(result);
             return result.ToString();
         }
         

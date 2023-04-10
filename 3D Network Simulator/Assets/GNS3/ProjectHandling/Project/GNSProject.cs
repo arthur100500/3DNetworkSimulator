@@ -54,7 +54,7 @@ namespace GNS3.ProjectHandling.Project
 
         public void DeleteNode(string nodeID)
         {
-            _requests.MakeDeleteRequest("projects/" + _jProject.project_id + "nodes/" + nodeID, "{}");
+            _requests.MakeDeleteRequest("projects/" + _jProject.project_id + "/nodes/" + nodeID, "{}");
         }
 
         public void StartNode(string nodeID)
@@ -71,13 +71,13 @@ namespace GNS3.ProjectHandling.Project
 
         public void RemoveLink(string linkID)
         {
-            var url = "projects/" + _jProject.project_id + "links/" + linkID;
+            var url = "projects/" + _jProject.project_id + "/links/" + linkID;
             _requests.MakeDeleteRequest(url, "{}");
         }
         
         public GnsJLink AddLink(string linkJson)
         {
-            var url = "projects/" + _jProject.project_id + "links/";
+            var url = "projects/" + _jProject.project_id + "/links/";
             return _requests.MakePostRequest<GnsJLink>(url, "{}");
         }
     }
