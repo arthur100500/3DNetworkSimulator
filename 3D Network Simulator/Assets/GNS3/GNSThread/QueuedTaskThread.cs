@@ -60,16 +60,16 @@ namespace GNS3.GNSThread
             _actions.Enqueue(() =>
             {
                 var guid = Guid.NewGuid();
-                GlobalNotificationManager.AddLoadingMessage("[....] " + notification, guid);
+                GlobalNotificationManager.AddLoadingMessage("[..] " + notification, guid);
                 try
                 {
                     action();
-                    GlobalNotificationManager.AddLoadingMessage("[<color=green>DONE</color>] " + notification, guid);
+                    GlobalNotificationManager.AddLoadingMessage("[<color=green>OK</color>] " + notification, guid);
                 }
                 catch (Exception ex)
                 {
                     GlobalNotificationManager.AddLoadingMessage(
-                        "[<color=red>FAIL</color>] " + notification + " due to " + ex.Message, guid);
+                        "[<color=red>FL</color>] " + notification + " due to " + ex.Message, guid);
                 }
 
                 // TODO: Write something working here

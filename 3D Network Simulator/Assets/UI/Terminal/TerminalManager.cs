@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using GNS3.GNSConsole;
+using Interfaces.TextTransformer;
 using Objects.Player.Scripts;
+using Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,11 +32,12 @@ namespace UI.Terminal
         private Vector3 _cachedPosition;
         private Vector3 _cachedScale;
         private CanvasGroup _canvasGroup;
-
-        private IEventConsole _console;
         private string _lastInput = "";
         private PlayerMovement _playerMovement;
-        public Canvas ScreenCanvas { private get; set; }
+        
+        private IEventConsole _console;
+        private ITextTransformer _prettifier;
+        private Canvas ScreenCanvas { get; set; }
 
         private void OnGUI()
         {
@@ -54,7 +57,7 @@ namespace UI.Terminal
                 UpdateMessagesHeight();
             }
 
-            if (Input.GetKeyDown(KeyCode.T))
+            if (Input.GetKeyDown(KeyCode.Escape))
                 Hide();
 
             userInputLine.transform.SetAsLastSibling();
@@ -75,6 +78,7 @@ namespace UI.Terminal
             _cachedScale = _baseCanvasRectTransform.localScale;
             closeButton.onClick.AddListener(Hide);
             _playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
+            _prettifier = new EscapeSequencesPrettifier();
 
             Hide();
             LayoutRebuilder.ForceRebuildLayoutImmediate(messageList.GetComponent<RectTransform>());
@@ -214,7 +218,7 @@ namespace UI.Terminal
 
         private string ReplaceCVTS(string response)
         {
-            return Regex.Replace(response, "\\[\\dm", "");
+            return _prettifier.Process(response);
         }
     }
 }
