@@ -24,6 +24,7 @@ namespace UI.Terminal
         [SerializeField] private GameObject messageList;
         [SerializeField] private TextMeshProUGUI titleText;
         [SerializeField] private Button closeButton;
+        
         private readonly Queue<string> _messages = new();
         private Canvas _baseCanvas;
         private RectTransform _baseCanvasRectTransform;
@@ -75,6 +76,10 @@ namespace UI.Terminal
             _cachedScale = _baseCanvasRectTransform.localScale;
             closeButton.onClick.AddListener(Hide);
             _playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
+<<<<<<< Updated upstream
+=======
+            _prettifier = new EscapeSequenceRemover();
+>>>>>>> Stashed changes
 
             Hide();
             LayoutRebuilder.ForceRebuildLayoutImmediate(messageList.GetComponent<RectTransform>());
@@ -177,7 +182,6 @@ namespace UI.Terminal
         private void SetVisible(bool state)
         {
             _canvasGroup.interactable = state;
-            // canvasGroup.alpha = state ? 1 : 0;
             ChangeCanvas(state);
             _canvasGroup.blocksRaycasts = state;
         }
