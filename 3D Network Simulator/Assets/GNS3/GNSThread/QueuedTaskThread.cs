@@ -61,16 +61,16 @@ namespace GNS3.GNSThread
             {
                 var guid = Guid.NewGuid();
                 GlobalNotificationManager.AddLoadingMessage("[..] " + notification, guid);
-                try
-                {
+                //try
+                //{
                     action();
                     GlobalNotificationManager.AddLoadingMessage("[<color=green>OK</color>] " + notification, guid);
-                }
-                catch (Exception ex)
-                {
-                    GlobalNotificationManager.AddLoadingMessage(
-                        "[<color=red>FL</color>] " + notification + " due to " + ex.Message, guid);
-                }
+                //}
+                //catch (Exception ex)
+                //{
+                //    GlobalNotificationManager.AddLoadingMessage(
+                //        "[<color=red>FL</color>] " + notification + " due to " + ex.Message, guid);
+                //}
 
                 // TODO: Write something working here
                 Thread.Sleep(10);

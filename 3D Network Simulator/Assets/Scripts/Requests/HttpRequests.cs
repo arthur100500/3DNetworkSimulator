@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces.Requests;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Requests
 {
@@ -59,6 +60,8 @@ namespace Requests
     
         private async Task<string> MakeRequestAsync(string endpoint, string type)
         {
+            Debug.Log(endpoint);
+            
             using var request = new HttpRequestMessage(new HttpMethod(type), _addrBegin + endpoint);
             request.Headers.TryAddWithoutValidation("Authorization", $"Basic {_base64Authorization}");
         
@@ -68,6 +71,9 @@ namespace Requests
 
         private async Task<string> MakeRequestAsync(string endpoint, string type, string data)
         {
+            Debug.Log(endpoint);
+            Debug.Log(data);
+            
             using var request = new HttpRequestMessage(new HttpMethod(type), _addrBegin + endpoint);
             request.Content = new StringContent(data);
             request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");

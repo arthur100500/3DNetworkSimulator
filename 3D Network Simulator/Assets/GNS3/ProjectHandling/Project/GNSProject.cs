@@ -78,7 +78,7 @@ namespace GNS3.ProjectHandling.Project
         public GnsJLink AddLink(string linkJson)
         {
             var url = "projects/" + _jProject.project_id + "/links/";
-            return _requests.MakePostRequest<GnsJLink>(url, "{}");
+            return _requests.MakePostRequest<GnsJLink>(url, linkJson);
         }
     }
 }
