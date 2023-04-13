@@ -18,7 +18,7 @@ namespace Objects.Devices.PC.Laptop
         [SerializeField] private Canvas parentCanvas;
         [SerializeField] private Canvas screenCanvas;
 
-        private GnsConsole _console;
+        private IEventConsole _console;
         private TerminalManager _uiTerminal;
 
         public void Start()
@@ -48,14 +48,14 @@ namespace Objects.Devices.PC.Laptop
         {
             if (!Node.IsReady)
             {
-                GlobalNotificationManager.AddMessage("[<color=red>FAIL</color>] Can't connect to " + Node.Name +
+                GlobalNotificationManager.AddMessage("[<color=red>FL</color>] Can't connect to " + Node.Name +
                                                      " as it is not loaded");
                 return;
             }
 
             if (_console is null)
             {
-                _console = new GnsConsole(Node);
+                _console = Node.GetTerminal();
                 _uiTerminal.LinkTo(_console);
                 _uiTerminal.SetTitle(Node.Name);
             }

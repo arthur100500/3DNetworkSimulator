@@ -71,8 +71,6 @@ namespace GNS3.GNSThread
                     GlobalNotificationManager.AddLoadingMessage(
                         "[<color=red>FL</color>] " + notification + " due to " + ex.Message, guid);
                 }
-
-                // TODO: Write something working here
                 Thread.Sleep(10);
                 GlobalNotificationManager.StartRemovingMessage(guid, delay);
             });

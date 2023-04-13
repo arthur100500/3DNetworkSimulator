@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using GNS3.GNSThread;
 using GNS3.JsonObjects;
 using GNS3.ProjectHandling.Link;
+using GNS3.ProjectHandling.Node;
 using Interfaces.Requests;
+using Newtonsoft.Json;
+using UnityEngine;
 
 namespace GNS3.ProjectHandling.Project
 {
@@ -12,6 +15,7 @@ namespace GNS3.ProjectHandling.Project
         public readonly GnsProjectConfig Config;
         private GnsJProject _jProject;
         private readonly IRequestMaker _requests;
+        private List<object> _nodes;
         private string Name { get; }
         public string ID => _jProject.project_id;
         
@@ -20,7 +24,8 @@ namespace GNS3.ProjectHandling.Project
             Name = name;
             Config = config;
             _requests = requests;
-
+            _nodes = new List<object>();
+            
             EnqueueProjectCreation();
         }
 
@@ -28,7 +33,9 @@ namespace GNS3.ProjectHandling.Project
         {
             var data = "{\"name\": \"" + name + "\", \"node_type\": \"" + type + "\", \"compute_id\": \"local\"}";
             var url = "projects/" + _jProject.project_id + "/nodes";
-            return _requests.MakePostRequest<T>(url, data);
+            var node = _requests.MakePostRequest<T>(url, data);
+            _nodes.Add(node);
+            return node;
         }
         
         private void EnqueueProjectCreation()
@@ -71,14 +78,14 @@ namespace GNS3.ProjectHandling.Project
 
         public void RemoveLink(string linkID)
         {
-            var url = "projects/" + _jProject.project_id + "/links/" + linkID;
+            var url = "projects/" + _jProject.project_id + "/links" + linkID;
             _requests.MakeDeleteRequest(url, "{}");
         }
         
         public GnsJLink AddLink(string linkJson)
         {
-            var url = "projects/" + _jProject.project_id + "/links/";
-            return _requests.MakePostRequest<GnsJLink>(url, "{}");
+            var url = "projects/" + _jProject.project_id + "/links";
+            return _requests.MakePostRequest<GnsJLink>(url, linkJson);
         }
     }
 }

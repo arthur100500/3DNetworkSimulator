@@ -9,9 +9,9 @@ namespace GNS3.GNSConsole
         private WebSocket.WebSocket _socket;
         private string _url;
 
-        public GnsConsole(GnsNode node)
+        public GnsConsole(string url)
         {
-            Open(node);
+            Open(url);
         }
 
         public void AddOnOpenListener(WebSocketOpenEventHandler action)
@@ -39,9 +39,9 @@ namespace GNS3.GNSConsole
             _socket.Send(Encoding.ASCII.GetBytes(message));
         }
 
-        private void Open(GnsNode node)
+        private void Open(string url)
         {
-            _url = node.GnsWsUrl + "/console/ws";
+            _url = url;
 
             _socket = WebSocketFactory.CreateInstance(_url);
 
