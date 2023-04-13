@@ -1,7 +1,10 @@
+using Requests;
+using Unity.VisualScripting;
+
 namespace GNS3.ProjectHandling.Project
 {
     /*
-    Class for containg global parameters like project, last node name id etc
+    * Class for containing global parameters like project, last node name id etc
     */
     internal static class GlobalGnsParameters
     {
@@ -15,7 +18,14 @@ namespace GNS3.ProjectHandling.Project
 
         public static GnsProject GetProject()
         {
-            return _project ??= new GnsProject(GnsProjectConfig.LocalGnsProjectConfig(), "unity_project");
+            return _project ??= CreateProject();
+        }
+
+        private static GnsProject CreateProject()
+        {
+            var config = GnsProjectConfig.LocalGnsProjectConfig();
+            var addrBegin = "http://" + config.Address + ":" + config.Port + "/v2/";
+            return new GnsProject(config, "unity_project", new HttpRequests(addrBegin, config.User, config.Password));
         }
     }
 }

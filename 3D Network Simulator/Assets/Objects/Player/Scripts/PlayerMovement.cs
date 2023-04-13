@@ -56,7 +56,6 @@ namespace Objects.Player.Scripts
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape)) InControl = !InControl;
             if (!_inControl) return;
             // ground check
             _grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f);

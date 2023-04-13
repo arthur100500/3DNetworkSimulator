@@ -1,138 +1,84 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using GNS3.GNSThread;
 using GNS3.JsonObjects;
-using GNS3.ProjectHandling.Exceptions;
-using Newtonsoft.Json;
-using UnityEngine;
+using GNS3.ProjectHandling.Link;
+using Interfaces.Requests;
 
 namespace GNS3.ProjectHandling.Project
 {
     public class GnsProject : IDisposable
     {
-        private readonly string _addrBegin;
-        private readonly HttpClient _httpClient;
         public readonly GnsProjectConfig Config;
         private GnsJProject _jProject;
-
-        public GnsProject(GnsProjectConfig config, string name)
+        private readonly IRequestMaker _requests;
+        private string Name { get; }
+        public string ID => _jProject.project_id;
+        
+        public GnsProject(GnsProjectConfig config, string name, IRequestMaker requests)
         {
             Name = name;
-            _httpClient = new HttpClient();
-
             Config = config;
-            _addrBegin = "http://" + config.Address + ":" + config.Port + "/v2/";
+            _requests = requests;
 
+            EnqueueProjectCreation();
+        }
+
+        public T CreateNode<T>(string name, string type)
+        {
+            var data = "{\"name\": \"" + name + "\", \"node_type\": \"" + type + "\", \"compute_id\": \"local\"}";
+            var url = "projects/" + _jProject.project_id + "/nodes";
+            return _requests.MakePostRequest<T>(url, data);
+        }
+        
+        private void EnqueueProjectCreation()
+        {
             var notification = "Creating project " + Name;
             QueuedTaskThread.GetInstance().EnqueueActionWithNotification(InnerProjectCreate, notification, 4);
         }
 
-        private string Name { get; }
-        public string ID => _jProject.project_id;
+        private void InnerProjectCreate()
+        {
+            var allProjects = _requests.MakeGetRequest<List<GnsJProject>>("projects");
+            var existingProject = allProjects.Find(p => p.name == Name);
+
+            _jProject = existingProject is null
+                ? _requests.MakePostRequest<GnsJProject>("projects", "{\"name\": \"" + Name + "\"}")
+                : _requests.MakePostRequest<GnsJProject>("projects/" + existingProject.project_id + "/open", "{}");
+        }
 
         public void Dispose()
         {
-            MakeProjectDeleteRequest("");
+            _requests.MakeDeleteRequest("projects/" + _jProject.project_id, "{}");
         }
 
-        private void InnerProjectCreate()
+        public void DeleteNode(string nodeID)
         {
-            var msgID = Guid.NewGuid();
-
-            var allProjects = GetAllProjects();
-            var existingProject = allProjects.Find(p => p.name == Name);
-
-            var res = "";
-
-            res = existingProject is null
-                ? MakePostRequest("projects", "{\"name\": \"" + Name + "\"}")
-                : MakePostRequest("projects/" + existingProject.project_id + "/open", "{}");
-
-            _jProject = JsonConvert.DeserializeObject<GnsJProject>(res);
+            _requests.MakeDeleteRequest("projects/" + _jProject.project_id + "/nodes/" + nodeID, "{}");
         }
 
-        public string GetGnsVersion()
+        public void StartNode(string nodeID)
         {
-            return MakeGetRequest("version");
+            var url = "projects/" + _jProject.project_id + "/nodes/" + nodeID + "/start";
+            _requests.MakePostRequest(url, "{}");
         }
 
-        public string MakeGetRequest(string endpoint)
+        public void StopNode(string nodeID)
         {
-            return MakeCustomRequest(endpoint, "GET");
+            var url = "projects/" + _jProject.project_id + "/nodes/" + nodeID + "/stop";
+            _requests.MakePostRequest(url, "{}");
         }
 
-        public string MakeDeleteRequest(string endpoint)
+        public void RemoveLink(string linkID)
         {
-            return MakeCustomRequest(endpoint, "DELETE");
+            var url = "projects/" + _jProject.project_id + "/links/" + linkID;
+            _requests.MakeDeleteRequest(url, "{}");
         }
-
-        private string MakePostRequest(string endpoint, string type)
+        
+        public GnsJLink AddLink(string linkJson)
         {
-            var task = MakePostRequestAsync(endpoint, type);
-            return task.GetAwaiter().GetResult();
-        }
-
-        private string MakeCustomRequest(string endpoint, string type)
-        {
-            var task = MakeCustomRequestAsync(endpoint, type);
-            return task.GetAwaiter().GetResult();
-        }
-
-        private async Task<string> MakeCustomRequestAsync(string endpoint, string type)
-        {
-            using var request = new HttpRequestMessage(new HttpMethod(type), _addrBegin + endpoint);
-            var base64Authorization =
-                Convert.ToBase64String(Encoding.ASCII.GetBytes(Config.User + ":" + Config.Password));
-            request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64Authorization}");
-            var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
-            var toString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Debug.Log(type + "  " + _addrBegin + endpoint + ": \n" + toString);
-            return toString;
-        }
-
-        public async Task<string> MakePostRequestAsync(string endpoint, string data)
-        {
-            using var request = new HttpRequestMessage(new HttpMethod("POST"), _addrBegin + endpoint);
-            var base64Authorization =
-                Convert.ToBase64String(Encoding.ASCII.GetBytes(Config.User + ":" + Config.Password));
-            request.Content = new StringContent(data);
-            request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
-            request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64Authorization}");
-
-            var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
-            var toString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            if ((int)response.StatusCode >= 200 || (int)response.StatusCode < 300)
-            {
-                Debug.Log("POST " + _addrBegin + endpoint + " -d " + data + ": \n" + toString);
-                return toString;
-            }
-
-            throw new BadResponseException();
-        }
-
-        public string MakeProjectGetRequest(string endpoint)
-        {
-            return MakeGetRequest("projects/" + _jProject.project_id + "/" + endpoint);
-        }
-
-        public string MakeProjectPostRequest(string endpoint, string data)
-        {
-            return MakePostRequest("projects/" + _jProject.project_id + "/" + endpoint, data);
-        }
-
-        public string MakeProjectDeleteRequest(string endpoint)
-        {
-            return MakeDeleteRequest("projects/" + _jProject.project_id + "/" + endpoint);
-        }
-
-        private List<GnsJProject> GetAllProjects()
-        {
-            var res = MakeGetRequest("projects");
-            return JsonConvert.DeserializeObject<List<GnsJProject>>(res);
+            var url = "projects/" + _jProject.project_id + "/links/";
+            return _requests.MakePostRequest<GnsJLink>(url, "{}");
         }
     }
 }

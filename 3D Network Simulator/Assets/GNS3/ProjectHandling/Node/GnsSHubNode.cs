@@ -19,11 +19,7 @@ namespace GNS3.ProjectHandling.Node
 
         private void InitializeNode()
         {
-            var res = Project.MakeProjectPostRequest("nodes",
-                "{\"name\": \"" + Name + "\", \"node_type\": \"ethernet_hub\", \"compute_id\": \"local\"}");
-
-            _jNode = JsonConvert.DeserializeObject<GnsJSHubNode>(res);
-
+            _jNode = Project.CreateNode<GnsJSHubNode>(Name, "ethernet_hub");
             NodeID = _jNode.node_id;
             IsReady = true;
         }
