@@ -76,10 +76,7 @@ namespace UI.Terminal
             _cachedScale = _baseCanvasRectTransform.localScale;
             closeButton.onClick.AddListener(Hide);
             _playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
-<<<<<<< Updated upstream
-=======
             _prettifier = new EscapeSequenceRemover();
->>>>>>> Stashed changes
 
             Hide();
             LayoutRebuilder.ForceRebuildLayoutImmediate(messageList.GetComponent<RectTransform>());
