@@ -48,7 +48,7 @@ namespace Objects.Devices.PC.Laptop
         {
             if (!Node.IsReady)
             {
-                GlobalNotificationManager.AddMessage("[<color=red>FAIL</color>] Can't connect to " + Node.Name +
+                GlobalNotificationManager.AddMessage("[<color=red>FL</color>] Can't connect to " + Node.Name +
                                                      " as it is not loaded");
                 return;
             }
