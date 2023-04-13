@@ -46,7 +46,7 @@ namespace Objects.Devices.PC.Laptop
 
         public override void OpenConsole()
         {
-            if (!Node.Started)
+            if (!Node.IsReady)
             {
                 GlobalNotificationManager.AddMessage("[<color=red>FAIL</color>] Can't connect to " + Node.Name +
                                                      " as it is not loaded");
