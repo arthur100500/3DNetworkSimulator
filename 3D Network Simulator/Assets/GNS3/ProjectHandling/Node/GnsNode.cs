@@ -19,7 +19,7 @@ namespace GNS3.ProjectHandling.Node
         public IEventConsole GetTerminal()
         {
             var gnsWsUrl = "ws://" + Project.Config.Address + ":" + Project.Config.Port + "/v2/projects/" +
-                Project.ID + "/nodes/" + NodeID;
+                Project.ID + "/nodes/" + NodeID + "/console/ws";
             return new GnsConsole(gnsWsUrl);
         }
         
