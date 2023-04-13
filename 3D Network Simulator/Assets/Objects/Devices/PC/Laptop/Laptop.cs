@@ -18,7 +18,7 @@ namespace Objects.Devices.PC.Laptop
         [SerializeField] private Canvas parentCanvas;
         [SerializeField] private Canvas screenCanvas;
 
-        private GnsConsole _console;
+        private IEventConsole _console;
         private TerminalManager _uiTerminal;
 
         public void Start()
@@ -55,7 +55,7 @@ namespace Objects.Devices.PC.Laptop
 
             if (_console is null)
             {
-                _console = new GnsConsole(Node);
+                _console = Node.GetTerminal();
                 _uiTerminal.LinkTo(_console);
                 _uiTerminal.SetTitle(Node.Name);
             }

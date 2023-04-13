@@ -52,8 +52,6 @@ namespace GNS3.ProjectHandling.Project
             _jProject = existingProject is null
                 ? _requests.MakePostRequest<GnsJProject>("projects", "{\"name\": \"" + Name + "\"}")
                 : _requests.MakePostRequest<GnsJProject>("projects/" + existingProject.project_id + "/open", "{}");
-            
-            Debug.Log(JsonConvert.SerializeObject(_jProject));
         }
 
         public void Dispose()

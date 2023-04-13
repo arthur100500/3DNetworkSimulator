@@ -142,7 +142,7 @@ namespace UI.Terminal
             msg.GetComponentsInChildren<TextMeshProUGUI>()[1].text = userInput;
         }
 
-        public void LinkTo(GnsConsole console)
+        public void LinkTo(IEventConsole console)
         {
             _console = console;
             console.AddOnMessageListener(DisplayMessage);

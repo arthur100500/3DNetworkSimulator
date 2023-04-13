@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GNS3.GNSConsole;
 using GNS3.GNSThread;
 using GNS3.ProjectHandling.Link;
 using GNS3.ProjectHandling.Project;
@@ -15,9 +16,13 @@ namespace GNS3.ProjectHandling.Node
         protected string NodeID;
         protected GnsProject Project;
 
-        public string GnsWsUrl => "ws://" + Project.Config.Address + ":" + Project.Config.Port + "/v2/projects/" +
-                                  Project.ID + "/nodes/" + NodeID;
-
+        public IEventConsole GetTerminal()
+        {
+            var gnsWsUrl = "ws://" + Project.Config.Address + ":" + Project.Config.Port + "/v2/projects/" +
+                Project.ID + "/nodes/" + NodeID;
+            return new GnsConsole(gnsWsUrl);
+        }
+        
         public void Dispose()
         {
             Project.DeleteNode(NodeID);
