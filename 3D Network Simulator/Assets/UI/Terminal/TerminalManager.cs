@@ -36,7 +36,7 @@ namespace UI.Terminal
         private PlayerMovement _playerMovement;
         
         private IEventConsole _console;
-        private ITextTransformer _prettifier;
+        private ITextTransformer _textTransformer;
         private Canvas ScreenCanvas { get; set; }
 
         private void OnGUI()
@@ -78,7 +78,7 @@ namespace UI.Terminal
             _cachedScale = _baseCanvasRectTransform.localScale;
             closeButton.onClick.AddListener(Hide);
             _playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
-            _prettifier = new EscapeSequencesPrettifier();
+            _textTransformer = new EscapeSequenceRemover();
 
             Hide();
             LayoutRebuilder.ForceRebuildLayoutImmediate(messageList.GetComponent<RectTransform>());
@@ -154,7 +154,7 @@ namespace UI.Terminal
 
             foreach (var line in stringText.Split('\n'))
                 if (ValidateLine(line))
-                    _messages.Enqueue(ReplaceCVTS(line));
+                    _messages.Enqueue(ProcessText(line));
         }
 
         private bool ValidateLine(string line)
@@ -181,7 +181,6 @@ namespace UI.Terminal
         private void SetVisible(bool state)
         {
             _canvasGroup.interactable = state;
-            // canvasGroup.alpha = state ? 1 : 0;
             ChangeCanvas(state);
             _canvasGroup.blocksRaycasts = state;
         }
@@ -216,9 +215,9 @@ namespace UI.Terminal
             _console.SendMessage("\n");
         }
 
-        private string ReplaceCVTS(string response)
+        private string ProcessText(string response)
         {
-            return _prettifier.Process(response);
+            return _textTransformer.Process(response);
         }
     }
 }
