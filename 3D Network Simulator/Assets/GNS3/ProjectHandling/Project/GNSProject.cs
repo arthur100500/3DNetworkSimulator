@@ -78,7 +78,7 @@ namespace GNS3.ProjectHandling.Project
 
         public void RemoveLink(string linkID)
         {
-            var url = "projects/" + _jProject.project_id + "/links" + linkID;
+            var url = "projects/" + _jProject.project_id + "/links/" + linkID;
             _requests.MakeDeleteRequest(url, "{}");
         }
         
