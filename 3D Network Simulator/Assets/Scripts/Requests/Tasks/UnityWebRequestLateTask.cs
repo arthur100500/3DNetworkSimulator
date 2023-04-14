@@ -20,7 +20,7 @@ namespace Requests.Tasks
             _start = () => InnerStart(start);
             _requestCreateFunc = urlCreate;
             _finish = finish;
-
+            Guid = Guid.NewGuid();
 
             IsRunning = false;
         }
@@ -47,6 +47,7 @@ namespace Requests.Tasks
             outerStart.Invoke();
         }
 
+        public Guid Guid { get; }
         public bool IsRunning { get; private set; }
         public string NotificationOnStart { get; set; }
         public string NotificationOnSuccess { get; set; }

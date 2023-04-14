@@ -1,9 +1,11 @@
+using System;
 using UnityEngine;
 
 namespace GNS3.GNSThread
 {
     public interface IQueuedTask
     {
+        public Guid Guid { get; }
         public bool IsRunning { get; }
         public string NotificationOnStart { get; set; }
         public string NotificationOnSuccess { get; set;}

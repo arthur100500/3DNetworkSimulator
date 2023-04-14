@@ -69,7 +69,7 @@ namespace GNS3.GNSThread
                 _currentTask = _tasks.Dequeue();
                 
                 if (_currentTask.NotificationOnStart != "")
-                    GlobalNotificationManager.AddMessage(_currentTask.NotificationOnStart);
+                    GlobalNotificationManager.AddLoadingMessage(_currentTask.NotificationOnStart, _currentTask.Guid);
                 
                 _currentTask.Start(); 
                 yield return _currentTask.DoWork();
@@ -77,10 +77,13 @@ namespace GNS3.GNSThread
                 _currentTask.Finish();
                 
                 if (_currentTask.NotificationOnSuccess != "" && _currentTask.IsSuccessful)
-                    GlobalNotificationManager.AddMessage(_currentTask.NotificationOnSuccess);
+                    GlobalNotificationManager.AddLoadingMessage(_currentTask.NotificationOnSuccess, _currentTask.Guid);
                 
                 if (_currentTask.NotificationOnError != "" && !_currentTask.IsSuccessful)
-                    GlobalNotificationManager.AddMessage(_currentTask.NotificationOnError);
+                    GlobalNotificationManager.AddLoadingMessage(_currentTask.NotificationOnError, _currentTask.Guid);
+                
+                yield return new WaitForSeconds(0.1f);
+                GlobalNotificationManager.StartRemovingMessage(_currentTask.Guid, 4);
             }
         }
     }

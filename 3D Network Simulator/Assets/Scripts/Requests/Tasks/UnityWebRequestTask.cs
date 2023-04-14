@@ -6,6 +6,7 @@ namespace Requests.Tasks
 {
     public class UnityWebRequestTask : IQueuedTask
     {
+        public Guid Guid { get; }
         public bool IsRunning { get; private set; }
         public string NotificationOnStart { get; set; }
         public string NotificationOnSuccess { get; set; }
@@ -20,6 +21,7 @@ namespace Requests.Tasks
             _start = start;
             _finish = finish;
             _operation = operation;
+            Guid = Guid.NewGuid();
 
             IsRunning = false;
         }

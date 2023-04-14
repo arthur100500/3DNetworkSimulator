@@ -21,7 +21,8 @@ namespace Requests.Tasks
             _finish = finish;
             _operation = operation;
             _request = request;
-
+            Guid = Guid.NewGuid();
+            
             IsRunning = false;
         }
 
@@ -41,6 +42,7 @@ namespace Requests.Tasks
         }
 
 
+        public Guid Guid { get; }
         public bool IsRunning { get; private set; }
         public string NotificationOnStart { get; set; }
         public string NotificationOnSuccess { get; set; }

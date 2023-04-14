@@ -11,7 +11,7 @@ namespace GNS3.ProjectHandling.Project
         {
             return new GnsProjectConfig
             {
-                Address = "127.0.0.1",
+                Address = "localhost",
                 Port = 3080,
                 User = "admin",
                 Password = "666"
