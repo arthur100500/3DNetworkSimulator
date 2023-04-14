@@ -14,78 +14,108 @@ namespace GNS3.ProjectHandling.Project
     {
         public readonly GnsProjectConfig Config;
         private GnsJProject _jProject;
-        private readonly IRequestMaker _requests;
-        private List<object> _nodes;
+        private readonly IRequestTaskMaker _requests;
         private string Name { get; }
         public string ID => _jProject.project_id;
         
-        public GnsProject(GnsProjectConfig config, string name, IRequestMaker requests)
+        public GnsProject(GnsProjectConfig config, string name, IRequestTaskMaker requests)
         {
             Name = name;
             Config = config;
             _requests = requests;
-            _nodes = new List<object>();
             
             EnqueueProjectCreation();
         }
 
-        public T CreateNode<T>(string name, string type)
+        public void CreateNode<T>(string name, string type, Action<T> onCreate)
         {
+            var notification = "Creating node " + Name;
             var data = "{\"name\": \"" + name + "\", \"node_type\": \"" + type + "\", \"compute_id\": \"local\"}";
-            var url = "projects/" + _jProject.project_id + "/nodes";
-            var node = _requests.MakePostRequest<T>(url, data);
-            _nodes.Add(node);
-            return node;
+            
+            string GetUrl()
+            {
+                var url = "projects/" + _jProject.project_id + "/nodes";
+                return url;
+            }
+
+            var nodeCreationTask = _requests.MakePostRequest(GetUrl, () => data, () => { }, onCreate);
+            QueuedTaskCoroutineDispatcher.GetInstance().EnqueueActionWithNotification(nodeCreationTask, notification, 4);
         }
-        
+
+        private (string, string) _tempRequest;
         private void EnqueueProjectCreation()
         {
             var notification = "Creating project " + Name;
-            QueuedTaskThread.GetInstance().EnqueueActionWithNotification(InnerProjectCreate, notification, 4);
-        }
 
-        private void InnerProjectCreate()
-        {
-            var allProjects = _requests.MakeGetRequest<List<GnsJProject>>("projects");
-            var existingProject = allProjects.Find(p => p.name == Name);
+            var getProjectsTask = _requests.MakeGetRequest<List<GnsJProject>>(
+                "projects",
+                () => { },
+                (projectList) =>
+                {
+                    var foundProject = projectList.Find(p => p.name == Name);
+                    _tempRequest = foundProject is null ? ("projects", "{\"name\": \"" + Name + "\"}") : ("projects/" + foundProject.project_id + "/open", "{}");
+                }
+                );
+            
+            var createProjectTask = _requests.MakePostRequest<GnsJProject>(
+                (() => _tempRequest.Item1),
+                (() => _tempRequest.Item2),
+                () => { },
+                (project) => { _jProject = project; }
+            );
 
-            _jProject = existingProject is null
-                ? _requests.MakePostRequest<GnsJProject>("projects", "{\"name\": \"" + Name + "\"}")
-                : _requests.MakePostRequest<GnsJProject>("projects/" + existingProject.project_id + "/open", "{}");
+            QueuedTaskCoroutineDispatcher.GetInstance().EnqueueActionWithNotification(getProjectsTask, notification, 4);
+            QueuedTaskCoroutineDispatcher.GetInstance().EnqueueActionWithNotification(createProjectTask, notification, 4);
         }
 
         public void Dispose()
         {
-            _requests.MakeDeleteRequest("projects/" + _jProject.project_id, "{}");
+            var task = _requests.MakeDeleteRequest("projects/" + _jProject.project_id, "{}", () => { }, () => { });
+            QueuedTaskCoroutineDispatcher.GetInstance().EnqueueActionWithNotification(task, "Removing project", 4);
         }
 
         public void DeleteNode(string nodeID)
         {
-            _requests.MakeDeleteRequest("projects/" + _jProject.project_id + "/nodes/" + nodeID, "{}");
+            var task = _requests.MakeDeleteRequest("projects/" + _jProject.project_id + "/nodes/" + nodeID, "{}", () => { }, () => { });
+            QueuedTaskCoroutineDispatcher.GetInstance().EnqueueActionWithNotification(task, "Removing node " + nodeID, 4);
         }
 
         public void StartNode(string nodeID)
         {
-            var url = "projects/" + _jProject.project_id + "/nodes/" + nodeID + "/start";
-            _requests.MakePostRequest(url, "{}");
+            var notification = "Starting node " + Name;
+
+            string GetUrl()
+            {
+                var url = "projects/" + _jProject.project_id + "/nodes/" + nodeID + "/start";
+                return url;
+            }
+            
+            var task = _requests.MakePostRequest(GetUrl, "{}", () => { }, () => { });
+            QueuedTaskCoroutineDispatcher.GetInstance().EnqueueActionWithNotification(task, notification, 4);
         }
 
         public void StopNode(string nodeID)
         {
+            var notification = "Stopping node " + Name;
             var url = "projects/" + _jProject.project_id + "/nodes/" + nodeID + "/stop";
-            _requests.MakePostRequest(url, "{}");
+            var task = _requests.MakePostRequest(url, "{}", () => { }, () => { } );
+            QueuedTaskCoroutineDispatcher.GetInstance().EnqueueActionWithNotification(task, notification, 4);
         }
 
-        public void RemoveLink(string linkID)
+        public void RemoveLink(string linkID, GnsNode other)
         {
+            var notification = "Unlinking " + Name + " and " + other.Name;
             var url = "projects/" + _jProject.project_id + "/links" + linkID;
-            _requests.MakeDeleteRequest(url, "{}");
+            var task = _requests.MakeDeleteRequest(url, "{}", () => { }, () => { });
+            QueuedTaskCoroutineDispatcher.GetInstance().EnqueueActionWithNotification(task, notification, 4);
         }
         
-        public GnsJLink AddLink(string linkJson)
+        public void AddLink(string linkJson, GnsNode other, Action<GnsJLink> callback)
         {
+            var notification = "Linking " + Name + " and " + other.Name;
             var url = "projects/" + _jProject.project_id + "/links";
-            return _requests.MakePostRequest<GnsJLink>(url, linkJson);
+            var task = _requests.MakePostRequest(url, linkJson, () => { }, callback);
+            QueuedTaskCoroutineDispatcher.GetInstance().EnqueueActionWithNotification(task, notification, 4);
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Text;
 using GNS3.GNSConsole.WebSocket;
 using GNS3.ProjectHandling.Node;
+using UnityEngine;
 
 namespace GNS3.GNSConsole
 {
@@ -12,6 +13,8 @@ namespace GNS3.GNSConsole
         public GnsConsole(string url)
         {
             Open(url);
+            AddOnOpenListener(() => Debug.Log(_socket.GetState()));
+            AddOnErrorListener(Debug.Log);
         }
 
         public void AddOnOpenListener(WebSocketOpenEventHandler action)

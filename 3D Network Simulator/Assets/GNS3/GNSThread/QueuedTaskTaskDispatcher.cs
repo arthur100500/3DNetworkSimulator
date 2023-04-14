@@ -2,12 +2,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using UI.Console;
+using Unity.VisualScripting;
 
 namespace GNS3.GNSThread
 {
-    public class QueuedTaskThread : IQueuedThread
+    public class QueuedTaskTaskDispatcher : IQueuedTaskDispatcher, ISingleton
     {
-        private static QueuedTaskThread _queuedTaskThread;
+        private static QueuedTaskTaskDispatcher _queuedTaskTaskDispatcher;
         private static bool _running = true;
         private readonly ConcurrentQueue<Action> _actions = new();
         private bool _started;
@@ -35,26 +36,33 @@ namespace GNS3.GNSThread
             _thread.Join();
         }
 
-        public void EnqueueAction(Action action)
+        public void EnqueueAction(IQueuedTask action)
         {
             if (!_started) Run();
-            _actions.Enqueue(action);
+            _actions.Enqueue(() =>
+            {
+                action.Start();
+                action.DoWork();
+                action.Finish();
+            });
         }
 
-        public void EnqueueActionWithNotifications(Action action, string onStart, string onEnd, float delay)
+        public void EnqueueActionWithNotifications(IQueuedTask action, string onStart, string onEnd, float delay)
         {
             if (!_started) Run();
             _actions.Enqueue(() =>
             {
                 var guid = Guid.NewGuid();
                 GlobalNotificationManager.AddLoadingMessage(onStart, guid);
-                action();
+                action.Start();
+                action.DoWork();
+                action.Finish();
                 GlobalNotificationManager.AddLoadingMessage(onEnd, guid);
                 GlobalNotificationManager.StartRemovingMessage(guid, delay);
             });
         }
 
-        public void EnqueueActionWithNotification(Action action, string notification, float delay)
+        public void EnqueueActionWithNotification(IQueuedTask action, string notification, float delay)
         {
             if (!_started) Run();
             _actions.Enqueue(() =>
@@ -63,7 +71,9 @@ namespace GNS3.GNSThread
                 GlobalNotificationManager.AddLoadingMessage("[..] " + notification, guid);
                 try
                 {
-                    action();
+                    action.Start();
+                    action.DoWork();
+                    action.Finish();
                     GlobalNotificationManager.AddLoadingMessage("[<color=green>OK</color>] " + notification, guid);
                 }
                 catch (Exception ex)
@@ -75,11 +85,10 @@ namespace GNS3.GNSThread
                 GlobalNotificationManager.StartRemovingMessage(guid, delay);
             });
         }
-
-
-        public static QueuedTaskThread GetInstance()
+        
+        public static QueuedTaskTaskDispatcher GetInstance()
         {
-            return _queuedTaskThread ??= new QueuedTaskThread();
+            return _queuedTaskTaskDispatcher ??= new QueuedTaskTaskDispatcher();
         }
 
         private void ThreadWork()

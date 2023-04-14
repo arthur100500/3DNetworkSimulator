@@ -22,7 +22,7 @@ namespace GNS3.ProjectHandling.Node
                 Project.ID + "/nodes/" + NodeID + "/console/ws";
             return new GnsConsole(gnsWsUrl);
         }
-        
+
         public void Dispose()
         {
             Project.DeleteNode(NodeID);
@@ -37,51 +37,30 @@ namespace GNS3.ProjectHandling.Node
 
         public void Start()
         {
-            var notification = "Starting node " + Name;
-            QueuedTaskThread.GetInstance().EnqueueActionWithNotification(StartNode, notification, 4);
+            Project.StartNode(NodeID);
         }
 
         public void Stop()
         {
-            var notification = "Stopping node " + Name;
-            QueuedTaskThread.GetInstance().EnqueueActionWithNotification(StopNode, notification, 4);
-        }
-
-        private void StartNode()
-        {
-            Project.StartNode(NodeID);
-        }
-
-        private void StopNode()
-        {
             Project.StopNode(NodeID);
         }
-
+        
         public void ConnectTo(GnsNode other, int selfAdapterID, int otherAdapterID)
         {
-            var notification = "Linking " + Name + " and " + other.Name;
+            var linkJson = "{\"nodes\": [{\"adapter_number\": 0, \"node_id\": \"" + NodeID + "\", \"port_number\": " +
+                           selfAdapterID + "}, {\"adapter_number\": 0, \"node_id\": \"" + other.NodeID +
+                           "\", \"port_number\": " + otherAdapterID + "}]}";
 
-            void Func()
+            void Callback(GnsJLink link)
             {
-                ConnectToFunc(other, selfAdapterID, otherAdapterID);
+                other._links.Add(link);
+                _links.Add(link);
             }
 
-            QueuedTaskThread.GetInstance().EnqueueActionWithNotification(Func, notification, 4);
+            Project.AddLink(linkJson, other, Callback);
         }
 
         public void DisconnectFrom(GnsNode other, int selfAdapterID, int otherAdapterID)
-        {
-            var notification = "Unlinking " + Name + " and " + other.Name;
-
-            void Func()
-            {
-                DeleteFromFunc(other, selfAdapterID, otherAdapterID);
-            }
-
-            QueuedTaskThread.GetInstance().EnqueueActionWithNotification(Func, notification, 4);
-        }
-
-        private void DeleteFromFunc(GnsNode other, int selfAdapterID, int otherAdapterID)
         {
             var selectedLink = _links.Find(a =>
                 (a.nodes[0].node_id == NodeID &&
@@ -96,19 +75,9 @@ namespace GNS3.ProjectHandling.Node
             );
 
             
-            Project.RemoveLink(selectedLink.link_id);
+            Project.RemoveLink(selectedLink.link_id, other);
             other._links.Remove(selectedLink);
             _links.Remove(selectedLink);
-        }
-
-        private void ConnectToFunc(GnsNode other, int selfAdapterID, int otherAdapterID)
-        {
-            var linkJson = "{\"nodes\": [{\"adapter_number\": 0, \"node_id\": \"" + NodeID + "\", \"port_number\": " +
-                           selfAdapterID + "}, {\"adapter_number\": 0, \"node_id\": \"" + other.NodeID +
-                           "\", \"port_number\": " + otherAdapterID + "}]}";
-            var link = Project.AddLink(linkJson);
-            other._links.Add(link);
-            _links.Add(link);
         }
     }
 }

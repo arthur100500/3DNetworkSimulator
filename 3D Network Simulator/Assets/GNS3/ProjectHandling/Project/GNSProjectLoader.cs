@@ -25,7 +25,9 @@ namespace GNS3.ProjectHandling.Project
         {
             var config = GnsProjectConfig.LocalGnsProjectConfig();
             var addrBegin = "http://" + config.Address + ":" + config.Port + "/v2/";
-            return new GnsProject(config, "unity_project", new HttpRequests(addrBegin, config.User, config.Password));
+            // var requests = new HttpRequests(addrBegin, config.User, config.Password);
+            var requests = new UnityWebRequestTaskMaker(addrBegin, config.User, config.Password);
+            return new GnsProject(config, "unity_project", requests);
         }
     }
 }
