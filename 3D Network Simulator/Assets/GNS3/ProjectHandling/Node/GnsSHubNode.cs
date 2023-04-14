@@ -20,7 +20,7 @@ namespace GNS3.ProjectHandling.Node
             void AssignNode(GnsJSHubNode jNode)
             {
                 _jNode = jNode;
-                NodeID = _jNode.node_id;
+                ID = _jNode.node_id;
                 IsReady = true;
             }
             

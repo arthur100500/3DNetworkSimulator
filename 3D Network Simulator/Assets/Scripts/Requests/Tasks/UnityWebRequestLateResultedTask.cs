@@ -23,6 +23,20 @@ namespace Requests.Tasks
             IsRunning = false;
         }
 
+        public UnityWebRequestLateResultedTask(Func<UnityWebRequest> urlCreate, Action start, Action<T> finish,
+            string notification)
+        {
+            _start = () => InnerStart(start);
+            _requestCreateFunc = urlCreate;
+            _finish = finish;
+
+            NotificationOnStart = "[..] " + notification;
+            NotificationOnSuccess = "[<color=green>OK</color>] " + notification;
+            NotificationOnError = "[<color=red>FL</color>] " + notification;
+
+            IsRunning = false;
+        }
+
         private void InnerStart(Action outerStart)
         {
             _request = _requestCreateFunc.Invoke();
@@ -31,6 +45,9 @@ namespace Requests.Tasks
         }
 
         public bool IsRunning { get; private set; }
+        public string NotificationOnStart { get; set; }
+        public string NotificationOnSuccess { get; set; }
+        public string NotificationOnError { get; set; }
 
         public void Start()
         {
@@ -50,5 +67,7 @@ namespace Requests.Tasks
         {
             return _operation;
         }
+
+        public bool IsSuccessful => _request.isDone;
     }
 }

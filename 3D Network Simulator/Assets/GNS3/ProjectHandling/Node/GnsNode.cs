@@ -12,20 +12,23 @@ namespace GNS3.ProjectHandling.Node
     {
         private List<GnsJLink> _links;
         public bool IsReady;
+
+        public bool IsStarted;
+
         public string Name;
-        protected string NodeID;
+        public string ID;
         protected GnsProject Project;
 
         public IEventConsole GetTerminal()
         {
             var gnsWsUrl = "ws://" + Project.Config.Address + ":" + Project.Config.Port + "/v2/projects/" +
-                Project.ID + "/nodes/" + NodeID + "/console/ws";
+                Project.ID + "/nodes/" + ID + "/console/ws";
             return new GnsConsole(gnsWsUrl);
         }
 
         public void Dispose()
         {
-            Project.DeleteNode(NodeID);
+            Project.DeleteNode(this);
         }
 
         protected void Init(string name, GnsProject project)
@@ -37,18 +40,18 @@ namespace GNS3.ProjectHandling.Node
 
         public void Start()
         {
-            Project.StartNode(NodeID);
+            Project.StartNode(this);
         }
 
         public void Stop()
         {
-            Project.StopNode(NodeID);
+            Project.StopNode(this);
         }
         
         public void ConnectTo(GnsNode other, int selfAdapterID, int otherAdapterID)
         {
-            var linkJson = "{\"nodes\": [{\"adapter_number\": 0, \"node_id\": \"" + NodeID + "\", \"port_number\": " +
-                           selfAdapterID + "}, {\"adapter_number\": 0, \"node_id\": \"" + other.NodeID +
+            var linkJson = "{\"nodes\": [{\"adapter_number\": 0, \"node_id\": \"" + ID + "\", \"port_number\": " +
+                           selfAdapterID + "}, {\"adapter_number\": 0, \"node_id\": \"" + other.ID +
                            "\", \"port_number\": " + otherAdapterID + "}]}";
 
             void Callback(GnsJLink link)
@@ -57,25 +60,25 @@ namespace GNS3.ProjectHandling.Node
                 _links.Add(link);
             }
 
-            Project.AddLink(linkJson, other, Callback);
+            Project.AddLink(linkJson, this, other, Callback);
         }
 
         public void DisconnectFrom(GnsNode other, int selfAdapterID, int otherAdapterID)
         {
             var selectedLink = _links.Find(a =>
-                (a.nodes[0].node_id == NodeID &&
-                 a.nodes[1].node_id == other.NodeID &&
+                (a.nodes[0].node_id == ID &&
+                 a.nodes[1].node_id == other.ID &&
                  a.nodes[0].port_number == selfAdapterID &&
                  a.nodes[1].port_number == otherAdapterID)
                 ||
-                (a.nodes[1].node_id == NodeID &&
-                 a.nodes[0].node_id == other.NodeID &&
+                (a.nodes[1].node_id == ID &&
+                 a.nodes[0].node_id == other.ID &&
                  a.nodes[1].port_number == selfAdapterID &&
                  a.nodes[0].port_number == otherAdapterID)
             );
 
             
-            Project.RemoveLink(selectedLink.link_id, other);
+            Project.RemoveLink(selectedLink.link_id, this, other);
             other._links.Remove(selectedLink);
             _links.Remove(selectedLink);
         }

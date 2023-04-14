@@ -9,5 +9,6 @@ namespace GNS3.GNSConsole
         public void AddOnMessageListener(WebSocketMessageEventHandler action);
         public void AddOnErrorListener(WebSocketErrorEventHandler action);
         public void SendMessage(string message);
+        public WebSocketState GetState();
     }
 }

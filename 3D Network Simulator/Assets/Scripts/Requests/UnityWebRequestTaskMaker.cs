@@ -71,7 +71,7 @@ namespace Requests
         {
             UnityWebRequest GetRequest()
             {
-                var request = new UnityWebRequest(_addrBegin + url);
+                var request = new UnityWebRequest(_addrBegin + url());
                 request.uploadHandler = new UploadHandlerRaw(Encoding.ASCII.GetBytes(data));
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.method = UnityWebRequest.kHttpVerbPOST;
@@ -123,8 +123,8 @@ namespace Requests
             UnityWebRequest GetRequest()
             {
                 var readyData = data();
-                Debug.Log(readyData);
-                var request = new UnityWebRequest(_addrBegin + url());
+                var readyUrl = url();
+                var request = new UnityWebRequest(_addrBegin + readyUrl);
                 request.uploadHandler = new UploadHandlerRaw(Encoding.ASCII.GetBytes(readyData));
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.method = UnityWebRequest.kHttpVerbPOST;

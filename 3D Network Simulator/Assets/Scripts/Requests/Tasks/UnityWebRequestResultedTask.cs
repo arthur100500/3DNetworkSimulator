@@ -12,8 +12,10 @@ namespace Requests.Tasks
         private readonly Action<T> _finish;
         private readonly AsyncOperation _operation;
         private readonly UnityWebRequest _request;
+        public bool IsSuccessful => _request.isDone;
 
-        public UnityWebRequestResultedTask(Action start, AsyncOperation operation, Action<T> finish, UnityWebRequest request)
+        public UnityWebRequestResultedTask(Action start, AsyncOperation operation, Action<T> finish,
+            UnityWebRequest request)
         {
             _start = start;
             _finish = finish;
@@ -23,7 +25,26 @@ namespace Requests.Tasks
             IsRunning = false;
         }
 
+        public UnityWebRequestResultedTask(Action start, AsyncOperation operation, Action<T> finish,
+            UnityWebRequest request, string notification)
+        {
+            _start = start;
+            _finish = finish;
+            _operation = operation;
+            _request = request;
+
+            NotificationOnStart = "[..] " + notification;
+            NotificationOnSuccess = "[<color=green>OK</color>] " + notification;
+            NotificationOnError = "[<color=red>FL</color>] " + notification;
+
+            IsRunning = false;
+        }
+
+
         public bool IsRunning { get; private set; }
+        public string NotificationOnStart { get; set; }
+        public string NotificationOnSuccess { get; set; }
+        public string NotificationOnError { get; set; }
 
         public void Start()
         {

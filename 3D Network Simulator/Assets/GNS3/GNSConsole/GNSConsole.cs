@@ -14,6 +14,7 @@ namespace GNS3.GNSConsole
         {
             Open(url);
             AddOnOpenListener(() => Debug.Log(_socket.GetState()));
+            AddOnCloseListener((x) => Debug.Log(x));
             AddOnErrorListener(Debug.Log);
         }
 
@@ -40,6 +41,11 @@ namespace GNS3.GNSConsole
         public void SendMessage(string message)
         {
             _socket.Send(Encoding.ASCII.GetBytes(message));
+        }
+
+        public WebSocketState GetState()
+        {
+            return _socket.GetState();
         }
 
         private void Open(string url)

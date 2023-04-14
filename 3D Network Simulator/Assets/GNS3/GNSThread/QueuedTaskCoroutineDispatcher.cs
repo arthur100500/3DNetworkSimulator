@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UI.Console;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -37,6 +38,10 @@ namespace GNS3.GNSThread
 
         public void EnqueueActionWithNotification(IQueuedTask action, string notification, float delay)
         {
+            action.NotificationOnStart = "[..] " + notification;
+            action.NotificationOnSuccess = "[<color=green>OK</color>] " + notification;
+            action.NotificationOnError = "[<color=red>FL</color>] " + notification;
+
             _tasks.Enqueue(action);
         }
 
@@ -62,11 +67,20 @@ namespace GNS3.GNSThread
                     continue;
                 }
                 _currentTask = _tasks.Dequeue();
-                Debug.Log("Dequeued task");
+                
+                if (_currentTask.NotificationOnStart != "")
+                    GlobalNotificationManager.AddMessage(_currentTask.NotificationOnStart);
+                
                 _currentTask.Start(); 
                 yield return _currentTask.DoWork();
+                
                 _currentTask.Finish();
-                Debug.Log("Finished task");
+                
+                if (_currentTask.NotificationOnSuccess != "" && _currentTask.IsSuccessful)
+                    GlobalNotificationManager.AddMessage(_currentTask.NotificationOnSuccess);
+                
+                if (_currentTask.NotificationOnError != "" && !_currentTask.IsSuccessful)
+                    GlobalNotificationManager.AddMessage(_currentTask.NotificationOnError);
             }
         }
     }

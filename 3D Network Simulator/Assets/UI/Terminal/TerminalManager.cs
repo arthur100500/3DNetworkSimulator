@@ -211,6 +211,7 @@ namespace UI.Terminal
 
         private void Send(string msg)
         {
+            Debug.Log(_console.GetState());
             _console.SendMessage(msg);
             _console.SendMessage("\n");
         }
