@@ -7,6 +7,9 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using AOT;
 
 namespace GNS3.GNSConsole.WebSocket
 {
