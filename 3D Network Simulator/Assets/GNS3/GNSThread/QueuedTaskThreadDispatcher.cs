@@ -81,11 +81,12 @@ namespace GNS3.GNSThread
                     GlobalNotificationManager.AddLoadingMessage(
                         "[<color=red>FL</color>] " + notification + " due to " + ex.Message, guid);
                 }
+
                 Thread.Sleep(10);
                 GlobalNotificationManager.StartRemovingMessage(guid, delay);
             });
         }
-        
+
         public static QueuedTaskTaskDispatcher GetInstance()
         {
             return _queuedTaskTaskDispatcher ??= new QueuedTaskTaskDispatcher();

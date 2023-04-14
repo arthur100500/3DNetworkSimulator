@@ -8,11 +8,11 @@ namespace Requests.Tasks
 {
     public class UnityWebRequestLateResultedTask<T> : IQueuedTask
     {
-        private readonly Action _start;
         private readonly Action<T> _finish;
+        private readonly Func<UnityWebRequest> _requestCreateFunc;
+        private readonly Action _start;
         private AsyncOperation _operation;
         private UnityWebRequest _request;
-        private readonly Func<UnityWebRequest> _requestCreateFunc;
 
         public UnityWebRequestLateResultedTask(Func<UnityWebRequest> urlCreate, Action start, Action<T> finish)
         {
@@ -38,13 +38,6 @@ namespace Requests.Tasks
             IsRunning = false;
         }
 
-        private void InnerStart(Action outerStart)
-        {
-            _request = _requestCreateFunc.Invoke();
-            _operation = _request.SendWebRequest();
-            outerStart.Invoke();
-        }
-
         public Guid Guid { get; }
         public bool IsRunning { get; private set; }
         public string NotificationOnStart { get; set; }
@@ -60,7 +53,6 @@ namespace Requests.Tasks
         public void Finish()
         {
             var deserialized = JsonConvert.DeserializeObject<T>(_request.downloadHandler.text);
-            Debug.Log(_request.downloadHandler.text);
             _finish.Invoke(deserialized);
             IsRunning = false;
         }
@@ -71,5 +63,12 @@ namespace Requests.Tasks
         }
 
         public bool IsSuccessful => _request.isDone;
+
+        private void InnerStart(Action outerStart)
+        {
+            _request = _requestCreateFunc.Invoke();
+            _operation = _request.SendWebRequest();
+            outerStart.Invoke();
+        }
     }
 }

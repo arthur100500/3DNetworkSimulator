@@ -1,7 +1,5 @@
-using GNS3.GNSThread;
 using GNS3.JsonObjects;
 using GNS3.ProjectHandling.Project;
-using Newtonsoft.Json;
 
 namespace GNS3.ProjectHandling.Node
 {
@@ -23,7 +21,7 @@ namespace GNS3.ProjectHandling.Node
                 ID = _jNode.node_id;
                 IsReady = true;
             }
-            
+
             Project.CreateNode<GnsJSHubNode>(Name, "ethernet_hub", AssignNode);
         }
     }

@@ -1,34 +1,32 @@
 using System;
 using System.Collections.Generic;
 using GNS3.GNSConsole;
-using GNS3.GNSThread;
 using GNS3.ProjectHandling.Link;
 using GNS3.ProjectHandling.Project;
-using Newtonsoft.Json;
 
 namespace GNS3.ProjectHandling.Node
 {
     public abstract class GnsNode : IDisposable
     {
         private List<GnsJLink> _links;
+        public string ID;
         public bool IsReady;
 
         public bool IsStarted;
 
         public string Name;
-        public string ID;
         protected GnsProject Project;
-
-        public IEventConsole GetTerminal()
-        {
-            var gnsWsUrl = "ws://" + Project.Config.Address + ":" + Project.Config.Port + "/v2/projects/" +
-                Project.ID + "/nodes/" + ID + "/console/ws";
-            return new GnsConsole(gnsWsUrl);
-        }
 
         public void Dispose()
         {
             Project.DeleteNode(this);
+        }
+
+        public IEventConsole GetTerminal()
+        {
+            var gnsWsUrl = "ws://" + Project.Config.Address + ":" + Project.Config.Port + "/v2/projects/" +
+                           Project.ID + "/nodes/" + ID + "/console/ws";
+            return new GnsConsole(gnsWsUrl);
         }
 
         protected void Init(string name, GnsProject project)
@@ -47,7 +45,7 @@ namespace GNS3.ProjectHandling.Node
         {
             Project.StopNode(this);
         }
-        
+
         public void ConnectTo(GnsNode other, int selfAdapterID, int otherAdapterID)
         {
             var linkJson = "{\"nodes\": [{\"adapter_number\": 0, \"node_id\": \"" + ID + "\", \"port_number\": " +
@@ -77,7 +75,7 @@ namespace GNS3.ProjectHandling.Node
                  a.nodes[0].port_number == otherAdapterID)
             );
 
-            
+
             Project.RemoveLink(selectedLink.link_id, this, other);
             other._links.Remove(selectedLink);
             _links.Remove(selectedLink);

@@ -8,11 +8,10 @@ namespace Requests.Tasks
 {
     public class UnityWebRequestResultedTask<T> : IQueuedTask
     {
-        private readonly Action _start;
         private readonly Action<T> _finish;
         private readonly AsyncOperation _operation;
         private readonly UnityWebRequest _request;
-        public bool IsSuccessful => _request.isDone;
+        private readonly Action _start;
 
         public UnityWebRequestResultedTask(Action start, AsyncOperation operation, Action<T> finish,
             UnityWebRequest request)
@@ -22,7 +21,7 @@ namespace Requests.Tasks
             _operation = operation;
             _request = request;
             Guid = Guid.NewGuid();
-            
+
             IsRunning = false;
         }
 
@@ -41,6 +40,8 @@ namespace Requests.Tasks
             IsRunning = false;
         }
 
+        public bool IsSuccessful => _request.isDone;
+
 
         public Guid Guid { get; }
         public bool IsRunning { get; private set; }
@@ -57,7 +58,6 @@ namespace Requests.Tasks
         public void Finish()
         {
             var deserialized = JsonConvert.DeserializeObject<T>(_request.downloadHandler.text);
-            Debug.Log(_request.downloadHandler.text);
             _finish.Invoke(deserialized);
             IsRunning = false;
         }

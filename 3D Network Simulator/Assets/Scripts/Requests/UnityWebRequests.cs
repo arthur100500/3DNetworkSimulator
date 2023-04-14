@@ -10,15 +10,16 @@ namespace Requests
     {
         private readonly string _addrBegin;
         private readonly string _base64Authorization;
+
         public UnityWebRequests(string address, string user, string password)
         {
             _addrBegin = address;
             _base64Authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes(user + ":" + password));
         }
-        
+
         public void MakeGetRequest(string url)
         {
-            var request = UnityWebRequest.Get(_addrBegin + url); 
+            var request = UnityWebRequest.Get(_addrBegin + url);
             SendRequest(request);
         }
 
@@ -57,7 +58,7 @@ namespace Requests
             request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
             request.SendWebRequest();
         }
-        
+
         private T SendRequest<T>(UnityWebRequest request)
         {
             request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");

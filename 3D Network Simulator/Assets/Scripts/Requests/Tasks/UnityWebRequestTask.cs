@@ -6,16 +6,11 @@ namespace Requests.Tasks
 {
     public class UnityWebRequestTask : IQueuedTask
     {
-        public Guid Guid { get; }
-        public bool IsRunning { get; private set; }
-        public string NotificationOnStart { get; set; }
-        public string NotificationOnSuccess { get; set; }
-        public string NotificationOnError { get; set; }
-
-        private readonly Action _start;
         private readonly Action _finish;
         private readonly AsyncOperation _operation;
-        public bool IsSuccessful => _operation.isDone;
+
+        private readonly Action _start;
+
         public UnityWebRequestTask(Action start, AsyncOperation operation, Action finish)
         {
             _start = start;
@@ -38,6 +33,13 @@ namespace Requests.Tasks
 
             IsRunning = false;
         }
+
+        public Guid Guid { get; }
+        public bool IsRunning { get; private set; }
+        public string NotificationOnStart { get; set; }
+        public string NotificationOnSuccess { get; set; }
+        public string NotificationOnError { get; set; }
+        public bool IsSuccessful => _operation.isDone;
 
         public void Start()
         {

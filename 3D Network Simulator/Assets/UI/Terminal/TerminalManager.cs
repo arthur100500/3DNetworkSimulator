@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using GNS3.GNSConsole;
 using Interfaces.TextTransformer;
 using Objects.Player.Scripts;
@@ -32,10 +31,10 @@ namespace UI.Terminal
         private Vector3 _cachedPosition;
         private Vector3 _cachedScale;
         private CanvasGroup _canvasGroup;
+
+        private IEventConsole _console;
         private string _lastInput = "";
         private PlayerMovement _playerMovement;
-        
-        private IEventConsole _console;
         private ITextTransformer _textTransformer;
         private Canvas ScreenCanvas { get; set; }
 
@@ -211,7 +210,6 @@ namespace UI.Terminal
 
         private void Send(string msg)
         {
-            Debug.Log(_console.GetState());
             _console.SendMessage(msg);
             _console.SendMessage("\n");
         }

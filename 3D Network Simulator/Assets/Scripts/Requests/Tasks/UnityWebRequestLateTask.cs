@@ -1,6 +1,5 @@
 using System;
 using GNS3.GNSThread;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -8,12 +7,11 @@ namespace Requests.Tasks
 {
     public class UnityWebRequestLateTask : IQueuedTask
     {
-        private readonly Action _start;
         private readonly Action _finish;
+        private readonly Func<UnityWebRequest> _requestCreateFunc;
+        private readonly Action _start;
         private AsyncOperation _operation;
         private UnityWebRequest _request;
-        private readonly Func<UnityWebRequest> _requestCreateFunc;
-        public bool IsSuccessful => _request.isDone;
 
         public UnityWebRequestLateTask(Func<UnityWebRequest> urlCreate, Action start, Action finish)
         {
@@ -39,13 +37,7 @@ namespace Requests.Tasks
             IsRunning = false;
         }
 
-
-        private void InnerStart(Action outerStart)
-        {
-            _request = _requestCreateFunc.Invoke();
-            _operation = _request.SendWebRequest();
-            outerStart.Invoke();
-        }
+        public bool IsSuccessful => _request.isDone;
 
         public Guid Guid { get; }
         public bool IsRunning { get; private set; }
@@ -68,6 +60,14 @@ namespace Requests.Tasks
         public AsyncOperation DoWork()
         {
             return _operation;
+        }
+
+
+        private void InnerStart(Action outerStart)
+        {
+            _request = _requestCreateFunc.Invoke();
+            _operation = _request.SendWebRequest();
+            outerStart.Invoke();
         }
     }
 }

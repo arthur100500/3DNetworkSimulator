@@ -6,15 +6,14 @@ using System.Threading.Tasks;
 using GNS3.ProjectHandling.Exceptions;
 using Interfaces.Requests;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace Requests
 {
     public class HttpRequests : IRequestMaker
     {
-        private readonly HttpClient _httpClient;
         private readonly string _addrBegin;
         private readonly string _base64Authorization;
+        private readonly HttpClient _httpClient;
 
         public HttpRequests(string addressBegin, string user, string password)
         {

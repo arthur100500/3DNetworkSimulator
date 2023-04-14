@@ -52,7 +52,7 @@ namespace Objects.Devices.PC.Laptop
                                                      " as it is not loaded");
                 return;
             }
-            
+
             if (!Node.IsStarted)
             {
                 GlobalNotificationManager.AddMessage("[<color=red>FL</color>] Can't connect to " + Node.Name +

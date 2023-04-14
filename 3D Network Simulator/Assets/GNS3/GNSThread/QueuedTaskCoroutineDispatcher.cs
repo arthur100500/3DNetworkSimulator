@@ -8,24 +8,16 @@ namespace GNS3.GNSThread
 {
     public class QueuedTaskCoroutineDispatcher : MonoBehaviour, IQueuedTaskDispatcher, ISingleton
     {
-        private readonly Queue<IQueuedTask> _tasks;
-        private bool _running;
         private static QueuedTaskCoroutineDispatcher _instance;
+        private readonly Queue<IQueuedTask> _tasks;
         private IQueuedTask _currentTask;
-        public static QueuedTaskCoroutineDispatcher GetInstance()
-        {
-            if (_instance is not null) return _instance;
-            var gameObject = Instantiate(new GameObject());
-            _instance = gameObject.AddComponent<QueuedTaskCoroutineDispatcher>();
-            _instance.Run();
-            return _instance;
-        }
-        
+        private bool _running;
+
         public QueuedTaskCoroutineDispatcher()
         {
             _tasks = new Queue<IQueuedTask>();
         }
-        
+
         public void EnqueueAction(IQueuedTask action)
         {
             _tasks.Enqueue(action);
@@ -56,32 +48,42 @@ namespace GNS3.GNSThread
             _running = false;
             StopCoroutine(WorkCoroutine());
         }
-        
+
+        public static QueuedTaskCoroutineDispatcher GetInstance()
+        {
+            if (_instance is not null) return _instance;
+            var gameObject = Instantiate(new GameObject());
+            _instance = gameObject.AddComponent<QueuedTaskCoroutineDispatcher>();
+            _instance.Run();
+            return _instance;
+        }
+
         private IEnumerator WorkCoroutine()
         {
-            while(_running)
+            while (_running)
             {
-                if(_tasks.Count == 0 || (_currentTask is not null && _currentTask.IsRunning))
+                if (_tasks.Count == 0 || (_currentTask is not null && _currentTask.IsRunning))
                 {
                     yield return new WaitForSeconds(0.1f);
                     continue;
                 }
+
                 _currentTask = _tasks.Dequeue();
-                
+
                 if (_currentTask.NotificationOnStart != "")
                     GlobalNotificationManager.AddLoadingMessage(_currentTask.NotificationOnStart, _currentTask.Guid);
-                
-                _currentTask.Start(); 
+
+                _currentTask.Start();
                 yield return _currentTask.DoWork();
-                
+
                 _currentTask.Finish();
-                
+
                 if (_currentTask.NotificationOnSuccess != "" && _currentTask.IsSuccessful)
                     GlobalNotificationManager.AddLoadingMessage(_currentTask.NotificationOnSuccess, _currentTask.Guid);
-                
+
                 if (_currentTask.NotificationOnError != "" && !_currentTask.IsSuccessful)
                     GlobalNotificationManager.AddLoadingMessage(_currentTask.NotificationOnError, _currentTask.Guid);
-                
+
                 yield return new WaitForSeconds(0.1f);
                 GlobalNotificationManager.StartRemovingMessage(_currentTask.Guid, 4);
             }
