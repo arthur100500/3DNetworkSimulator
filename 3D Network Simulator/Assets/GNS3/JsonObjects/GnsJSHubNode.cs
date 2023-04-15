@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GNS3.JsonObjects.Basic;
 
 namespace GNS3.JsonObjects
 {
@@ -37,7 +38,7 @@ namespace GNS3.JsonObjects
         public List<PortsMapping> ports_mapping { get; set; }
     }
 
-    public class GnsJSHubNode
+    public class GnsJSHubNode : GnsJNode
     {
         public object command_line { get; set; }
         public string compute_id { get; set; }
@@ -50,14 +51,10 @@ namespace GNS3.JsonObjects
         public int height { get; set; }
         public Label label { get; set; }
         public bool locked { get; set; }
-        public string name { get; set; }
         public object node_directory { get; set; }
-        public string node_id { get; set; }
-        public string node_type { get; set; }
         public string port_name_format { get; set; }
         public int port_segment_size { get; set; }
         public List<Port> ports { get; set; }
-        public string project_id { get; set; }
         public Properties properties { get; set; }
         public string status { get; set; }
         public string symbol { get; set; }

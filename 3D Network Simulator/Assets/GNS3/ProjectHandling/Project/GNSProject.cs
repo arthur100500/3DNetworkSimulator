@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GNS3.GNSThread;
 using GNS3.JsonObjects;
+using GNS3.JsonObjects.Basic;
 using GNS3.ProjectHandling.Link;
 using GNS3.ProjectHandling.Node;
 using Interfaces.Requests;
@@ -14,8 +15,8 @@ namespace GNS3.ProjectHandling.Project
         public readonly GnsProjectConfig Config;
         private GnsJProject _jProject;
         private readonly IQueuedTaskDispatcher _dispatcher;
-
         private (string, string) _tempRequest;
+        private List<GnsJNode> _nodes;
 
         public GnsProject(GnsProjectConfig config, string name, IRequestTaskMaker requests,
             IQueuedTaskDispatcher dispatcher)
@@ -24,6 +25,7 @@ namespace GNS3.ProjectHandling.Project
             Config = config;
             _requests = requests;
             _dispatcher = dispatcher;
+            _nodes = new List<GnsJNode>();
 
             EnqueueProjectCreation();
         }
@@ -37,7 +39,7 @@ namespace GNS3.ProjectHandling.Project
             _dispatcher.EnqueueActionWithNotification(task, "Removing project", 4);
         }
 
-        public void CreateNode<T>(string name, string type, Action<T> onCreate)
+        public void CreateNode<T>(string name, string type, Action<T> onCreate) where T : GnsJNode
         {
             var notification = "Creating node " + name;
             var data = "{\"name\": \"" + name + "\", \"node_type\": \"" + type + "\", \"compute_id\": \"local\"}";
@@ -48,7 +50,13 @@ namespace GNS3.ProjectHandling.Project
                 return url;
             }
 
-            var nodeCreationTask = _requests.MakePostRequest(GetUrl, () => data, () => { }, onCreate);
+            void AddAndOnCreate(T node)
+            {
+                _nodes.Add(node);
+                onCreate(node);
+            }
+
+            var nodeCreationTask = _requests.MakePostRequest(GetUrl, () => data, () => { }, (Action<T>)AddAndOnCreate);
             _dispatcher.EnqueueActionWithNotification(nodeCreationTask, notification, 4);
         }
 
