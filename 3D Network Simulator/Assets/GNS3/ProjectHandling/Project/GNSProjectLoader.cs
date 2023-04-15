@@ -1,3 +1,4 @@
+using GNS3.GNSThread;
 using Requests;
 
 namespace GNS3.ProjectHandling.Project
@@ -26,7 +27,8 @@ namespace GNS3.ProjectHandling.Project
             var addrBegin = "http://" + config.Address + ":" + config.Port + "/v2/";
             // var requests = new HttpRequests(addrBegin, config.User, config.Password);
             var requests = new UnityWebRequestTaskMaker(addrBegin, config.User, config.Password);
-            return new GnsProject(config, "unity_project", requests);
+            var dispatcher = QueuedTaskCoroutineDispatcher.GetInstance();
+            return new GnsProject(config, "unity_project", requests, dispatcher);
         }
     }
 }

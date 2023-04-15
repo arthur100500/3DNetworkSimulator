@@ -13,7 +13,7 @@ namespace GNS3.GNSThread
         private IQueuedTask _currentTask;
         private bool _running;
 
-        public QueuedTaskCoroutineDispatcher()
+        private QueuedTaskCoroutineDispatcher()
         {
             _tasks = new Queue<IQueuedTask>();
         }
