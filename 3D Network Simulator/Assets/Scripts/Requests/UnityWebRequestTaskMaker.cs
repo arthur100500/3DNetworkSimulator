@@ -21,14 +21,14 @@ namespace Requests
         public IQueuedTask MakeDeleteRequest(string url, string data, Action start, Action finish)
         {
             var request = UnityWebRequest.Delete(_addrBegin + url);
-            request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+            SetHeaders(request);
             return new UnityWebRequestTask(start, request.SendWebRequest(), finish);
         }
 
         public IQueuedTask MakeGetRequest(string url, Action start, Action finish)
         {
             var request = UnityWebRequest.Get(_addrBegin + url);
-            request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+            SetHeaders(request);
             return new UnityWebRequestTask(start, request.SendWebRequest(), finish);
         }
 
@@ -38,7 +38,7 @@ namespace Requests
             request.uploadHandler = new UploadHandlerRaw(Encoding.ASCII.GetBytes(data));
             request.downloadHandler = new DownloadHandlerBuffer();
             request.method = UnityWebRequest.kHttpVerbPOST;
-            request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+            SetHeaders(request);
             return new UnityWebRequestTask(start, request.SendWebRequest(), finish);
         }
 
@@ -47,7 +47,7 @@ namespace Requests
             UnityWebRequest GetRequest()
             {
                 var request = UnityWebRequest.Delete(_addrBegin + url());
-                request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+                SetHeaders(request);
                 return request;
             }
 
@@ -59,7 +59,7 @@ namespace Requests
             UnityWebRequest GetRequest()
             {
                 var request = UnityWebRequest.Get(_addrBegin + url());
-                request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+                SetHeaders(request);
                 return request;
             }
 
@@ -74,7 +74,7 @@ namespace Requests
                 request.uploadHandler = new UploadHandlerRaw(Encoding.ASCII.GetBytes(data));
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.method = UnityWebRequest.kHttpVerbPOST;
-                request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+                SetHeaders(request);
                 return request;
             }
 
@@ -84,7 +84,7 @@ namespace Requests
         public IQueuedTask MakeGetRequest<T>(string url, Action start, Action<T> finish)
         {
             var request = UnityWebRequest.Get(_addrBegin + url);
-            request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+            SetHeaders(request);
             return new UnityWebRequestResultedTask<T>(start, request.SendWebRequest(), finish, request);
         }
 
@@ -94,14 +94,14 @@ namespace Requests
             request.uploadHandler = new UploadHandlerRaw(Encoding.ASCII.GetBytes(data));
             request.downloadHandler = new DownloadHandlerBuffer();
             request.method = UnityWebRequest.kHttpVerbPOST;
-            request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+            SetHeaders(request);
             return new UnityWebRequestResultedTask<T>(start, request.SendWebRequest(), finish, request);
         }
 
         public IQueuedTask MakeGetRequest<T>(string url, string data, Action start, Action<T> finish)
         {
             var request = UnityWebRequest.Get(_addrBegin + url);
-            request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+            SetHeaders(request);
             return new UnityWebRequestResultedTask<T>(start, request.SendWebRequest(), finish, request);
         }
 
@@ -110,7 +110,7 @@ namespace Requests
             UnityWebRequest GetRequest()
             {
                 var request = UnityWebRequest.Get(_addrBegin + url());
-                request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+                SetHeaders(request);
                 return request;
             }
 
@@ -127,8 +127,7 @@ namespace Requests
                 request.uploadHandler = new UploadHandlerRaw(Encoding.ASCII.GetBytes(readyData));
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.method = UnityWebRequest.kHttpVerbPOST;
-                //var request = UnityWebRequest.Post(_addrBegin + url(), readyData);
-                request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+                SetHeaders(request);
                 return request;
             }
 
@@ -140,11 +139,20 @@ namespace Requests
             UnityWebRequest GetRequest()
             {
                 var request = UnityWebRequest.Get(_addrBegin + url());
-                request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+                SetHeaders(request);
                 return request;
             }
 
             return new UnityWebRequestLateResultedTask<T>(GetRequest, start, finish);
+        }
+
+        private void SetHeaders(UnityWebRequest request)
+        {
+            request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
+            request.SetRequestHeader("Access-Control-Allow-Credentials", "true");
+            request.SetRequestHeader("Access-Control-Allow-Headers", "Accept, X-Access-Token, X-Application-Name, X-Request-Sent-Time");
+            request.SetRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); 
+            request.SetRequestHeader("Access-Control-Allow-Origin", "*"); 
         }
     }
 }
