@@ -1,96 +1,87 @@
 using System.Collections.Generic;
 using GNS3.JsonObjects.Basic;
 using Newtonsoft.Json;
+using UnityEngine.Scripting;
 
 namespace GNS3.JsonObjects
 {
+    [Preserve]
     public class DataLinkTypes
     {
-        public string Ethernet { get; set; }
+        [Preserve] public string Ethernet { get; set; }
 
-        [JsonConstructor]
-        public DataLinkTypes()
-        {
-        }
+        [JsonConstructor] public DataLinkTypes() { }
     }
 
+    [Preserve]
     public class Label
     {
-        public int rotation { get; set; }
-        public object style { get; set; }
-        public string text { get; set; }
-        public object x { get; set; }
-        public int y { get; set; }
+        [Preserve] public int rotation { get; set; }
+        [Preserve] public object style { get; set; }
+        [Preserve] public string text { get; set; }
+        [Preserve] public object x { get; set; }
+        [Preserve] public int y { get; set; }
 
-        [JsonConstructor] 
-        public Label()
-        {
-        }
+        [JsonConstructor] public Label() { }
     }
 
+    [Preserve]
     public class Port
     {
-        public int adapter_number { get; set; }
-        public DataLinkTypes data_link_types { get; set; }
-        public string link_type { get; set; }
-        public string name { get; set; }
-        public int port_number { get; set; }
-        public string short_name { get; set; }
+        [Preserve] public int adapter_number { get; set; }
+        [Preserve] public DataLinkTypes data_link_types { get; set; }
+        [Preserve] public string link_type { get; set; }
+        [Preserve] public string name { get; set; }
+        [Preserve] public int port_number { get; set; }
+        [Preserve] public string short_name { get; set; }
 
-        [JsonConstructor] 
-        public Port()
-        {
-        }
+        [JsonConstructor] public Port() { }
     }
 
+    [Preserve]
     public class PortsMapping
     {
-        public string name { get; set; }
-        public int port_number { get; set; }
+        [Preserve] public string name { get; set; }
+        [Preserve] public int port_number { get; set; }
 
-        [JsonConstructor] 
-        public PortsMapping()
-        {
-        }
+        [JsonConstructor] public PortsMapping() { }
     }
 
+    [Preserve]
     public class Properties
     {
-        public List<PortsMapping> ports_mapping { get; set; }
-        
-        [JsonConstructor] 
-        public Properties(){}
+        [Preserve] public List<PortsMapping> ports_mapping { get; set; }
+
+        [JsonConstructor] public Properties() { }
     }
 
+    [Preserve]
     public class GnsJSHubNode : GnsJNode
     {
-        public object command_line { get; set; }
-        public string compute_id { get; set; }
-        public object console { get; set; }
-        public bool console_auto_start { get; set; }
-        public string console_host { get; set; }
-        public object console_type { get; set; }
-        public List<object> custom_adapters { get; set; }
-        public object first_port_name { get; set; }
-        public int height { get; set; }
-        public Label label { get; set; }
-        public bool locked { get; set; }
-        public object node_directory { get; set; }
-        public string port_name_format { get; set; }
-        public int port_segment_size { get; set; }
-        public List<Port> ports { get; set; }
-        public Properties properties { get; set; }
-        public string status { get; set; }
-        public string symbol { get; set; }
-        public object template_id { get; set; }
-        public int width { get; set; }
-        public int x { get; set; }
-        public int y { get; set; }
-        public int z { get; set; }
+        [Preserve] public object command_line { get; set; }
+        [Preserve] public string compute_id { get; set; }
+        [Preserve] public object console { get; set; }
+        [Preserve] public bool console_auto_start { get; set; }
+        [Preserve] public string console_host { get; set; }
+        [Preserve] public object console_type { get; set; }
+        [Preserve] public List<object> custom_adapters { get; set; }
+        [Preserve] public object first_port_name { get; set; }
+        [Preserve] public int height { get; set; }
+        [Preserve] public Label label { get; set; }
+        [Preserve] public bool locked { get; set; }
+        [Preserve] public object node_directory { get; set; }
+        [Preserve] public string port_name_format { get; set; }
+        [Preserve] public int port_segment_size { get; set; }
+        [Preserve] public List<Port> ports { get; set; }
+        [Preserve] public Properties properties { get; set; }
+        [Preserve] public string status { get; set; }
+        [Preserve] public string symbol { get; set; }
+        [Preserve] public object template_id { get; set; }
+        [Preserve] public int width { get; set; }
+        [Preserve] public int x { get; set; }
+        [Preserve] public int y { get; set; }
+        [Preserve] public int z { get; set; }
 
-        [JsonConstructor] 
-        public GnsJSHubNode()
-        {
-        }
+        [JsonConstructor] public GnsJSHubNode() { }
     }
 }
