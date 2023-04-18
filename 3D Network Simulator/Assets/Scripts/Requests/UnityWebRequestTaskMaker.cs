@@ -3,8 +3,8 @@ using System.Text;
 using GNS3.GNSThread;
 using Interfaces.Requests;
 using Requests.Tasks;
-using UnityEngine;
 using UnityEngine.Networking;
+using Interfaces.Logger;
 
 namespace Requests
 {
@@ -12,10 +12,11 @@ namespace Requests
     {
         private readonly string _addrBegin;
         private readonly string _base64Authorization;
-
-        public UnityWebRequestTaskMaker(string address, string user, string password)
+        private readonly ILogger _logger;
+        public UnityWebRequestTaskMaker(string address, string user, string password, ILogger logger)
         {
             _addrBegin = address;
+            _logger = logger;
             _base64Authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes(user + ":" + password));
         }
 
@@ -23,14 +24,14 @@ namespace Requests
         {
             var request = UnityWebRequest.Delete(_addrBegin + url);
             SetHeaders(request);
-            return new UnityWebRequestTask(start, request.SendWebRequest(), finish);
+            return new UnityWebRequestTask(start, request.SendWebRequest(), finish, request);
         }
 
         public IQueuedTask MakeGetRequest(string url, Action start, Action finish)
         {
             var request = UnityWebRequest.Get(_addrBegin + url);
             SetHeaders(request);
-            return new UnityWebRequestTask(start, request.SendWebRequest(), finish);
+            return new UnityWebRequestTask(start, request.SendWebRequest(), finish, request);
         }
 
         public IQueuedTask MakePostRequest(string url, string data, Action start, Action finish)
@@ -40,7 +41,7 @@ namespace Requests
             request.downloadHandler = new DownloadHandlerBuffer();
             request.method = UnityWebRequest.kHttpVerbPOST;
             SetHeaders(request);
-            return new UnityWebRequestTask(start, request.SendWebRequest(), finish);
+            return new UnityWebRequestTask(start, request.SendWebRequest(), finish, request);
         }
 
         public IQueuedTask MakeDeleteRequest(Func<string> url, string data, Action start, Action finish)
@@ -52,7 +53,7 @@ namespace Requests
                 return request;
             }
 
-            return new UnityWebRequestLateTask(GetRequest, start, finish);
+            return new UnityWebRequestLateTask(GetRequest, start, finish, _logger);
         }
 
         public IQueuedTask MakeGetRequest(Func<string> url, Action start, Action finish)
@@ -64,7 +65,7 @@ namespace Requests
                 return request;
             }
 
-            return new UnityWebRequestLateTask(GetRequest, start, finish);
+            return new UnityWebRequestLateTask(GetRequest, start, finish, _logger);
         }
 
         public IQueuedTask MakePostRequest(Func<string> url, string data, Action start, Action finish)
@@ -79,14 +80,14 @@ namespace Requests
                 return request;
             }
 
-            return new UnityWebRequestLateTask(GetRequest, start, finish);
+            return new UnityWebRequestLateTask(GetRequest, start, finish, _logger);
         }
 
         public IQueuedTask MakeGetRequest<T>(string url, Action start, Action<T> finish)
         {
             var request = UnityWebRequest.Get(_addrBegin + url);
             SetHeaders(request);
-            return new UnityWebRequestResultedTask<T>(start, request.SendWebRequest(), finish, request);
+            return new UnityWebRequestResultedTask<T>(start, request.SendWebRequest(), finish, request, _logger);
         }
 
         public IQueuedTask MakePostRequest<T>(string url, string data, Action start, Action<T> finish)
@@ -96,14 +97,14 @@ namespace Requests
             request.downloadHandler = new DownloadHandlerBuffer();
             request.method = UnityWebRequest.kHttpVerbPOST;
             SetHeaders(request);
-            return new UnityWebRequestResultedTask<T>(start, request.SendWebRequest(), finish, request);
+            return new UnityWebRequestResultedTask<T>(start, request.SendWebRequest(), finish, request, _logger);
         }
 
         public IQueuedTask MakeGetRequest<T>(string url, string data, Action start, Action<T> finish)
         {
             var request = UnityWebRequest.Get(_addrBegin + url);
             SetHeaders(request);
-            return new UnityWebRequestResultedTask<T>(start, request.SendWebRequest(), finish, request);
+            return new UnityWebRequestResultedTask<T>(start, request.SendWebRequest(), finish, request, _logger);
         }
 
         public IQueuedTask MakeGetRequest<T>(Func<string> url, Action start, Action<T> finish)
@@ -115,7 +116,7 @@ namespace Requests
                 return request;
             }
 
-            return new UnityWebRequestLateResultedTask<T>(GetRequest, start, finish);
+            return new UnityWebRequestLateResultedTask<T>(GetRequest, start, finish, _logger);
         }
 
         public IQueuedTask MakePostRequest<T>(Func<string> url, Func<string> data, Action start, Action<T> finish)
@@ -132,7 +133,7 @@ namespace Requests
                 return request;
             }
 
-            return new UnityWebRequestLateResultedTask<T>(GetRequest, start, finish);
+            return new UnityWebRequestLateResultedTask<T>(GetRequest, start, finish, _logger);
         }
 
         public IQueuedTask MakeGetRequest<T>(Func<string> url, string data, Action start, Action<T> finish)
@@ -144,7 +145,7 @@ namespace Requests
                 return request;
             }
 
-            return new UnityWebRequestLateResultedTask<T>(GetRequest, start, finish);
+            return new UnityWebRequestLateResultedTask<T>(GetRequest, start, finish, _logger);
         }
 
         private void SetHeaders(UnityWebRequest request)

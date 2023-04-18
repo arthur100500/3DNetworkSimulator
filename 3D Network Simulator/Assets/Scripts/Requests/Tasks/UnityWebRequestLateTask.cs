@@ -1,7 +1,9 @@
 using System;
 using GNS3.GNSThread;
+using GNS3.ProjectHandling.Exceptions;
 using UnityEngine;
 using UnityEngine.Networking;
+using ILogger = Interfaces.Logger.ILogger;
 
 namespace Requests.Tasks
 {
@@ -12,11 +14,13 @@ namespace Requests.Tasks
         private readonly Action _start;
         private AsyncOperation _operation;
         private UnityWebRequest _request;
+        private ILogger _logger;
 
-        public UnityWebRequestLateTask(Func<UnityWebRequest> urlCreate, Action start, Action finish)
+        public UnityWebRequestLateTask(Func<UnityWebRequest> urlCreate, Action start, Action finish, ILogger logger)
         {
             _start = () => InnerStart(start);
             _requestCreateFunc = urlCreate;
+            _logger = logger;
             _finish = finish;
             Guid = Guid.NewGuid();
 
@@ -24,11 +28,12 @@ namespace Requests.Tasks
         }
 
         public UnityWebRequestLateTask(Func<UnityWebRequest> urlCreate, Action start, Action finish,
-            string notification)
+            string notification, ILogger logger)
         {
             _start = () => InnerStart(start);
             _requestCreateFunc = urlCreate;
             _finish = finish;
+            _logger = logger;
 
             NotificationOnStart = "[..] " + notification;
             NotificationOnSuccess = "[<color=green>OK</color>] " + notification;
@@ -47,12 +52,18 @@ namespace Requests.Tasks
 
         public void Start()
         {
+            _logger.LogDebug( "Start: " + _request.url);
             _start.Invoke();
             IsRunning = true;
         }
 
         public void Finish()
         {
+            _logger.LogDebug( "Finished: " + _request.url);
+            var text = _request.downloadHandler.text;
+            _logger.LogDebug( "Got: " + text);
+            if (_request.responseCode is < 200 or >= 300 )
+                throw new BadResponseException($"Got bad response({_request.responseCode}) from {_request.url}");
             _finish.Invoke();
             IsRunning = false;
         }

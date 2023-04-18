@@ -1,6 +1,8 @@
 using System;
 using GNS3.GNSThread;
+using GNS3.ProjectHandling.Exceptions;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Requests.Tasks
 {
@@ -10,12 +12,14 @@ namespace Requests.Tasks
         private readonly AsyncOperation _operation;
 
         private readonly Action _start;
+        private readonly UnityWebRequest _request;
 
-        public UnityWebRequestTask(Action start, AsyncOperation operation, Action finish)
+        public UnityWebRequestTask(Action start, AsyncOperation operation, Action finish, UnityWebRequest request)
         {
             _start = start;
             _finish = finish;
             _operation = operation;
+            _request = request;
             Guid = Guid.NewGuid();
 
             IsRunning = false;
@@ -49,6 +53,8 @@ namespace Requests.Tasks
 
         public void Finish()
         {
+            if (_request.responseCode is < 200 or >= 300 )
+                throw new BadResponseException($"Got bad response({_request.responseCode}) from {_request.url}");
             _finish.Invoke();
             IsRunning = false;
         }

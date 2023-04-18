@@ -1,5 +1,6 @@
 using System;
 using GNS3.GNSThread;
+using Logger;
 using Requests;
 
 namespace GNS3.ProjectHandling.Project
@@ -21,11 +22,12 @@ namespace GNS3.ProjectHandling.Project
 
         private static GnsProject CreateProject()
         {
+            var logger = new DebugLogger();
             var config = GnsProjectConfig.ProxyGnsProjectConfig();
             var addrBegin = $"http://{config.Address}:{config.Port}/v2/";
-            var requests = new UnityWebRequestTaskMaker(addrBegin, config.User, config.Password);
+            var requests = new UnityWebRequestTaskMaker(addrBegin, config.User, config.Password, logger);
             _dispatcher = QueuedTaskCoroutineDispatcher.GetInstance();
-            return new GnsProject(config, "unity_project", requests, _dispatcher);
+            return new GnsProject(config, "unity_project", requests, _dispatcher, logger);
         }
 
         public static void Cleanup()

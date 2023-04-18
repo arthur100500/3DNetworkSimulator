@@ -5,6 +5,7 @@ using GNS3.JsonObjects;
 using GNS3.JsonObjects.Basic;
 using GNS3.ProjectHandling.Link;
 using GNS3.ProjectHandling.Node;
+using Interfaces.Logger;
 using Interfaces.Requests;
 
 namespace GNS3.ProjectHandling.Project
@@ -16,16 +17,21 @@ namespace GNS3.ProjectHandling.Project
         private GnsJProject _jProject;
         private readonly IQueuedTaskDispatcher _dispatcher;
         private (string, string) _tempRequest;
-        private List<GnsJNode> _nodes;
+        private ILogger _logger;
 
-        public GnsProject(GnsProjectConfig config, string name, IRequestTaskMaker requests,
-            IQueuedTaskDispatcher dispatcher)
+        public GnsProject(
+            GnsProjectConfig config,
+            string name,
+            IRequestTaskMaker requests,
+            IQueuedTaskDispatcher dispatcher,
+            ILogger logger
+        )
         {
             Name = name;
             Config = config;
             _requests = requests;
             _dispatcher = dispatcher;
-            _nodes = new List<GnsJNode>();
+            _logger = logger;
 
             EnqueueProjectCreation();
         }
@@ -37,6 +43,7 @@ namespace GNS3.ProjectHandling.Project
         {
             var task = _requests.MakeDeleteRequest("projects/" + _jProject.project_id, "{}", () => { }, () => { });
             _dispatcher.EnqueueActionWithNotification(task, "Removing project", 4);
+            _logger.LogDebug($"Disposing project {Name}({ID})");
         }
 
         public void CreateNode<T>(string name, string type, Action<T> onCreate) where T : GnsJNode
@@ -52,8 +59,8 @@ namespace GNS3.ProjectHandling.Project
 
             void AddAndOnCreate(T node)
             {
-                _nodes.Add(node);
                 onCreate(node);
+                _logger.LogDebug($"Created node {node.name}({node.node_id})");
             }
 
             var nodeCreationTask = _requests.MakePostRequest(GetUrl, () => data, () => { }, (Action<T>)AddAndOnCreate);
@@ -80,7 +87,11 @@ namespace GNS3.ProjectHandling.Project
                 () => _tempRequest.Item1,
                 () => _tempRequest.Item2,
                 () => { },
-                project => { _jProject = project; }
+                project =>
+                {
+                    _jProject = project;
+                    _logger.LogDebug($"Created project {Name}({ID})");
+                }
             );
 
             _dispatcher.EnqueueActionWithNotification(getProjectsTask, notification, 4);
@@ -90,7 +101,7 @@ namespace GNS3.ProjectHandling.Project
         public void DeleteNode(GnsNode node)
         {
             var task = _requests.MakeDeleteRequest($"projects/{_jProject.project_id}/nodes/{node.ID}", "{}",
-                () => { }, () => { });
+                () => { }, () => { _logger.LogDebug($"Created node {node.Name}({node.ID})"); });
             _dispatcher.EnqueueActionWithNotification(task, "Removing node " + node.Name, 4);
         }
 
@@ -104,7 +115,11 @@ namespace GNS3.ProjectHandling.Project
                 return url;
             }
 
-            var task = _requests.MakePostRequest(GetUrl, "{}", () => { }, () => { node.IsStarted = true; });
+            var task = _requests.MakePostRequest(GetUrl, "{}", () => { }, () =>
+            {
+                node.IsStarted = true;
+                _logger.LogDebug($"Started node {node.Name}({node.ID})");
+            });
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }
 
@@ -112,7 +127,11 @@ namespace GNS3.ProjectHandling.Project
         {
             var notification = "Stopping node " + node.Name;
             var url = $"projects/{_jProject.project_id}/nodes/{node.ID}/stop";
-            var task = _requests.MakePostRequest(url, "{}", () => { }, () => { node.IsStarted = false; });
+            var task = _requests.MakePostRequest(url, "{}", () => { }, () =>
+            {
+                node.IsStarted = false;
+                _logger.LogDebug($"Stopped node {node.Name}({node.ID})");
+            });
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }
 
@@ -120,7 +139,8 @@ namespace GNS3.ProjectHandling.Project
         {
             var notification = $"Unlinking {self.Name} and {other.Name}";
             var url = $"projects/{_jProject.project_id}/links/{linkID}";
-            var task = _requests.MakeDeleteRequest(url, "{}", () => { }, () => { });
+            var task = _requests.MakeDeleteRequest(url, "{}", () => { },
+                () => { _logger.LogDebug($"Unlinking node {self.Name} and {other.Name}"); });
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }
 
@@ -128,7 +148,8 @@ namespace GNS3.ProjectHandling.Project
         {
             var notification = "Linking " + self.Name + " and " + other.Name;
             var url = $"projects/{_jProject.project_id}/links";
-            var task = _requests.MakePostRequest(url, linkJson, () => { }, callback);
+            var task = _requests.MakePostRequest(url, linkJson,
+                () => { _logger.LogDebug($"Linking node {self.Name} and {other.Name}"); }, callback);
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }
     }

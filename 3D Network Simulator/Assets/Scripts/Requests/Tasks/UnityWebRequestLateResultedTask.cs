@@ -1,8 +1,10 @@
 using System;
 using GNS3.GNSThread;
+using GNS3.ProjectHandling.Exceptions;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
+using ILogger = Interfaces.Logger;
 
 namespace Requests.Tasks
 {
@@ -13,12 +15,15 @@ namespace Requests.Tasks
         private readonly Action _start;
         private AsyncOperation _operation;
         private UnityWebRequest _request;
+        private ILogger.ILogger _logger;
 
-        public UnityWebRequestLateResultedTask(Func<UnityWebRequest> urlCreate, Action start, Action<T> finish)
+        public UnityWebRequestLateResultedTask(Func<UnityWebRequest> urlCreate, Action start, Action<T> finish,
+            ILogger.ILogger logger)
         {
             _start = () => InnerStart(start);
             _requestCreateFunc = urlCreate;
             _finish = finish;
+            _logger = logger;
             Guid = Guid.NewGuid();
 
             IsRunning = false;
@@ -48,11 +53,17 @@ namespace Requests.Tasks
         {
             _start.Invoke();
             IsRunning = true;
+            _logger.LogDebug( "Start: " + _request.url);
         }
 
         public void Finish()
         {
-            var deserialized = JsonConvert.DeserializeObject<T>(_request.downloadHandler.text);
+            _logger.LogDebug( "Finished: " + _request.url);
+            var text = _request.downloadHandler.text;
+            _logger.LogDebug( "Got: " + text);
+            var deserialized = JsonConvert.DeserializeObject<T>(text);
+            if (_request.responseCode is < 200 or >= 300)
+                throw new BadResponseException($"Got bad response({_request.responseCode}) from {_request.url}");
             _finish.Invoke(deserialized);
             IsRunning = false;
         }
