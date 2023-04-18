@@ -1,4 +1,5 @@
 using GNS3.JsonObjects.Basic;
+using Newtonsoft.Json;
 
 namespace GNS3.JsonObjects
 {
@@ -10,6 +11,7 @@ namespace GNS3.JsonObjects
         public string console_type { get; set; }
         public string status { get; set; }
 
+        [JsonConstructor] 
         public GnsVpcsJNode()
         {
         }

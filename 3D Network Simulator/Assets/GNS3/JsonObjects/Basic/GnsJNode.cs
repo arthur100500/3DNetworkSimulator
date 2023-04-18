@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace GNS3.JsonObjects.Basic
 {
     public class GnsJNode
@@ -7,6 +9,7 @@ namespace GNS3.JsonObjects.Basic
         public string node_type { get; set; }
         public string project_id { get; set; }
         
+        [JsonConstructor] 
         public GnsJNode() {}
     }
 }

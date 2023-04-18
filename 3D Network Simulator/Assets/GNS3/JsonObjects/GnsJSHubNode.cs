@@ -1,11 +1,17 @@
 using System.Collections.Generic;
 using GNS3.JsonObjects.Basic;
+using Newtonsoft.Json;
 
 namespace GNS3.JsonObjects
 {
     public class DataLinkTypes
     {
         public string Ethernet { get; set; }
+
+        [JsonConstructor]
+        public DataLinkTypes()
+        {
+        }
     }
 
     public class Label
@@ -16,6 +22,7 @@ namespace GNS3.JsonObjects
         public object x { get; set; }
         public int y { get; set; }
 
+        [JsonConstructor] 
         public Label()
         {
         }
@@ -30,6 +37,7 @@ namespace GNS3.JsonObjects
         public int port_number { get; set; }
         public string short_name { get; set; }
 
+        [JsonConstructor] 
         public Port()
         {
         }
@@ -40,6 +48,7 @@ namespace GNS3.JsonObjects
         public string name { get; set; }
         public int port_number { get; set; }
 
+        [JsonConstructor] 
         public PortsMapping()
         {
         }
@@ -49,6 +58,7 @@ namespace GNS3.JsonObjects
     {
         public List<PortsMapping> ports_mapping { get; set; }
         
+        [JsonConstructor] 
         public Properties(){}
     }
 
@@ -78,6 +88,7 @@ namespace GNS3.JsonObjects
         public int y { get; set; }
         public int z { get; set; }
 
+        [JsonConstructor] 
         public GnsJSHubNode()
         {
         }
