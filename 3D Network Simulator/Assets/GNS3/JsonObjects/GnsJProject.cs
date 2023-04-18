@@ -4,5 +4,9 @@ namespace GNS3.JsonObjects
     {
         public string name { get; set; }
         public string project_id { get; set; }
+
+        public GnsJProject()
+        {
+        }
     }
 }

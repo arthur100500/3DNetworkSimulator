@@ -15,6 +15,10 @@ namespace GNS3.JsonObjects
         public string text { get; set; }
         public object x { get; set; }
         public int y { get; set; }
+
+        public Label()
+        {
+        }
     }
 
     public class Port
@@ -25,17 +29,27 @@ namespace GNS3.JsonObjects
         public string name { get; set; }
         public int port_number { get; set; }
         public string short_name { get; set; }
+
+        public Port()
+        {
+        }
     }
 
     public class PortsMapping
     {
         public string name { get; set; }
         public int port_number { get; set; }
+
+        public PortsMapping()
+        {
+        }
     }
 
     public class Properties
     {
         public List<PortsMapping> ports_mapping { get; set; }
+        
+        public Properties(){}
     }
 
     public class GnsJSHubNode : GnsJNode
@@ -63,5 +77,9 @@ namespace GNS3.JsonObjects
         public int x { get; set; }
         public int y { get; set; }
         public int z { get; set; }
+
+        public GnsJSHubNode()
+        {
+        }
     }
 }

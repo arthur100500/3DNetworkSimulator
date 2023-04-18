@@ -9,5 +9,9 @@ namespace GNS3.JsonObjects
         public string console_host { get; set; }
         public string console_type { get; set; }
         public string status { get; set; }
+
+        public GnsVpcsJNode()
+        {
+        }
     }
 }
