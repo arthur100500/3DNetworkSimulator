@@ -52,7 +52,6 @@ namespace Requests.Tasks
 
         public void Start()
         {
-            _logger.LogDebug( "Start: " + _request.url);
             _start.Invoke();
             IsRunning = true;
         }
@@ -79,6 +78,7 @@ namespace Requests.Tasks
             _request = _requestCreateFunc.Invoke();
             _operation = _request.SendWebRequest();
             outerStart.Invoke();
+            _logger.LogDebug( "Start: " + _request.url);
         }
     }
 }
