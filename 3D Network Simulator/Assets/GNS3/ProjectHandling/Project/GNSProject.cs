@@ -42,11 +42,11 @@ namespace GNS3.ProjectHandling.Project
         public void CreateNode<T>(string name, string type, Action<T> onCreate) where T : GnsJNode
         {
             var notification = "Creating node " + name;
-            var data = "{\"name\": \"" + name + "\", \"node_type\": \"" + type + "\", \"compute_id\": \"local\"}";
+            var data = $"{{\"name\": \"{name}\", \"node_type\": \"{type}\", \"compute_id\": \"local\"}}";
 
             string GetUrl()
             {
-                var url = "projects/" + _jProject.project_id + "/nodes";
+                var url = $"projects/{_jProject.project_id}/nodes";
                 return url;
             }
 
@@ -71,8 +71,8 @@ namespace GNS3.ProjectHandling.Project
                 {
                     var foundProject = projectList.Find(p => p.name == Name);
                     _tempRequest = foundProject is null
-                        ? ("projects", "{\"name\": \"" + Name + "\"}")
-                        : ("projects/" + foundProject.project_id + "/open", "{}");
+                        ? ("projects", $"{{\"name\": \"{Name}\"}}")
+                        : ($"projects/{foundProject.project_id}/open", "{}");
                 }
             );
 
@@ -89,7 +89,7 @@ namespace GNS3.ProjectHandling.Project
 
         public void DeleteNode(GnsNode node)
         {
-            var task = _requests.MakeDeleteRequest("projects/" + _jProject.project_id + "/nodes/" + node.ID, "{}",
+            var task = _requests.MakeDeleteRequest($"projects/{_jProject.project_id}/nodes/{node.ID}", "{}",
                 () => { }, () => { });
             _dispatcher.EnqueueActionWithNotification(task, "Removing node " + node.Name, 4);
         }
@@ -100,7 +100,7 @@ namespace GNS3.ProjectHandling.Project
 
             string GetUrl()
             {
-                var url = "projects/" + _jProject.project_id + "/nodes/" + node.ID + "/start";
+                var url = $"projects/{_jProject.project_id}/nodes/{node.ID}/start";
                 return url;
             }
 
@@ -111,15 +111,15 @@ namespace GNS3.ProjectHandling.Project
         public void StopNode(GnsNode node)
         {
             var notification = "Stopping node " + node.Name;
-            var url = "projects/" + _jProject.project_id + "/nodes/" + node.ID + "/stop";
+            var url = $"projects/{_jProject.project_id}/nodes/{node.ID}/stop";
             var task = _requests.MakePostRequest(url, "{}", () => { }, () => { node.IsStarted = false; });
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }
 
         public void RemoveLink(string linkID, GnsNode self, GnsNode other)
         {
-            var notification = "Unlinking " + self.Name + " and " + other.Name;
-            var url = "projects/" + _jProject.project_id + "/links" + linkID;
+            var notification = $"Unlinking {self.Name} and {other.Name}";
+            var url = $"projects/{_jProject.project_id}/links/{linkID}";
             var task = _requests.MakeDeleteRequest(url, "{}", () => { }, () => { });
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }
@@ -127,7 +127,7 @@ namespace GNS3.ProjectHandling.Project
         public void AddLink(string linkJson, GnsNode self, GnsNode other, Action<GnsJLink> callback)
         {
             var notification = "Linking " + self.Name + " and " + other.Name;
-            var url = "projects/" + _jProject.project_id + "/links";
+            var url = $"projects/{_jProject.project_id}/links";
             var task = _requests.MakePostRequest(url, linkJson, () => { }, callback);
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }

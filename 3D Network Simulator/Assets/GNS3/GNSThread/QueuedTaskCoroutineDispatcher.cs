@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UI.Console;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace GNS3.GNSThread
 {
-    public class QueuedTaskCoroutineDispatcher : MonoBehaviour, IQueuedTaskDispatcher, ISingleton
+    public class QueuedTaskCoroutineDispatcher : MonoBehaviour, IQueuedTaskDispatcher, ISingleton, IDisposable
     {
         private static QueuedTaskCoroutineDispatcher _instance;
         private readonly Queue<IQueuedTask> _tasks;
@@ -16,6 +17,7 @@ namespace GNS3.GNSThread
         private QueuedTaskCoroutineDispatcher()
         {
             _tasks = new Queue<IQueuedTask>();
+            Debug.Log("Queued Task Coroutine Dispatcher created");
         }
 
         public void EnqueueAction(IQueuedTask action)
@@ -87,6 +89,11 @@ namespace GNS3.GNSThread
                 yield return new WaitForSeconds(0.1f);
                 GlobalNotificationManager.StartRemovingMessage(_currentTask.Guid, 4);
             }
+        }
+
+        public void Dispose()
+        {
+            _tasks.Clear();
         }
     }
 }

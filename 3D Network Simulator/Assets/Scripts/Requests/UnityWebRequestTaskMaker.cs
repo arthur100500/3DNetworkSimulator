@@ -3,6 +3,7 @@ using System.Text;
 using GNS3.GNSThread;
 using Interfaces.Requests;
 using Requests.Tasks;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Requests
@@ -151,7 +152,7 @@ namespace Requests
             request.SetRequestHeader("Authorization", $"Basic {_base64Authorization}");
             request.SetRequestHeader("Access-Control-Allow-Credentials", "true");
             request.SetRequestHeader("Access-Control-Allow-Headers", "Accept, X-Access-Token, X-Application-Name, X-Request-Sent-Time");
-            request.SetRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); 
+            request.SetRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, DELETE"); 
             request.SetRequestHeader("Access-Control-Allow-Origin", "*"); 
         }
     }
