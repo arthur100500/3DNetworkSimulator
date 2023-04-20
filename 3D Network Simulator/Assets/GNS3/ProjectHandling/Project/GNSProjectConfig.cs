@@ -23,7 +23,7 @@ namespace GNS3.ProjectHandling.Project
             return new GnsProjectConfig
             {
                 Address = "localhost",
-                Port = 9364,
+                Port = 5000,
                 User = "admin",
                 Password = "666"
             };

@@ -36,7 +36,7 @@ namespace GNS3.GNSThread
             _thread.Join();
         }
 
-        public void EnqueueAction(IQueuedTask action)
+        public void EnqueueAction(IQueuedTask<object> action)
         {
             if (!_started) Run();
             _actions.Enqueue(() =>
@@ -47,7 +47,7 @@ namespace GNS3.GNSThread
             });
         }
 
-        public void EnqueueActionWithNotifications(IQueuedTask action, string onStart, string onEnd, float delay)
+        public void EnqueueActionWithNotifications(IQueuedTask<object> action, string onStart, string onEnd, float delay)
         {
             if (!_started) Run();
             _actions.Enqueue(() =>
@@ -62,7 +62,7 @@ namespace GNS3.GNSThread
             });
         }
 
-        public void EnqueueActionWithNotification(IQueuedTask action, string notification, float delay)
+        public void EnqueueActionWithNotification(IQueuedTask<object> action, string notification, float delay)
         {
             if (!_started) Run();
             _actions.Enqueue(() =>

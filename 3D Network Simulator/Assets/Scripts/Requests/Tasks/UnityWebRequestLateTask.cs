@@ -7,7 +7,7 @@ using ILogger = Interfaces.Logger.ILogger;
 
 namespace Requests.Tasks
 {
-    public class UnityWebRequestLateTask : IQueuedTask
+    public class UnityWebRequestLateTask : IQueuedTask<AsyncOperation>
     {
         private readonly Action _finish;
         private readonly Func<UnityWebRequest> _requestCreateFunc;

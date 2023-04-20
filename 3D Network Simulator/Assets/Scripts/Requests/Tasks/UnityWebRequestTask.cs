@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 
 namespace Requests.Tasks
 {
-    public class UnityWebRequestTask : IQueuedTask
+    public class UnityWebRequestTask : IQueuedTask<AsyncOperation>
     {
         private readonly Action _finish;
         private readonly AsyncOperation _operation;

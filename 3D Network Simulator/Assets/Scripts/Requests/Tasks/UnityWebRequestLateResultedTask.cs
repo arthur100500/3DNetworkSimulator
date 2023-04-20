@@ -8,16 +8,16 @@ using ILogger = Interfaces.Logger;
 
 namespace Requests.Tasks
 {
-    public class UnityWebRequestLateResultedTask<T> : IQueuedTask
+    public class UnityWebRequestLateResultedTask<T1> : IQueuedTask<AsyncOperation>
     {
-        private readonly Action<T> _finish;
+        private readonly Action<T1> _finish;
         private readonly Func<UnityWebRequest> _requestCreateFunc;
         private readonly Action _start;
         private AsyncOperation _operation;
         private UnityWebRequest _request;
         private ILogger.ILogger _logger;
 
-        public UnityWebRequestLateResultedTask(Func<UnityWebRequest> urlCreate, Action start, Action<T> finish,
+        public UnityWebRequestLateResultedTask(Func<UnityWebRequest> urlCreate, Action start, Action<T1> finish,
             ILogger.ILogger logger)
         {
             _start = () => InnerStart(start);
@@ -29,7 +29,7 @@ namespace Requests.Tasks
             IsRunning = false;
         }
 
-        public UnityWebRequestLateResultedTask(Func<UnityWebRequest> urlCreate, Action start, Action<T> finish,
+        public UnityWebRequestLateResultedTask(Func<UnityWebRequest> urlCreate, Action start, Action<T1> finish,
             string notification)
         {
             _start = () => InnerStart(start);
@@ -61,7 +61,7 @@ namespace Requests.Tasks
             _logger.LogDebug( "Finished: " + _request.url);
             var text = _request.downloadHandler.text;
             _logger.LogDebug( "Got: " + text);
-            var deserialized = JsonConvert.DeserializeObject<T>(text);
+            var deserialized = JsonConvert.DeserializeObject<T1>(text);
             if (_request.responseCode is < 200 or >= 300)
                 throw new BadResponseException($"Got bad response({_request.responseCode}) from {_request.url}");
             _finish.Invoke(deserialized);

@@ -10,27 +10,27 @@ namespace GNS3.GNSThread
     public class QueuedTaskCoroutineDispatcher : MonoBehaviour, IQueuedTaskDispatcher, ISingleton, IDisposable
     {
         private static QueuedTaskCoroutineDispatcher _instance;
-        private readonly Queue<IQueuedTask> _tasks;
-        private IQueuedTask _currentTask;
+        private readonly Queue<IQueuedTask<object>> _tasks;
+        private IQueuedTask<object> _currentTask;
         private bool _running;
 
         private QueuedTaskCoroutineDispatcher()
         {
-            _tasks = new Queue<IQueuedTask>();
+            _tasks = new Queue<IQueuedTask<object>>();
             Debug.Log("Queued Task Coroutine Dispatcher created");
         }
 
-        public void EnqueueAction(IQueuedTask action)
+        public void EnqueueAction(IQueuedTask<object> action)
         {
             _tasks.Enqueue(action);
         }
 
-        public void EnqueueActionWithNotifications(IQueuedTask action, string onStart, string onEnd, float delay)
+        public void EnqueueActionWithNotifications(IQueuedTask<object> action, string onStart, string onEnd, float delay)
         {
             _tasks.Enqueue(action);
         }
 
-        public void EnqueueActionWithNotification(IQueuedTask action, string notification, float delay)
+        public void EnqueueActionWithNotification(IQueuedTask<object> action, string notification, float delay)
         {
             action.NotificationOnStart = "[..] " + notification;
             action.NotificationOnSuccess = "[<color=green>OK</color>] " + notification;

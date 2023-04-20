@@ -1,9 +1,10 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace GNS3.GNSThread
 {
-    public interface IQueuedTask
+    public interface IQueuedTask<out T>
     {
         public Guid Guid { get; }
         public bool IsRunning { get; }
@@ -13,6 +14,6 @@ namespace GNS3.GNSThread
         public bool IsSuccessful { get; }
         public void Start();
         public void Finish();
-        public AsyncOperation DoWork();
+        public T DoWork();
     }
 }

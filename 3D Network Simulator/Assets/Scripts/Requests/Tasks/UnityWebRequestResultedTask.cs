@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 using ILogger = Interfaces.Logger.ILogger;
 namespace Requests.Tasks
 {
-    public class UnityWebRequestResultedTask<T> : IQueuedTask
+    public class UnityWebRequestResultedTask<T> : IQueuedTask<AsyncOperation>
     {
         private readonly Action<T> _finish;
         private readonly AsyncOperation _operation;
