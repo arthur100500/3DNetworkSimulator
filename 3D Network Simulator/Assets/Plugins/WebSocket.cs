@@ -6,10 +6,13 @@
  * @license Apache 2.0 - See LICENSE file distributed with this source code.
  */
 
+// ReSharper disable all
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using AOT;
+using UnityEngine;
+using System.Text;
 
 namespace GNS3.GNSConsole.WebSocket
 {
@@ -674,7 +677,7 @@ namespace GNS3.GNSConsole.WebSocket
 
         }
 
-        [MonoPInvokeCallback(typeof(OnMessageCallback))]
+        [MonoPInvokeCallback(typeof(Action<int, int, int>))]
         public static void DelegateOnMessageEvent(int instanceId, System.IntPtr msgPtr, int msgSize)
         {
 
@@ -684,7 +687,6 @@ namespace GNS3.GNSConsole.WebSocket
             {
                 byte[] msg = new byte[msgSize];
                 Marshal.Copy(msgPtr, msg, 0, msgSize);
-
                 instanceRef.DelegateOnMessageEvent(msg);
             }
 

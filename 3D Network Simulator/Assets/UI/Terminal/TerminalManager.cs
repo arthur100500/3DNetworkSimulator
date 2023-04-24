@@ -6,6 +6,7 @@ using Objects.Player.Scripts;
 using Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Scripting;
 using UnityEngine.UI;
 
 namespace UI.Terminal
@@ -144,16 +145,26 @@ namespace UI.Terminal
         public void LinkTo(IEventConsole console)
         {
             _console = console;
+            Debug.Log("Linking WS!");
             console.AddOnMessageListener(DisplayMessage);
+            console.Connect();
         }
 
+        [Preserve]
         private void DisplayMessage(byte[] text)
         {
             var stringText = Encoding.ASCII.GetString(text);
 
             foreach (var line in stringText.Split('\n'))
-                if (ValidateLine(line))
-                    _messages.Enqueue(ProcessText(line));
+            {
+                Debug.Log("Looking at: " + line);
+                
+                if (!ValidateLine(line)) continue;
+                Debug.Log("Enqueued line: " + line);
+                _messages.Enqueue(ProcessText(line));
+            }
+
+            Debug.Log("Message count: " + _messages.Count);
         }
 
         private bool ValidateLine(string line)

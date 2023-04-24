@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GNS3.GNSConsole;
 using GNS3.ProjectHandling.Link;
 using GNS3.ProjectHandling.Project;
+using Logger;
 
 namespace GNS3.ProjectHandling.Node
 {
@@ -26,7 +27,7 @@ namespace GNS3.ProjectHandling.Node
         {
             var gnsWsUrl = "ws://" + Project.Config.Address + ":" + Project.Config.Port + "/v2/projects/" +
                            Project.ID + "/nodes/" + ID + "/console/ws";
-            return new GnsConsole(gnsWsUrl);
+            return new GnsConsole(gnsWsUrl, new DebugLogger());
         }
 
         protected void Init(string name, GnsProject project)

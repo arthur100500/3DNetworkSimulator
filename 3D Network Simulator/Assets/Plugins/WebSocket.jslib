@@ -49,7 +49,8 @@ var LibraryWebSocket = {
 	 * @param callback Reference to C# static function
 	 */
 	WebSocketSetOnMessage: function(callback) {
-
+		
+		console.log(callback)
 		webSocketState.onMessage = callback;
 
 	},
@@ -152,18 +153,19 @@ var LibraryWebSocket = {
 			if (webSocketState.debug)
 				console.log("[JSLIB WebSocket] Received message:", ev.data);
 
+
 			if (webSocketState.onMessage === null)
 				return;
 
 			if (ev.data instanceof ArrayBuffer) {
 
 				var dataBuffer = new Uint8Array(ev.data);
-				
+
 				var buffer = _malloc(dataBuffer.length);
 				HEAPU8.set(dataBuffer, buffer);
-
+				
 				try {
-					Module['dynCall_viii']( webSocketState.onMessage, [ instanceId, buffer, dataBuffer.length ]);
+					Module['dynCall_viii']( webSocketState.onMessage, instanceId, buffer, dataBuffer.length);
 				} finally {
 					_free(buffer);
 				}
@@ -177,7 +179,7 @@ var LibraryWebSocket = {
 				var buffer = _malloc(dataBuffer.length);
 				HEAPU8.set(dataBuffer, buffer);
 				try {
-				Runtime.dynCall("viii", webSocketState.onMessage, [ instanceId, buffer, dataBuffer.length ]);
+					Module['dynCall_viii']( webSocketState.onMessage, instanceId, buffer, dataBuffer.length);
 				} finally {
 				_free(buffer);
 			}
