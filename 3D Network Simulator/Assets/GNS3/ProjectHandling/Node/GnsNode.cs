@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GNS3.GNSConsole;
-using GNS3.ProjectHandling.Link;
+using GNS3.JsonObjects;
 using GNS3.ProjectHandling.Project;
 using Logger;
 
