@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 using Interfaces.TextTransformer;
-using Unity.VisualScripting;
-using UnityEngine;
 
 namespace Text
 {
     public class EscapeSequencesPrettifier : ITextTransformer
     {
-        private Dictionary<StyleSequenceType, string> _styles;
-        private List<string> _openTags;
+        private readonly List<string> _openTags;
+        private readonly Dictionary<StyleSequenceType, string> _styles;
 
         public EscapeSequencesPrettifier()
         {
-            _openTags = new();
-            _styles = new()
+            _openTags = new List<string>();
+            _styles = new Dictionary<StyleSequenceType, string>
             {
                 [StyleSequenceType.BoldBright] = "<b>",
                 [StyleSequenceType.NoBoldBright] = "</b>",
@@ -56,14 +54,14 @@ namespace Text
                 [StyleSequenceType.BrightBackgroundBlue] = "UNSUPPORTED",
                 [StyleSequenceType.BrightBackgroundMagenta] = "UNSUPPORTED",
                 [StyleSequenceType.BrightBackgroundCyan] = "UNSUPPORTED",
-                [StyleSequenceType.BrightBackgroundWhite] = "UNSUPPORTED",
+                [StyleSequenceType.BrightBackgroundWhite] = "UNSUPPORTED"
             };
         }
-        
+
         public string Process(string input)
         {
             var result = new StringBuilder((int)(input.Length * 1.5f));
-            
+
             for (var index = 0; index < input.Length; index++)
             {
                 var style = CheckForStyleSequence(input, index);
@@ -88,15 +86,15 @@ namespace Text
 
             return result.ToString();
         }
-        
+
         private StyleSequenceType CheckForStyleSequence(string input, int start)
         {
             if (!input.Substring(start).StartsWith("["))
                 return StyleSequenceType.None;
-            
+
             start += 2;
             var digitCount = 0;
-            while (Char.IsDigit(input[start + digitCount])) digitCount++;
+            while (char.IsDigit(input[start + digitCount])) digitCount++;
             var result = int.Parse(input.Substring(start, digitCount));
             return (StyleSequenceType)result;
         }
@@ -116,7 +114,7 @@ namespace Text
                         break;
                 }
 
-                if (tag.StartsWith("<color")) 
+                if (tag.StartsWith("<color"))
                     sb.Append("</color>");
             }
 

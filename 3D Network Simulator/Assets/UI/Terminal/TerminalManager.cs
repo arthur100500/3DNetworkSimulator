@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using GNS3.GNSConsole;
 using Interfaces.TextTransformer;
 using Objects.Player.Scripts;
 using Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Scripting;
 using UnityEngine.UI;
 
 namespace UI.Terminal
@@ -32,10 +32,10 @@ namespace UI.Terminal
         private Vector3 _cachedPosition;
         private Vector3 _cachedScale;
         private CanvasGroup _canvasGroup;
+
+        private IEventConsole _console;
         private string _lastInput = "";
         private PlayerMovement _playerMovement;
-        
-        private IEventConsole _console;
         private ITextTransformer _textTransformer;
         private Canvas ScreenCanvas { get; set; }
 
@@ -145,16 +145,26 @@ namespace UI.Terminal
         public void LinkTo(IEventConsole console)
         {
             _console = console;
+            Debug.Log("Linking WS!");
             console.AddOnMessageListener(DisplayMessage);
+            console.Connect();
         }
 
+        [Preserve]
         private void DisplayMessage(byte[] text)
         {
             var stringText = Encoding.ASCII.GetString(text);
 
             foreach (var line in stringText.Split('\n'))
-                if (ValidateLine(line))
-                    _messages.Enqueue(ProcessText(line));
+            {
+                Debug.Log("Looking at: " + line);
+                
+                if (!ValidateLine(line)) continue;
+                Debug.Log("Enqueued line: " + line);
+                _messages.Enqueue(ProcessText(line));
+            }
+
+            Debug.Log("Message count: " + _messages.Count);
         }
 
         private bool ValidateLine(string line)

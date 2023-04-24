@@ -1,7 +1,7 @@
 namespace Text
 {
-    public enum StyleSequenceType 
-    { 
+    public enum StyleSequenceType
+    {
         None = -1,
         Default = 0,
         BoldBright = 1,
@@ -45,6 +45,6 @@ namespace Text
         BrightBackgroundBlue = 104,
         BrightBackgroundMagenta = 105,
         BrightBackgroundCyan = 106,
-        BrightBackgroundWhite = 107,
+        BrightBackgroundWhite = 107
     }
 }
