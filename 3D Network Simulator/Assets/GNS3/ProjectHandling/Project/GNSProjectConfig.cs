@@ -17,5 +17,16 @@ namespace GNS3.ProjectHandling.Project
                 Password = "666"
             };
         }
+        
+        public static GnsProjectConfig ProxyGnsProjectConfig()
+        {
+            return new GnsProjectConfig
+            {
+                Address = "localhost",
+                Port = 10203,
+                User = "admin",
+                Password = "666"
+            };
+        }
     }
 }

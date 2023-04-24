@@ -1,7 +1,5 @@
-using GNS3.GNSThread;
 using GNS3.JsonObjects;
 using GNS3.ProjectHandling.Project;
-using Newtonsoft.Json;
 
 namespace GNS3.ProjectHandling.Node
 {
@@ -12,16 +10,19 @@ namespace GNS3.ProjectHandling.Node
         public GnsVpcsNode(GnsProject project, string name)
         {
             Init(name, project);
-
-            var notification = "Creating node " + Name;
-            QueuedTaskThread.GetInstance().EnqueueActionWithNotification(InitializeNode, notification, 4);
+            InitializeNode();
         }
 
         private void InitializeNode()
         {
-            _jNode = Project.CreateNode<GnsVpcsJNode>(Name, "vpcs");
-            NodeID = _jNode.node_id;
-            IsReady = true;
+            void AssignNode(GnsVpcsJNode jNode)
+            {
+                _jNode = jNode;
+                ID = _jNode.node_id;
+                IsReady = true;
+            }
+
+            Project.CreateNode<GnsVpcsJNode>(Name, "vpcs", AssignNode);
         }
     }
 }
