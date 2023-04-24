@@ -62,3 +62,6 @@ crashlytics-build.properties
 .idea/
 .vscode/
 .vsconfig
+
+# User settings
+UserSettings/ 
