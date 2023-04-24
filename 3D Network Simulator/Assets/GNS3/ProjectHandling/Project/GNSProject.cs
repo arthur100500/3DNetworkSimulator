@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using GNS3.GNSThread;
 using GNS3.JsonObjects;
 using GNS3.JsonObjects.Basic;
-using GNS3.ProjectHandling.Link;
 using GNS3.ProjectHandling.Node;
 using Interfaces.Logger;
 using Interfaces.Requests;
