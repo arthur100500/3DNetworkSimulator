@@ -1987,6 +1987,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   devices:
   - {fileID: 3526005316320735901, guid: a2433389155d44940a7ad764e29d3120, type: 3}
+  - {fileID: 4566983166976523654, guid: b876bb4278551274392ebad93121af1b, type: 3}
+  - {fileID: 2336986158620154863, guid: e13de4b5cd48967449576ecfd29b19a5, type: 3}
   cardPrefab: {fileID: 4443306653076494465, guid: cec88629c94644b4aaae76668da7185d, type: 3}
   cardHolder: {fileID: 304176186}
   canvasGroup: {fileID: 1645643863}
