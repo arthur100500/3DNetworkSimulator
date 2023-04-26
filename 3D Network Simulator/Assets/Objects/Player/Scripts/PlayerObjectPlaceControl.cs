@@ -41,6 +41,9 @@ namespace Objects.Player.Scripts
                 return;
             }
 
+            if (Input.GetMouseButtonDown(1))
+                DestroyPreview();
+
             var angle = Quaternion.Euler(0, _camera.transform.rotation.eulerAngles.y, 0);
             _previewDevice.transform.position = hitPosition
                                                 + angle * _currentDevice.PreviewOffset;
@@ -53,6 +56,11 @@ namespace Objects.Player.Scripts
             var actual = Instantiate(_currentDevice.GetActual());
             actual.transform.position = position + angle * _currentDevice.ActualOffset;
             actual.transform.rotation = angle;
+            DestroyPreview();
+        }
+
+        private void DestroyPreview()
+        {
             Destroy(_previewDevice);
             _previewDevice = null;
             _currentDevice = null;

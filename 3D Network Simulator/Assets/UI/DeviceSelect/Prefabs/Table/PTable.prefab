@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &640555804365879966
+--- !u!1 &8775470656813281178
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,43 +8,43 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8669292254619713248}
-  - component: {fileID: 4566983166976523654}
+  - component: {fileID: 7420374698098866989}
+  - component: {fileID: 2336986158620154863}
   m_Layer: 0
-  m_Name: PMiniHub
+  m_Name: PTable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8669292254619713248
+--- !u!4 &7420374698098866989
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 640555804365879966}
+  m_GameObject: {fileID: 8775470656813281178}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.8941906, y: -8.896899, z: -9.755937}
+  m_LocalPosition: {x: -6.1435814, y: -8.333287, z: -9.078496}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4566983166976523654
+--- !u!114 &2336986158620154863
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 640555804365879966}
+  m_GameObject: {fileID: 8775470656813281178}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 622be402977f4472b8aa9fda937dcbae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actualOffset: {x: 0, y: 0.05, z: 0}
-  previewOffset: {x: 0, y: 0.05, z: 0}
-  prefab: {fileID: 3425930015767318780, guid: 91af60db2a441394d9587cedb856f376, type: 3}
-  previewPrefab: {fileID: 7700007161683620025, guid: a329c1b59de726d41ab31d29d014290b, type: 3}
+  actualOffset: {x: 0, y: 0.49, z: 0}
+  previewOffset: {x: 0, y: 0.49, z: 0}
+  prefab: {fileID: 4082927271240524180, guid: 77cb36de47ce9db43a2c3d5b714d2623, type: 3}
+  previewPrefab: {fileID: 6150023129251204119, guid: ae4e8e3dcf1882846a39a4543a3fc414, type: 3}
