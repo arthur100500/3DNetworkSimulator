@@ -23,6 +23,8 @@ namespace Objects.Devices.PC.Laptop
 
         public void Start()
         {
+            parentCanvas = GameObject.FindWithTag("UI").GetComponent<Canvas>();
+            
             _uiTerminal = Instantiate(uiTerminalPrefab, parentCanvas.transform).GetComponent<TerminalManager>();
             _uiTerminal.Initialize(screenCanvas);
 
