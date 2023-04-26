@@ -41,13 +41,18 @@ namespace Objects.Player.Scripts
                 return;
             }
 
-            _previewDevice.transform.position = hitPosition;
+            var angle = Quaternion.Euler(0, _camera.transform.rotation.eulerAngles.y, 0);
+            _previewDevice.transform.position = hitPosition
+                                                + angle * _currentDevice.PreviewOffset;
+            _previewDevice.transform.rotation = angle;
         }
 
         private void PlaceObject(Vector3 position)
         {
+            var angle = Quaternion.Euler(0, _camera.transform.rotation.eulerAngles.y, 0);
             var actual = Instantiate(_currentDevice.GetActual());
-            actual.transform.position = position;
+            actual.transform.position = position + angle * _currentDevice.ActualOffset;
+            actual.transform.rotation = angle;
             Destroy(_previewDevice);
             _previewDevice = null;
             _currentDevice = null;

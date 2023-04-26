@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 622be402977f4472b8aa9fda937dcbae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0, z: 0}
+  actualOffset: {x: 0, y: 0.03, z: 0}
+  previewOffset: {x: -0.23, y: -0.12, z: 0}
   prefab: {fileID: 8475686634712828776, guid: 6ea708a3ef43ccd459eff9db4cea3b81, type: 3}
   previewPrefab: {fileID: 4934103682846113493, guid: e00a645a2e3ffde44a11584239556360, type: 3}
