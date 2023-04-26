@@ -26,7 +26,7 @@ namespace GNS3.ProjectHandling.Project
         private static GnsProject CreateProject()
         {
             _dispatcher = QueuedTaskCoroutineDispatcher.GetInstance();
-            var logger = new DebugLogger();
+            var logger = new VoidLogger();
             _config = GnsProjectConfig.ProxyGnsProjectConfig();
             var addrBegin = $"http://{_config.Address}:{_config.Port}/v2/";
             var requests = new UnityWebRequestTaskMaker(addrBegin, _config.User, _config.Password, logger);
