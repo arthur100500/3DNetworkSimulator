@@ -14,16 +14,11 @@ namespace GNS3.GNSConsole
         {
             _logger = logger;
             Open(url);
-            _socket.OnMessage += msg => Debug.Log("Socket got: " + Encoding.ASCII.GetString(msg));
         }
 
         public void AddOnOpenListener(WebSocketOpenEventHandler action)
         {
-            _socket.OnOpen += () =>
-            {
-                _logger.LogDebug("Opened WS");
-                action();
-            };
+            _socket.OnOpen += action;
         }
 
         public void AddOnCloseListener(WebSocketCloseEventHandler action)
@@ -45,7 +40,6 @@ namespace GNS3.GNSConsole
 
         public void SendMessage(string message)
         {
-            _logger.LogDebug($"Sent message of length {message.Length}");
             _socket.Send(Encoding.ASCII.GetBytes(message));
         }
 

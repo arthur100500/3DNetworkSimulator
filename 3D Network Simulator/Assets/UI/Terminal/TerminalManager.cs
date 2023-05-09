@@ -157,14 +157,10 @@ namespace UI.Terminal
 
             foreach (var line in stringText.Split('\n'))
             {
-                Debug.Log("Looking at: " + line);
-                
                 if (!ValidateLine(line)) continue;
-                Debug.Log("Enqueued line: " + line);
                 _messages.Enqueue(ProcessText(line));
             }
 
-            Debug.Log("Message count: " + _messages.Count);
         }
 
         private bool ValidateLine(string line)
