@@ -25,6 +25,8 @@ namespace Requests.Tasks
             var authCookie = headers["Set-Cookie"];
             
             _finish.Invoke(authCookie);
+
+            IsRunning = false;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Requests.Tasks
         private readonly bool _needDeserialization;
 
         public Guid Guid { get; }
-        public bool IsRunning { get; private set; }
+        public bool IsRunning { get; protected set; }
         public string NotificationOnStart { get; set; }
         public string NotificationOnSuccess { get; set; }
         public string NotificationOnError { get; set; }
