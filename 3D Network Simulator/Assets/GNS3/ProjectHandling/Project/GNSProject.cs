@@ -16,7 +16,7 @@ namespace GNS3.ProjectHandling.Project
         private GnsJProject _jProject;
         private readonly IQueuedTaskDispatcher _dispatcher;
         private (string, string) _tempRequest;
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
         public GnsProject(
             GnsProjectConfig config,

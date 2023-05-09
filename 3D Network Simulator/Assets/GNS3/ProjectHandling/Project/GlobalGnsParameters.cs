@@ -30,6 +30,7 @@ namespace GNS3.ProjectHandling.Project
             _config = GnsProjectConfig.ProxyGnsProjectConfig();
             var addrBegin = $"http://{_config.Address}:{_config.Port}/v2/";
             var requests = new UnityWebRequestTaskMaker(addrBegin, _config.User, _config.Password, logger);
+            requests.Authorize(_dispatcher, _config);
             return new GnsProject(_config, "unity_project", requests, _dispatcher, logger);
         }
 

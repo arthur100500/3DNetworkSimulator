@@ -14,7 +14,7 @@ namespace Requests.Tasks
         private readonly Func<UnityWebRequest> _requestCreateFunc;
         private readonly Action _start;
         private AsyncOperation _operation;
-        private UnityWebRequest _request;
+        protected UnityWebRequest Request;
         private readonly ILogger _logger;
         private bool _noErrorsOccured;
         private readonly bool _needDeserialization;
@@ -24,7 +24,7 @@ namespace Requests.Tasks
         public string NotificationOnStart { get; set; }
         public string NotificationOnSuccess { get; set; }
         public string NotificationOnError { get; set; }
-        public bool IsSuccessful => _request.isDone && _noErrorsOccured;
+        public bool IsSuccessful => Request.isDone && _noErrorsOccured;
 
         protected AUnityRequestTask(Func<UnityWebRequest> urlCreate, Action start, Action<T> finish, ILogger logger, bool needDeserialization)
         {
@@ -41,8 +41,8 @@ namespace Requests.Tasks
         
         private void InnerStart(Action outerStart)
         {
-            _request = _requestCreateFunc.Invoke();
-            _operation = _request.SendWebRequest();
+            Request = _requestCreateFunc.Invoke();
+            _operation = Request.SendWebRequest();
             outerStart.Invoke();
         }
         
@@ -50,19 +50,19 @@ namespace Requests.Tasks
         {
             _start.Invoke();
             IsRunning = true;
-            _logger.LogDebug( "Start: " + _request.url);
+            _logger.LogDebug( "Start: " + Request.url);
         }
 
-        public void Finish()
+        public virtual void Finish()
         {
-            _logger.LogDebug( "Finished: " + _request.url);
-            var text = _request.downloadHandler.text;
+            _logger.LogDebug( "Finished: " + Request.url);
+            var text = Request.downloadHandler.text;
             _logger.LogDebug( "Got: " + text);
 
-            if (_request.responseCode is < 200 or >= 300)
+            if (Request.responseCode is < 200 or >= 300)
             {
                 _noErrorsOccured = false;
-                throw new BadResponseException($"Got bad response({_request.responseCode}) from {_request.url}");
+                throw new BadResponseException($"Got bad response({Request.responseCode}) from {Request.url}");
             }
 
             if (_needDeserialization)
