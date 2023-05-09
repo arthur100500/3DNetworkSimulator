@@ -96,7 +96,8 @@ namespace GNS3.GNSThread
                 if (_currentTask.NotificationOnError != "" && !_currentTask.IsSuccessful)
                 {
                     GlobalNotificationManager.AddLoadingMessage(_currentTask.NotificationOnError, _currentTask.Guid);
-                    GlobalNotificationManager.AddLoadingMessage(exceptionReason, _currentTask.Guid);
+                    if (exceptionReason != "") 
+                        GlobalNotificationManager.AddLoadingMessage(exceptionReason, _currentTask.Guid);
                 }
 
                 yield return new WaitForSeconds(0.1f);
