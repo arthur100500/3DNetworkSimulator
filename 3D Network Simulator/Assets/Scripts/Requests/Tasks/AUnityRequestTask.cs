@@ -17,7 +17,7 @@ namespace Requests.Tasks
         private UnityWebRequest _request;
         private readonly ILogger _logger;
         private bool _noErrorsOccured;
-        private bool _needDeserialization;
+        private readonly bool _needDeserialization;
 
         public Guid Guid { get; }
         public bool IsRunning { get; private set; }
