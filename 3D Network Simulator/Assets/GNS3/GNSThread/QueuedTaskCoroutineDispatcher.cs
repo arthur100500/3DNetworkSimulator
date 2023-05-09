@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using GNS3.ProjectHandling.Exceptions;
 using UI.Console;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -78,13 +79,25 @@ namespace GNS3.GNSThread
                 _currentTask.Start();
                 yield return _currentTask.DoWork();
 
-                _currentTask.Finish();
+                var exceptionReason = "";
+                
+                try
+                {
+                    _currentTask.Finish();
+                }
+                catch (BadResponseException ex)
+                {
+                    exceptionReason = ex.Message;
+                }
 
                 if (_currentTask.NotificationOnSuccess != "" && _currentTask.IsSuccessful)
                     GlobalNotificationManager.AddLoadingMessage(_currentTask.NotificationOnSuccess, _currentTask.Guid);
 
                 if (_currentTask.NotificationOnError != "" && !_currentTask.IsSuccessful)
+                {
                     GlobalNotificationManager.AddLoadingMessage(_currentTask.NotificationOnError, _currentTask.Guid);
+                    GlobalNotificationManager.AddLoadingMessage(exceptionReason, _currentTask.Guid);
+                }
 
                 yield return new WaitForSeconds(0.1f);
                 GlobalNotificationManager.StartRemovingMessage(_currentTask.Guid, 4);

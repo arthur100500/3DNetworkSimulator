@@ -14,6 +14,7 @@ namespace Requests.Tasks
         private readonly UnityWebRequest _request;
         private readonly Action _start;
         private readonly ILogger _logger;
+        private bool _noErrorsOccured;
         
         public UnityWebRequestResultedTask(Action start, AsyncOperation operation, Action<T> finish,
             UnityWebRequest request, ILogger logger)
@@ -25,7 +26,10 @@ namespace Requests.Tasks
             Guid = Guid.NewGuid();
             _logger = logger;
             
+            _noErrorsOccured = true;
+            
             IsRunning = false;
+            
         }
 
         public UnityWebRequestResultedTask(Action start, AsyncOperation operation, Action<T> finish,
@@ -40,11 +44,13 @@ namespace Requests.Tasks
             NotificationOnStart = "[..] " + notification;
             NotificationOnSuccess = "[<color=green>OK</color>] " + notification;
             NotificationOnError = "[<color=red>FL</color>] " + notification;
+            
+            _noErrorsOccured = true;
 
             IsRunning = false;
         }
 
-        public bool IsSuccessful => _request.isDone;
+        public bool IsSuccessful => _request.isDone && _noErrorsOccured;
 
 
         public Guid Guid { get; }
@@ -66,8 +72,12 @@ namespace Requests.Tasks
             var text = _request.downloadHandler.text;
             _logger.LogDebug( "Got: " + text);
             var deserialized = JsonConvert.DeserializeObject<T>(text);
-            if (_request.responseCode is < 200 or >= 300 )
+            if (_request.responseCode is < 200 or >= 300)
+            {
+                _noErrorsOccured = false;
                 throw new BadResponseException($"Got bad response({_request.responseCode}) from {_request.url}");
+            }
+
             _finish.Invoke(deserialized);
             IsRunning = false;
         }

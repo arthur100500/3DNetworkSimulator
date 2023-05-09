@@ -14,6 +14,8 @@ namespace Requests.Tasks
         private readonly Action _start;
         private readonly UnityWebRequest _request;
 
+        private bool _noErrorsOccured;
+
         public UnityWebRequestTask(Action start, AsyncOperation operation, Action finish, UnityWebRequest request)
         {
             _start = start;
@@ -22,6 +24,8 @@ namespace Requests.Tasks
             _request = request;
             Guid = Guid.NewGuid();
 
+            _noErrorsOccured = true;
+            
             IsRunning = false;
         }
 
@@ -35,6 +39,8 @@ namespace Requests.Tasks
             NotificationOnSuccess = "[<color=green>OK</color>] " + notification;
             NotificationOnError = "[<color=red>FL</color>] " + notification;
 
+            _noErrorsOccured = true;
+            
             IsRunning = false;
         }
 
@@ -43,7 +49,7 @@ namespace Requests.Tasks
         public string NotificationOnStart { get; set; }
         public string NotificationOnSuccess { get; set; }
         public string NotificationOnError { get; set; }
-        public bool IsSuccessful => _operation.isDone;
+        public bool IsSuccessful => _operation.isDone && _noErrorsOccured;
 
         public void Start()
         {
@@ -53,8 +59,12 @@ namespace Requests.Tasks
 
         public void Finish()
         {
-            if (_request.responseCode is < 200 or >= 300 )
+            if (_request.responseCode is < 200 or >= 300)
+            {
+                _noErrorsOccured = false;
                 throw new BadResponseException($"Got bad response({_request.responseCode}) from {_request.url}");
+            }
+
             _finish.Invoke();
             IsRunning = false;
         }

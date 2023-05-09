@@ -16,6 +16,7 @@ namespace Requests.Tasks
         private AsyncOperation _operation;
         private UnityWebRequest _request;
         private ILogger.ILogger _logger;
+        private bool _noErrorsOccured;
 
         public UnityWebRequestLateResultedTask(Func<UnityWebRequest> urlCreate, Action start, Action<T1> finish,
             ILogger.ILogger logger)
@@ -25,6 +26,7 @@ namespace Requests.Tasks
             _finish = finish;
             _logger = logger;
             Guid = Guid.NewGuid();
+            _noErrorsOccured = true;
 
             IsRunning = false;
         }
@@ -39,6 +41,7 @@ namespace Requests.Tasks
             NotificationOnStart = "[..] " + notification;
             NotificationOnSuccess = "[<color=green>OK</color>] " + notification;
             NotificationOnError = "[<color=red>FL</color>] " + notification;
+            _noErrorsOccured = true;
 
             IsRunning = false;
         }
@@ -63,7 +66,11 @@ namespace Requests.Tasks
             _logger.LogDebug( "Got: " + text);
             var deserialized = JsonConvert.DeserializeObject<T1>(text);
             if (_request.responseCode is < 200 or >= 300)
+            {
+                _noErrorsOccured = false;
                 throw new BadResponseException($"Got bad response({_request.responseCode}) from {_request.url}");
+            }
+
             _finish.Invoke(deserialized);
             IsRunning = false;
         }
@@ -73,7 +80,7 @@ namespace Requests.Tasks
             return _operation;
         }
 
-        public bool IsSuccessful => _request.isDone;
+        public bool IsSuccessful => _request.isDone && _noErrorsOccured;
 
         private void InnerStart(Action outerStart)
         {
