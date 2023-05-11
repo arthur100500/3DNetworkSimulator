@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Gameplay.MainMenu.InterScene;
 using GNS.ProjectHandling.Node;
 using GNS.ProjectHandling.Project;
 using GNS3.GNSThread;
@@ -28,32 +29,22 @@ namespace Project
         private NsJProject _initial;
 
         [SerializeField] private DeviceFactory _deviceFactory;
+        
 
         public void Start()
         {
             var logger = new DebugLogger();
-            var reqs = new WebRequestMaker(logger);
-
-            var cookie =
-                ".AspNetCore.Identity.Application=CfDJ8KibhKtdp-hLv8zF1sQmiBHYucC6TVrF96lrzue2CTnqE6cA7PCzVk6A4Vj4_3cOI9dfCVN9MQi3fpEIYAqpMa6ITqCvzNGgw-eMXbGrN3GcAdaH3J63RpObani0lDgLviYZbXJ7ECiHGlLoYinz3Wkw-CkP5N1hC718mEdILYAOa7piHWsiOSUPLGcyA0JoJy4vvke2sVbnUYPQNw3T1OVjxfl8ePH8EUAFN7ohihdMq_ksm7bufnkeP9IwdffdQQNywfKB1U2san5oPiUCtvGDWMCi2KpN2dsRyEhKngsC-jN_qi7VIJxjWMEFp4Xv2iCYnX2eKBEWdOqdsAJmoPXWotHiBhA5nrxlyqtKy_h6nuxCGmjjt5CORuZL9FitW-vXqQwS2xq25F2ws7A8cmeZZoDWx5LIplWC3c-M-jTBjw_zUtbyr958szFNHLW3NJZAl9tRNH-QrIsXqMN84VJW-p-im1Z6PrqTmTVJeCNaoK57cG74Z6y1UIVOuaDG4M-F7yYB8lIS1oAhbLGmdEk8QL-Ki1lcc1iS_GcchFh-GbimU-FN2bHeYpXJ1AzaXIi_hPwULti792jzu_hc6W7fH7HG-ESMqOTXiFMF5TJAlsrIeEvxIbc2Q7S4tZtoNBFffy_mdWjX6bFh_uGQ0H3D8Xr35m6X0Th3ba1oHQa1124d8q-nBwBn0Mpi7ZO2l7nDIOnl481nLhFN8nEpnK_vU7gKSIZXxF21XqKJpY3c; Path=/; HttpOnly; Expires=Thu, 25 May 2023 21:01:46 GMT;";
-
-            reqs.SetCookies(cookie);
-                
-            var mockProject =
-                "[{\\\"Type\\\":\\\"Laptop\\\",\\\"Node\\\":{\\\"ID\\\":\\\"f7b7d8fe-b49f-4e7a-8036-e333df0b7b97\\\",\\\"IsStarted\\\":true,\\\"Name\\\":\\\"Laptop\\\",\\\"_links\\\":[{\\\"capture_file_name\\\":null,\\\"capture_file_path\\\":null,\\\"capturing\\\":false,\\\"link_id\\\":\\\"5acb7f94-c169-4c2c-9ce0-1282328500b0\\\",\\\"nodes\\\":[{\\\"adapter_number\\\":0,\\\"node_id\\\":\\\"f7b7d8fe-b49f-4e7a-8036-e333df0b7b97\\\",\\\"port_number\\\":0},{\\\"adapter_number\\\":0,\\\"node_id\\\":\\\"8d9e11ba-8b5c-4e50-be79-4b2d1ad8c11c\\\",\\\"port_number\\\":0}],\\\"project_id\\\":\\\"05f017ba-1cb7-444a-82e2-67e306d6de9a\\\"}]},\\\"Position\\\":{\\\"_x\\\":1.91631794,\\\"_y\\\":-9.97,\\\"_z\\\":-9.398485},\\\"Rotation\\\":{\\\"_x\\\":0.0,\\\"_y\\\":0.858643,\\\"_z\\\":0.0,\\\"_w\\\":-0.512574136}},{\\\"Type\\\":\\\"Laptop\\\",\\\"Node\\\":{\\\"ID\\\":\\\"8d9e11ba-8b5c-4e50-be79-4b2d1ad8c11c\\\",\\\"IsStarted\\\":true,\\\"Name\\\":\\\"Laptop\\\",\\\"_links\\\":[{\\\"capture_file_name\\\":null,\\\"capture_file_path\\\":null,\\\"capturing\\\":false,\\\"link_id\\\":\\\"5acb7f94-c169-4c2c-9ce0-1282328500b0\\\",\\\"nodes\\\":[{\\\"adapter_number\\\":0,\\\"node_id\\\":\\\"f7b7d8fe-b49f-4e7a-8036-e333df0b7b97\\\",\\\"port_number\\\":0},{\\\"adapter_number\\\":0,\\\"node_id\\\":\\\"8d9e11ba-8b5c-4e50-be79-4b2d1ad8c11c\\\",\\\"port_number\\\":0}],\\\"project_id\\\":\\\"05f017ba-1cb7-444a-82e2-67e306d6de9a\\\"}]},\\\"Position\\\":{\\\"_x\\\":2.77500057,\\\"_y\\\":-9.97,\\\"_z\\\":-11.3616323},\\\"Rotation\\\":{\\\"_x\\\":0.0,\\\"_y\\\":0.679098248,\\\"_z\\\":0.0,\\\"_w\\\":0.7340474}}]";            var mockJson =
-                "{\"Id\":1,\"Name\":\"Project 1\",\"GnsId\":\"05f017ba-1cb7-444a-82e2-67e306d6de9a\",\"OwnerId\":\"3cf60524-baaf-4463-a84f-333f3c30d3da\",\"JsonAnnotation\":\"" + mockProject + "\"}";
             
-            // MOCK INIT
             Init(
-                reqs,
-                QueuedTaskCoroutineDispatcher.GetInstance(),
-                GnsProjectConfig.ProxyGnsProjectConfig(), 
-                mockJson,
+                MenuToGameExchanger.RequestMaker,
+                MenuToGameExchanger.Dispatcher,
+                MenuToGameExchanger.ProjectConfig,
+                MenuToGameExchanger.InitialProjectJson,
                 logger
             );
         }
-
-        public void Init(
+        
+        private void Init(
             IRequestMaker request,
             IQueuedTaskDispatcher dispatcher,
             GnsProjectConfig config,
