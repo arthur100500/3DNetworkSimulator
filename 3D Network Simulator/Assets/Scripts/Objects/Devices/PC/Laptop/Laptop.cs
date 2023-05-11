@@ -1,3 +1,4 @@
+using GNS.ProjectHandling.Project;
 using GNS3.GNSConsole;
 using GNS3.ProjectHandling.Node;
 using GNS3.ProjectHandling.Project;
@@ -74,6 +75,13 @@ namespace Objects.Devices.PC.Laptop
             }
 
             _uiTerminal.Show();
+        }
+
+
+        public override void CreateNode(GnsProject parent)
+        {
+            Node = new GnsVpcsNode(parent, "Laptop");
+            Node.Start();
         }
     }
 }

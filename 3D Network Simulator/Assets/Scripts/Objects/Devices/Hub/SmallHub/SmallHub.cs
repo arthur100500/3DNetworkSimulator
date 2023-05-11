@@ -1,3 +1,4 @@
+using GNS.ProjectHandling.Project;
 using GNS3.ProjectHandling.Node;
 using GNS3.ProjectHandling.Project;
 using Objects.Devices.Common;
@@ -46,6 +47,11 @@ namespace Objects.Devices.Hub.SmallHub
         {
             powerIndicator.SwitchOff();
             Node.Stop();
+        }
+
+        public override void CreateNode(GnsProject parent)
+        {
+            Node = new GnsSHubNode(parent, "Small hub");
         }
     }
 }

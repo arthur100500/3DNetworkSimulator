@@ -30,7 +30,7 @@ namespace Interfaces.Json
         
         public Vector3Serializable(Vector3 actual)
         {
-            this.Vector3 = actual;
+            Vector3 = actual;
         }
     }
 }

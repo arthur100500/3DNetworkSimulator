@@ -6,9 +6,7 @@ namespace Objects.Player.Scripts
 {
     public class PlayerConsoleInteract : MonoBehaviour
     {
-        [FormerlySerializedAs("PortLayer")] [SerializeField]
-        private LayerMask portLayer;
-
+        [SerializeField] private LayerMask portLayer;
         private Camera _camera;
 
         private void Start()

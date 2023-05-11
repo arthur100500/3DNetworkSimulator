@@ -1,3 +1,4 @@
+using Objects.Devices.Common;
 using Objects.Devices.Common.ConsoleDevice;
 using UI.DeviceSelect;
 using UI.DeviceSelect.Scripts;
@@ -9,8 +10,10 @@ namespace Objects.Player.Scripts
     {
         private IPlaceableDevice _currentDevice;
         private GameObject _previewDevice;
-        [SerializeField] private LayerMask placeableLayer;
         private Camera _camera;
+        
+        [SerializeField] private LayerMask placeableLayer;
+        [SerializeField] private Project.Project project;
 
         public void SetDevice(IPlaceableDevice dev)
         {
@@ -57,6 +60,8 @@ namespace Objects.Player.Scripts
             actual.transform.position = position + angle * _currentDevice.ActualOffset;
             actual.transform.rotation = angle;
             DestroyPreview();
+            
+            project.RegisterDevice(actual.GetComponent<ADevice>());
         }
 
         private void DestroyPreview()

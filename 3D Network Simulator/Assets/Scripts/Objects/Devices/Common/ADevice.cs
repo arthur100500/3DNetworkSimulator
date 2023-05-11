@@ -1,4 +1,5 @@
 using GNS.ProjectHandling.Node;
+using GNS.ProjectHandling.Project;
 using GNS3.ProjectHandling.Node;
 using UnityEngine;
 
@@ -12,5 +13,7 @@ namespace Objects.Devices.Common
         {
             Node = node;
         }
+
+        public abstract void CreateNode(GnsProject parent);
     }
 }

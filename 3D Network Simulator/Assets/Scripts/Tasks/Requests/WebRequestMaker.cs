@@ -36,7 +36,10 @@ namespace Tasks.Requests
                 var url = urlCreate();
 
                 var request = new UnityWebRequest(url);
-                request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(data));
+                
+                if (method == UnityWebRequest.kHttpVerbPOST)
+                    request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(data));
+                
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.method = method;
                 
@@ -60,7 +63,10 @@ namespace Tasks.Requests
                 var url = urlCreate();
 
                 var request = new UnityWebRequest(url);
-                request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(data));
+                
+                if (method == UnityWebRequest.kHttpVerbPOST)
+                    request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(data));
+                
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.method = method;
                 
