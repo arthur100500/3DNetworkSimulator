@@ -37,7 +37,7 @@ namespace Project
             
             Init(
                 MenuToGameExchanger.RequestMaker,
-                MenuToGameExchanger.Dispatcher,
+                QueuedTaskCoroutineDispatcher.GetInstance(), 
                 MenuToGameExchanger.ProjectConfig,
                 MenuToGameExchanger.InitialProject,
                 logger

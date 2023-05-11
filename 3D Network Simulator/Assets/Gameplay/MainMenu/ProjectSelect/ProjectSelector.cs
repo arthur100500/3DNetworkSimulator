@@ -6,6 +6,7 @@ using Logger;
 using Menu.Json;
 using Tasks.Requests;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Menu.ProjectSelect
 {
@@ -27,10 +28,12 @@ namespace Menu.ProjectSelect
 
         private static void LoadProject(NsJProject proj)
         {
-            MenuToGameExchanger.Dispatcher = QueuedTaskTaskDispatcher.GetInstance();
+            MenuToGameExchanger.Dispatcher = QueuedTaskCoroutineDispatcher.GetInstance();
             MenuToGameExchanger.ProjectConfig = GnsProjectConfig.ProxyGnsProjectConfig();
             MenuToGameExchanger.InitialProject = proj;
             MenuToGameExchanger.RequestMaker = new WebRequestMaker(new VoidLogger());
+            
+            SceneManager.LoadScene("GameScene");
         }
     }
 }

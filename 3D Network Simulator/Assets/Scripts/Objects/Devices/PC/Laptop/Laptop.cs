@@ -1,7 +1,6 @@
 using GNS.ProjectHandling.Project;
 using GNS3.GNSConsole;
 using GNS3.ProjectHandling.Node;
-using GNS3.ProjectHandling.Project;
 using Objects.Devices.Common;
 using Objects.Devices.Common.ConsoleDevice;
 using Objects.Parts.Wire;
