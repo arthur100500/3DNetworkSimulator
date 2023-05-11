@@ -46,6 +46,8 @@ namespace Project
 
             deviceGameObject.transform.position = entry.Position.Vector3;
             deviceGameObject.transform.rotation = entry.Rotation.Quaternion;
+
+            gnsNode.IsReady = true;
         }
     }
 }
