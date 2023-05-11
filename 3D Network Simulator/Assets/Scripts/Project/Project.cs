@@ -39,7 +39,7 @@ namespace Project
                 MenuToGameExchanger.RequestMaker,
                 MenuToGameExchanger.Dispatcher,
                 MenuToGameExchanger.ProjectConfig,
-                MenuToGameExchanger.InitialProjectJson,
+                MenuToGameExchanger.InitialProject,
                 logger
             );
         }
@@ -48,7 +48,7 @@ namespace Project
             IRequestMaker request,
             IQueuedTaskDispatcher dispatcher,
             GnsProjectConfig config,
-            string projectJson,
+            NsJProject nsjProject,
             ILogger logger
         )
         {
@@ -56,8 +56,7 @@ namespace Project
             _dispatcher = dispatcher;
             _logger = logger;
             _config = config;
-
-            var nsjProject = JsonConvert.DeserializeObject<NsJProject>(projectJson);
+            
             var id = nsjProject.GnsId;
 
             _initial = nsjProject;

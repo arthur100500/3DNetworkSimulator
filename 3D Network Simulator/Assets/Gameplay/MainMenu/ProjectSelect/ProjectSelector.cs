@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using Gameplay.MainMenu.InterScene;
+using GNS3.GNSThread;
+using GNS3.ProjectHandling.Project;
+using Logger;
 using Menu.Json;
+using Tasks.Requests;
 using UnityEngine;
-using UnityEngine.UI;
-using NsJProject = Project.Json.NsJProject;
 
 namespace Menu.ProjectSelect
 {
@@ -22,9 +25,12 @@ namespace Menu.ProjectSelect
             }
         }
 
-        private void LoadProject(NsJProject proj)
+        private static void LoadProject(NsJProject proj)
         {
-            Debug.Log(proj.Name);
+            MenuToGameExchanger.Dispatcher = QueuedTaskTaskDispatcher.GetInstance();
+            MenuToGameExchanger.ProjectConfig = GnsProjectConfig.ProxyGnsProjectConfig();
+            MenuToGameExchanger.InitialProject = proj;
+            MenuToGameExchanger.RequestMaker = new WebRequestMaker(new VoidLogger());
         }
     }
 }

@@ -1,5 +1,6 @@
 using GNS3.GNSThread;
 using GNS3.ProjectHandling.Project;
+using Menu.Json;
 using Tasks.Requests;
 
 namespace Gameplay.MainMenu.InterScene
@@ -9,6 +10,6 @@ namespace Gameplay.MainMenu.InterScene
         public static IRequestMaker RequestMaker;
         public static IQueuedTaskDispatcher Dispatcher;
         public static GnsProjectConfig ProjectConfig;
-        public static string InitialProjectJson;
+        public static NsJProject InitialProject;
     }
 }
