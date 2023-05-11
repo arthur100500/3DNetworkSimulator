@@ -17,6 +17,8 @@ namespace Requests.Tasks
         
         public override void Finish()
         {
+            IsRunning = false;
+            
             var headers = Request.GetResponseHeaders();
 
             if (headers is null || !headers.ContainsKey("Set-Cookie"))
@@ -25,8 +27,7 @@ namespace Requests.Tasks
             var authCookie = headers["Set-Cookie"];
             
             _finish.Invoke(authCookie);
-
-            IsRunning = false;
+            
         }
     }
 }

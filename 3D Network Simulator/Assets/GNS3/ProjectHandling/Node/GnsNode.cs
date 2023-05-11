@@ -4,18 +4,28 @@ using GNS3.GNSConsole;
 using GNS3.JsonObjects;
 using GNS3.ProjectHandling.Project;
 using Logger;
+using Newtonsoft.Json;
 
 namespace GNS3.ProjectHandling.Node
 {
-    public abstract class GnsNode : IDisposable
+    public abstract class GnsNode
     {
+        [JsonProperty]
         private List<GnsJLink> _links;
+        
+        [JsonProperty]
         public string ID;
+        
+        [JsonIgnore]
         public bool IsReady;
-
+        
+        [JsonProperty]
         public bool IsStarted;
-
+        
+        [JsonProperty]
         public string Name;
+        
+        [JsonIgnore]
         protected GnsProject Project;
 
         public void Dispose()
