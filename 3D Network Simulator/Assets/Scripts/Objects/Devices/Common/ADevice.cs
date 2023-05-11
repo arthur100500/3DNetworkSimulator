@@ -1,11 +1,10 @@
 using GNS.ProjectHandling.Node;
 using GNS.ProjectHandling.Project;
-using GNS3.ProjectHandling.Node;
-using UnityEngine;
+using Objects.Common;
 
 namespace Objects.Devices.Common
 {
-    public abstract class ADevice : MonoBehaviour
+    public abstract class ADevice : APlaceable
     {
         public GnsNode Node;
 

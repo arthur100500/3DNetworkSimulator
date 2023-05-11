@@ -4,6 +4,9 @@ using GNS.ProjectHandling.Node;
 using GNS.ProjectHandling.Project;
 using GNS3.ProjectHandling.Node;
 using Objects.Devices.Common;
+using Objects.Devices.Hub.SmallHub;
+using Objects.Devices.PC.Laptop;
+using Objects.Env.Table;
 using Project.Json;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
@@ -23,9 +26,9 @@ namespace Project
         {
             _prefabs = new Dictionary<string, GameObject>
             {
-                { "Laptop", laptopPrefab },
-                { "Hub", hubPrefab },
-                { "Table", tablePrefab },
+                { nameof(Laptop), laptopPrefab },
+                { nameof(SmallHub), hubPrefab },
+                { nameof(Table), tablePrefab },
             };
         }
 

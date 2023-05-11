@@ -1,3 +1,4 @@
+using Objects.Common;
 using Objects.Devices.Common;
 using Objects.Devices.Common.ConsoleDevice;
 using UI.DeviceSelect;
@@ -61,7 +62,7 @@ namespace Objects.Player.Scripts
             actual.transform.rotation = angle;
             DestroyPreview();
             
-            project.RegisterDevice(actual.GetComponent<ADevice>());
+            project.AddPlaceable(actual.GetComponent<APlaceable>());
         }
 
         private void DestroyPreview()
