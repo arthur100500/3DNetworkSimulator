@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Menu.Json;
 using UnityEngine;
 using UnityEngine.UI;
+using NsJProject = Project.Json.NsJProject;
 
 namespace Menu.ProjectSelect
 {

@@ -9,7 +9,7 @@ namespace Requests.Tasks
     {
         public Guid Guid { get; }
         public bool IsRunning { get; private set; }
-        public bool IsReady;
+        private readonly bool _isReady;
         public string NotificationOnStart { get; set; }
         public string NotificationOnSuccess { get; set; }
         public string NotificationOnError { get; set; }
@@ -19,7 +19,7 @@ namespace Requests.Tasks
         {
             Guid = Guid.NewGuid();
             IsRunning = true;
-            IsReady = false;
+            _isReady = false;
             
             NotificationOnStart = "[..] " + notification;
             NotificationOnSuccess = "[<color=green>OK</color>] " + notification;
@@ -36,7 +36,7 @@ namespace Requests.Tasks
 
         public IEnumerator DoWork()
         {
-            return new WaitUntil(() => IsReady);
+            return new WaitUntil(() => _isReady);
         }
     }
 }

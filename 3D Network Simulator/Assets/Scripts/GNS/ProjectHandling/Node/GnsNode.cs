@@ -1,32 +1,38 @@
 using System;
 using System.Collections.Generic;
+using GNS.ProjectHandling.Project;
 using GNS3.GNSConsole;
 using GNS3.JsonObjects;
-using GNS3.ProjectHandling.Project;
 using Logger;
+using Newtonsoft.Json;
 
-namespace GNS3.ProjectHandling.Node
+namespace GNS.ProjectHandling.Node
 {
-    public abstract class GnsNode : IDisposable
+    public class GnsNode
     {
+        [JsonProperty]
         private List<GnsJLink> _links;
+        
+        [JsonProperty]
         public string ID;
+        
+        [JsonIgnore]
         public bool IsReady;
 
+        [JsonProperty]
         public bool IsStarted;
 
+        [JsonProperty]
         public string Name;
+        
+        [JsonIgnore]
         protected GnsProject Project;
-
-        public void Dispose()
-        {
-            Project.DeleteNode(this);
-        }
+        
 
         public IEventConsole GetTerminal()
         {
             var gnsWsUrl = "ws://" + Project.Config.Address + ":" + Project.Config.Port + "/v2/projects/" +
-                           Project.ID + "/nodes/" + ID + "/console/ws";
+                           Project.Id + "/nodes/" + ID + "/console/ws";
             return new GnsConsole(gnsWsUrl, new DebugLogger());
         }
 
@@ -35,6 +41,11 @@ namespace GNS3.ProjectHandling.Node
             Name = name;
             Project = project;
             _links = new List<GnsJLink>();
+        }
+
+        public void SetProject(GnsProject project)
+        {
+            Project = project;
         }
 
         public void Start()

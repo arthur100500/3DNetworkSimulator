@@ -9,8 +9,17 @@ namespace Requests.Tasks
 {
     public class UnityWebRequestLateTask : AUnityRequestTask<bool>
     {
-        public UnityWebRequestLateTask(Func<UnityWebRequest> urlCreate, Action start, Action finish, ILogger logger) :
-            base(urlCreate, start, _ => { finish(); }, logger, false)
+        public UnityWebRequestLateTask(
+            Func<UnityWebRequest> urlCreate,
+            Action start,
+            Action<UnityWebRequest> finish,
+            ILogger logger
+        ) : base(
+            urlCreate, 
+            start, 
+            (_, request) => { finish(request); },
+            logger, 
+            false)
         {
             
         }

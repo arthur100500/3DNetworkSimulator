@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
+using GNS.ProjectHandling.Node;
 using GNS3.GNSThread;
 using GNS3.JsonObjects;
 using GNS3.JsonObjects.Basic;
 using GNS3.ProjectHandling.Node;
+using GNS3.ProjectHandling.Project;
 using Interfaces.Logger;
-using Interfaces.Requests;
+using Tasks.Requests;
+using UnityEngine.Networking;
 
-namespace GNS3.ProjectHandling.Project
+namespace GNS.ProjectHandling.Project
 {
-    public class GnsProject : IDisposable
+    public class GnsProject
     {
-        private readonly IRequestTaskMaker _requests;
+        private readonly IRequestMaker _requests;
         public readonly GnsProjectConfig Config;
         private GnsJProject _jProject;
         private readonly IQueuedTaskDispatcher _dispatcher;
@@ -20,13 +23,13 @@ namespace GNS3.ProjectHandling.Project
 
         public GnsProject(
             GnsProjectConfig config,
-            string name,
-            IRequestTaskMaker requests,
+            string id,
+            IRequestMaker requests,
             IQueuedTaskDispatcher dispatcher,
             ILogger logger
         )
         {
-            Name = name;
+            Id = id;
             Config = config;
             _requests = requests;
             _dispatcher = dispatcher;
@@ -36,14 +39,8 @@ namespace GNS3.ProjectHandling.Project
         }
 
         private string Name { get; }
-        public string ID => _jProject.project_id;
+        public string Id { get; private set; }
 
-        public void Dispose()
-        {
-            var task = _requests.MakeDeleteRequest("projects/" + _jProject.project_id, "{}", () => { }, () => { });
-            _dispatcher.EnqueueActionWithNotification(task, "Removing project", 4);
-            _logger.LogDebug($"Disposing project {Name}({ID})");
-        }
 
         public void CreateNode<T>(string name, string type, Action<T> onCreate) where T : GnsJNode
         {
@@ -62,7 +59,14 @@ namespace GNS3.ProjectHandling.Project
                 _logger.LogDebug($"Created node {node.name}({node.node_id})");
             }
 
-            var nodeCreationTask = _requests.MakePostRequest(GetUrl, () => data, () => { }, (Action<T>)AddAndOnCreate);
+            var nodeCreationTask = _requests.CreateTask(
+                GetUrl, 
+                () => data, 
+                () => { }, 
+                (Action<T, UnityWebRequest>)((x, _) => AddAndOnCreate(x)),
+                UnityWebRequest.kHttpVerbPOST
+            );
+            
             _dispatcher.EnqueueActionWithNotification(nodeCreationTask, notification, 4);
         }
 
@@ -70,28 +74,33 @@ namespace GNS3.ProjectHandling.Project
         {
             var notification = "Creating project " + Name;
 
-            var getProjectsTask = _requests.MakeGetRequest<List<GnsJProject>>(
-                "projects",
+            var getProjectsTask = _requests.CreateTask<List<GnsJProject>>(
+                () => "projects",
+                () => "{}",
                 () => { },
-                projectList =>
+                (projectList, _) =>
                 {
                     var foundProject = projectList.Find(p => p.name == Name);
                     _tempRequest = foundProject is null
                         ? ("projects", $"{{\"name\": \"{Name}\"}}")
                         : ($"projects/{foundProject.project_id}/open", "{}");
-                }
+                },
+                UnityWebRequest.kHttpVerbGET
             );
 
-            var createProjectTask = _requests.MakePostRequest<GnsJProject>(
+            var createProjectTask = _requests.CreateTask<GnsJProject>(
                 () => _tempRequest.Item1,
                 () => _tempRequest.Item2,
                 () => { },
-                project =>
+                (project, _) =>
                 {
                     _jProject = project;
-                    _logger.LogDebug($"Created project {Name}({ID})");
-                }
+                    _logger.LogDebug($"Created project {Name}({Id})");
+                },
+                UnityWebRequest.kHttpVerbPOST
             );
+
+            Id = _jProject.project_id;
 
             _dispatcher.EnqueueActionWithNotification(getProjectsTask, notification, 4);
             _dispatcher.EnqueueActionWithNotification(createProjectTask, notification, 4);
@@ -99,8 +108,14 @@ namespace GNS3.ProjectHandling.Project
 
         public void DeleteNode(GnsNode node)
         {
-            var task = _requests.MakeDeleteRequest($"projects/{_jProject.project_id}/nodes/{node.ID}", "{}",
-                () => { }, () => { _logger.LogDebug($"Created node {node.Name}({node.ID})"); });
+            var task = _requests.CreateTask(
+                () => $"projects/{_jProject.project_id}/nodes/{node.ID}",
+                () => "{}",
+                () => { },
+                _ => { _logger.LogDebug($"Created node {node.Name}({node.ID})"); },
+                UnityWebRequest.kHttpVerbDELETE
+            );
+
             _dispatcher.EnqueueActionWithNotification(task, "Removing node " + node.Name, 4);
         }
 
@@ -114,11 +129,17 @@ namespace GNS3.ProjectHandling.Project
                 return url;
             }
 
-            var task = _requests.MakePostRequest(GetUrl, "{}", () => { }, () =>
-            {
-                node.IsStarted = true;
-                _logger.LogDebug($"Started node {node.Name}({node.ID})");
-            });
+            var task = _requests.CreateTask(
+                GetUrl,
+                () => "{}",
+                () => { },
+                _ =>
+                {
+                    node.IsStarted = true;
+                    _logger.LogDebug($"Started node {node.Name}({node.ID})");
+                },
+                UnityWebRequest.kHttpVerbPOST
+            );
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }
 
@@ -126,11 +147,18 @@ namespace GNS3.ProjectHandling.Project
         {
             var notification = "Stopping node " + node.Name;
             var url = $"projects/{_jProject.project_id}/nodes/{node.ID}/stop";
-            var task = _requests.MakePostRequest(url, "{}", () => { }, () =>
-            {
-                node.IsStarted = false;
-                _logger.LogDebug($"Stopped node {node.Name}({node.ID})");
-            });
+
+            var task = _requests.CreateTask(
+                () => url,
+                () => "{}",
+                () => { },
+                _ =>
+                {
+                    node.IsStarted = false;
+                    _logger.LogDebug($"Stopped node {node.Name}({node.ID})");
+                }, UnityWebRequest.kHttpVerbPOST
+            );
+
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }
 
@@ -138,8 +166,18 @@ namespace GNS3.ProjectHandling.Project
         {
             var notification = $"Unlinking {self.Name} and {other.Name}";
             var url = $"projects/{_jProject.project_id}/links/{linkID}";
-            var task = _requests.MakeDeleteRequest(url, "{}", () => { },
-                () => { _logger.LogDebug($"Unlinking node {self.Name} and {other.Name}"); });
+
+            var task = _requests.CreateTask(
+                () => url,
+                () => "{}",
+                () => { },
+                _ =>
+                {
+                    _logger.LogDebug($"Unlinking node {self.Name} and {other.Name}");
+                },
+                UnityWebRequest.kHttpVerbDELETE
+            );
+
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }
 
@@ -147,8 +185,18 @@ namespace GNS3.ProjectHandling.Project
         {
             var notification = "Linking " + self.Name + " and " + other.Name;
             var url = $"projects/{_jProject.project_id}/links";
-            var task = _requests.MakePostRequest(url, linkJson,
-                () => { _logger.LogDebug($"Linking node {self.Name} and {other.Name}"); }, callback);
+            
+            var task = _requests.CreateTask<GnsJLink>(
+                () => url,
+                () => linkJson,
+                () =>
+                {
+                    _logger.LogDebug($"Linking node {self.Name} and {other.Name}");
+                },
+                (link, _) => callback(link),
+                UnityWebRequest.kHttpVerbPOST
+            );
+            
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
         }
     }

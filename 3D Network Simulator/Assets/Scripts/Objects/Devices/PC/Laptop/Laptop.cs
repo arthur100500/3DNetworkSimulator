@@ -1,7 +1,7 @@
 using GNS3.GNSConsole;
 using GNS3.ProjectHandling.Node;
 using GNS3.ProjectHandling.Project;
-using Objects.Devices.Common.ADevice;
+using Objects.Devices.Common;
 using Objects.Devices.Common.ConsoleDevice;
 using Objects.Parts.Wire;
 using UI.Console;
@@ -24,26 +24,30 @@ namespace Objects.Devices.PC.Laptop
         public void Start()
         {
             parentCanvas = GameObject.FindWithTag("UI").GetComponent<Canvas>();
-            
+
             _uiTerminal = Instantiate(uiTerminalPrefab, parentCanvas.transform).GetComponent<TerminalManager>();
             _uiTerminal.Initialize(screenCanvas);
 
-            Node = new GnsVpcsNode(GlobalGnsParameters.GetProject(), "PC" + GlobalGnsParameters.GetNextFreeID());
             ethernetPort.SingleConnectEvent += Connect;
             ethernetPort.SingleDisconnectEvent += Disconnect;
-            Node.Start();
         }
 
         private void Connect(AWire other)
         {
-            Node.ConnectTo(other.GetParent().GetComponent<ADevice>().Node, ethernetPort.GetPortNumber(),
-                other.GetPortNumber());
+            Node.ConnectTo(
+                other.GetParent().GetComponent<ADevice>().Node,
+                ethernetPort.GetPortNumber(),
+                other.GetPortNumber()
+            );
         }
 
         private void Disconnect(AWire other)
         {
-            Node.DisconnectFrom(other.GetParent().GetComponent<ADevice>().Node, ethernetPort.GetPortNumber(),
-                other.GetPortNumber());
+            Node.DisconnectFrom(
+                other.GetParent().GetComponent<ADevice>().Node,
+                ethernetPort.GetPortNumber(),
+                other.GetPortNumber()
+            );
         }
 
         public override void OpenConsole()

@@ -1,3 +1,5 @@
+using GNS.ProjectHandling.Node;
+using GNS.ProjectHandling.Project;
 using GNS3.JsonObjects;
 using GNS3.ProjectHandling.Project;
 

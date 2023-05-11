@@ -1,6 +1,6 @@
 using GNS3.ProjectHandling.Node;
 using GNS3.ProjectHandling.Project;
-using Objects.Devices.Common.ADevice;
+using Objects.Devices.Common;
 using Objects.Parts.Controllers.Scripts;
 using Objects.Parts.Wire;
 using UnityEngine;
@@ -16,20 +16,23 @@ namespace Objects.Devices.Hub.SmallHub
 
         public void Start()
         {
-            Node = new GnsSHubNode(GlobalGnsParameters.GetProject(),
-                "Small Hub " + GlobalGnsParameters.GetNextFreeID());
-
             power.ConnectEvent += Enable;
             power.DisconnectEvent += Disable;
 
             foreach (var en in ethernetCables)
             {
                 en.SingleConnectEvent += other =>
-                    Node.ConnectTo(other.GetParent().GetComponent<ADevice>().Node, en.GetPortNumber(),
-                        other.GetPortNumber());
+                    Node.ConnectTo(
+                        other.GetParent().GetComponent<ADevice>().Node,
+                        en.GetPortNumber(),
+                        other.GetPortNumber()
+                    );
                 en.SingleDisconnectEvent += other =>
-                    Node.DisconnectFrom(other.GetParent().GetComponent<ADevice>().Node, en.GetPortNumber(),
-                        other.GetPortNumber());
+                    Node.DisconnectFrom(
+                        other.GetParent().GetComponent<ADevice>().Node,
+                        en.GetPortNumber(),
+                        other.GetPortNumber()
+                    );
             }
         }
 

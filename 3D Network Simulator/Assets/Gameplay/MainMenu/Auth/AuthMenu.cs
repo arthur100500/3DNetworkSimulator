@@ -9,6 +9,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using NsJProject = Project.Json.NsJProject;
 
 namespace Menu.Auth
 {
