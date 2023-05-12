@@ -32,24 +32,20 @@ namespace Project
             };
         }
 
-        public void Create(
-            DeviceEntry entry,
-            GnsProject project,
-            Transform projectTransform
-        )
+        public void Create(DeviceEntry entry, GnsProject project, Transform projectTransform)
         {
-            var gnsNode = entry.Node;
-            gnsNode.SetProject(project);
-
             var type = entry.Type;
             var deviceGameObject = Instantiate(_prefabs[type], projectTransform);
-
-            var deviceComponent = deviceGameObject.GameObject().GetComponent<ADevice>();
-            deviceComponent.AssignNode(gnsNode);
-
             deviceGameObject.transform.position = entry.Position.Vector3;
             deviceGameObject.transform.rotation = entry.Rotation.Quaternion;
-
+            
+            var deviceComponent = deviceGameObject.GetComponent<ADevice>();
+            if (deviceComponent is null || entry.Node is null)
+                return;
+            
+            var gnsNode = entry.Node;
+            gnsNode.SetProject(project);
+            deviceComponent.AssignNode(gnsNode);
             gnsNode.IsReady = true;
         }
     }

@@ -28,7 +28,6 @@ namespace Menu.ProjectSelect
 
         private static void LoadProject(NsJProject proj)
         {
-            MenuToGameExchanger.Dispatcher = QueuedTaskCoroutineDispatcher.GetInstance();
             MenuToGameExchanger.ProjectConfig = GnsProjectConfig.ProxyGnsProjectConfig();
             MenuToGameExchanger.InitialProject = proj;
             MenuToGameExchanger.RequestMaker = new WebRequestMaker(new VoidLogger());

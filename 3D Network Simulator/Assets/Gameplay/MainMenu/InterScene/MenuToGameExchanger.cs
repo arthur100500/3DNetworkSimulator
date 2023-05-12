@@ -8,7 +8,6 @@ namespace Gameplay.MainMenu.InterScene
     public static class MenuToGameExchanger
     {
         public static IRequestMaker RequestMaker;
-        public static IQueuedTaskDispatcher Dispatcher;
         public static GnsProjectConfig ProjectConfig;
         public static NsJProject InitialProject;
     }

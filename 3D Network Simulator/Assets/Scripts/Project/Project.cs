@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Gameplay.MainMenu.InterScene;
 using GNS.ProjectHandling.Node;
@@ -57,7 +56,7 @@ namespace Project
             _logger = logger;
             _config = config;
             
-            var id = nsjProject.GnsId;
+            var id = nsjProject.GnsID;
 
             _initial = nsjProject;
                 
@@ -76,9 +75,9 @@ namespace Project
         {
             var projectJsonList = JsonConvert.DeserializeObject<List<DeviceEntry>>(projectJson);
 
-            foreach (var project in projectJsonList)
+            foreach (var device in projectJsonList)
             {
-                _deviceFactory.Create(project, _project, gameObject.transform);
+                _deviceFactory.Create(device, _project, gameObject.transform);
             }
         }
 
@@ -141,8 +140,9 @@ namespace Project
         {
             var nsProj = new NsJProject
             {
+                Id = _initial.Id,
                 Name = _initial.Name,
-                GnsId = _initial.GnsId,
+                GnsID = _initial.GnsID,
                 JsonAnnotation = data,
                 OwnerId = _initial.OwnerId
             };
@@ -156,7 +156,7 @@ namespace Project
                 _ => { },
                 UnityWebRequest.kHttpVerbPOST
             );
-            
+
             _dispatcher.EnqueueActionWithNotification(task, "Saving project", 4);
         }
     }
