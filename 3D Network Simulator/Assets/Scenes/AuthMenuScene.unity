@@ -1424,7 +1424,7 @@ MonoBehaviour:
   passwordInputField: {fileID: 2090074761}
   submitButton: {fileID: 1444378498}
   errors: {fileID: 800193206}
-  selector: {fileID: 0}
+  selector: {fileID: 1763135368}
 --- !u!1 &1763135365
 GameObject:
   m_ObjectHideFlags: 0
