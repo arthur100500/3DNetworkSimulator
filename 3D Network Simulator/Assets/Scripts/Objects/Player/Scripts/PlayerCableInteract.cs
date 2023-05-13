@@ -85,15 +85,14 @@ namespace Objects.Player.Scripts
             if (!Input.GetMouseButtonDown(0))
                 return;
 
-            if (Physics.Raycast(ray, out var hit, Mathf.Infinity, portLayer) && hit.collider != null)
-            {
-                var foundObject = hit.collider.gameObject;
+            if (!Physics.Raycast(ray, out var hit, Mathf.Infinity, portLayer) || hit.collider == null) return;
+            
+            var foundObject = hit.collider.gameObject;
 
-                if (!_isActive)
-                    SetActive(foundObject);
-                else
-                    TryConnect(foundObject);
-            }
+            if (!_isActive)
+                SetActive(foundObject);
+            else
+                TryConnect(foundObject);
         }
 
         private void CreateWireRenderer(AWire wire)
@@ -116,23 +115,23 @@ namespace Objects.Player.Scripts
             var expected = target.GetComponent<AWire>();
             var provided = _firstTarget.GetComponent<AWire>();
 
-            if (expected.GetInputType() == provided.GetOutputType()
-                && expected.IsAvailable() && provided.IsAvailable()
-                && expected != provided)
-            {
-                _wireRenderer.p2 = target.transform;
-                var o = _wireRenderer.gameObject;
-                expected.wireRenderer = o;
-                provided.wireRenderer = o;
-                // Both ends get an event
-                expected.Connect(provided);
-                provided.Connect(expected);
-                // Only 1 side is getting an event
-                expected.SingleConnect(provided);
-                Destroy(_inHandTarget);
-                _isActive = false;
-                expected.VisualConnect();
-            }
+            if (expected.GetInputType() != provided.GetOutputType()
+                || !expected.IsAvailable() || !provided.IsAvailable()
+                || expected == provided) return;
+            
+            
+            _wireRenderer.p2 = target.transform;
+            var o = _wireRenderer.gameObject;
+            expected.wireRenderer = o;
+            provided.wireRenderer = o;
+            // Both ends get an event
+            expected.Connect(provided);
+            provided.Connect(expected);
+            // Only 1 side is getting an event
+            expected.SingleConnect(provided);
+            Destroy(_inHandTarget);
+            _isActive = false;
+            expected.VisualConnect();
         }
 
         private void Discard()

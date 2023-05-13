@@ -13,6 +13,7 @@ using Project.Json;
 using Tasks.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Serialization;
 using ILogger = Interfaces.Logger.ILogger;
 using NsJProject = Menu.Json.NsJProject;
 
@@ -27,22 +28,22 @@ namespace Project
         private ILogger _logger;
         private NsJProject _initial;
 
-        [SerializeField] private DeviceFactory _deviceFactory;
-        
+        [SerializeField] private DeviceFactory deviceFactory;
+
 
         public void Start()
         {
             var logger = new DebugLogger();
-            
+
             Init(
                 MenuToGameExchanger.RequestMaker,
-                QueuedTaskCoroutineDispatcher.GetInstance(), 
+                QueuedTaskCoroutineDispatcher.GetInstance(),
                 MenuToGameExchanger.ProjectConfig,
                 MenuToGameExchanger.InitialProject,
                 logger
             );
         }
-        
+
         private void Init(
             IRequestMaker request,
             IQueuedTaskDispatcher dispatcher,
@@ -55,11 +56,11 @@ namespace Project
             _dispatcher = dispatcher;
             _logger = logger;
             _config = config;
-            
+
             var id = nsjProject.GnsID;
 
             _initial = nsjProject;
-                
+
             _project = new GnsProject(
                 config,
                 id,
@@ -75,10 +76,7 @@ namespace Project
         {
             var projectJsonList = JsonConvert.DeserializeObject<List<DeviceEntry>>(projectJson);
 
-            foreach (var device in projectJsonList)
-            {
-                _deviceFactory.Create(device, _project, gameObject.transform);
-            }
+            deviceFactory.CreateAll(projectJsonList, _project, gameObject.transform);
         }
 
         public void Update()
@@ -90,7 +88,7 @@ namespace Project
         public void AddPlaceable(APlaceable mold)
         {
             mold.gameObject.transform.SetParent(gameObject.transform);
-            
+
             if (mold is ADevice device)
                 device.CreateNode(_project);
         }
@@ -102,18 +100,14 @@ namespace Project
             for (var i = 0; i < gameObject.transform.childCount; i++)
             {
                 var child = gameObject.transform.GetChild(i);
-
-                DeviceEntry entry = null;
                 
                 var component = child.GetComponent<APlaceable>();
-                
+
                 if (component is null)
                     continue;
-                
-                entry = component is ADevice device ? 
-                    MakeEntry(device, device.Node) : 
-                    MakeEntry(component, null);
-                
+
+                var entry = component is ADevice device ? MakeEntry(device, device.Node) : MakeEntry(component, null);
+
                 entries.Add(entry);
             }
 
@@ -124,7 +118,7 @@ namespace Project
         private static DeviceEntry MakeEntry(Component component, GnsNode node)
         {
             var o = component.gameObject;
-                
+
             var entry = new DeviceEntry
             {
                 Node = node,
@@ -148,7 +142,7 @@ namespace Project
             };
 
             var json = JsonConvert.SerializeObject(nsProj);
-            
+
             var task = _requests.CreateTask(
                 () => $"http://{_config.Address}:{_config.Port}/ns/update",
                 () => json,

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using GNS.ProjectHandling.Project;
 using GNS3.GNSConsole;
@@ -11,7 +10,7 @@ namespace GNS.ProjectHandling.Node
     public class GnsNode
     {
         [JsonProperty]
-        private List<GnsJLink> _links;
+        public List<GnsJLink> Links;
         
         [JsonProperty]
         public string ID;
@@ -27,8 +26,13 @@ namespace GNS.ProjectHandling.Node
         
         [JsonIgnore]
         protected GnsProject Project;
-        
 
+
+        public GnsNode()
+        {
+            Links = new List<GnsJLink>();
+        }
+        
         public IEventConsole GetTerminal()
         {
             var gnsWsUrl = "ws://" + Project.Config.Address + ":" + Project.Config.Port + "/v2/projects/" +
@@ -40,7 +44,6 @@ namespace GNS.ProjectHandling.Node
         {
             Name = name;
             Project = project;
-            _links = new List<GnsJLink>();
         }
 
         public void SetProject(GnsProject project)
@@ -66,8 +69,8 @@ namespace GNS.ProjectHandling.Node
 
             void Callback(GnsJLink link)
             {
-                other._links.Add(link);
-                _links.Add(link);
+                other.Links.Add(link);
+                Links.Add(link);
             }
 
             Project.AddLink(linkJson, this, other, Callback);
@@ -75,7 +78,7 @@ namespace GNS.ProjectHandling.Node
 
         public void DisconnectFrom(GnsNode other, int selfAdapterID, int otherAdapterID)
         {
-            var selectedLink = _links.Find(a =>
+            var selectedLink = Links.Find(a =>
                 (a.nodes[0].node_id == ID &&
                  a.nodes[1].node_id == other.ID &&
                  a.nodes[0].port_number == selfAdapterID &&
@@ -89,8 +92,8 @@ namespace GNS.ProjectHandling.Node
 
 
             Project.RemoveLink(selectedLink.link_id, this, other);
-            other._links.Remove(selectedLink);
-            _links.Remove(selectedLink);
+            other.Links.Remove(selectedLink);
+            Links.Remove(selectedLink);
         }
     }
 }

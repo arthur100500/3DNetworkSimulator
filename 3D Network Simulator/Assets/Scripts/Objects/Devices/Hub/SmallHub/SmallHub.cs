@@ -1,5 +1,6 @@
+using System;
+using GNS.ProjectHandling.Node;
 using GNS.ProjectHandling.Project;
-using GNS3.ProjectHandling.Node;
 using GNS3.ProjectHandling.Project;
 using Objects.Devices.Common;
 using Objects.Parts.Controllers.Scripts;
@@ -52,6 +53,14 @@ namespace Objects.Devices.Hub.SmallHub
         public override void CreateNode(GnsProject parent)
         {
             Node = new GnsSHubNode(parent, "Small hub");
+        }
+        
+        public override AWire GetWire(int adapterNumber, int portNumber)
+        {
+            if (adapterNumber != 0 || portNumber > 7)
+                throw new ArgumentException("Small hub has only 8 ports");
+            
+            return ethernetCables[portNumber];
         }
     }
 }

@@ -1,9 +1,7 @@
-using GNS.ProjectHandling.Node;
 using GNS.ProjectHandling.Project;
 using GNS3.JsonObjects;
-using GNS3.ProjectHandling.Project;
 
-namespace GNS3.ProjectHandling.Node
+namespace GNS.ProjectHandling.Node
 {
     public class GnsVpcsNode : GnsNode
     {
@@ -24,7 +22,7 @@ namespace GNS3.ProjectHandling.Node
                 IsReady = true;
             }
 
-            Project.CreateNode<GnsVpcsJNode>(Name, "vpcs", AssignNode);
+            Project.CreateNode<GnsVpcsJNode>(Name, "vpcs", AssignNode, this);
         }
     }
 }

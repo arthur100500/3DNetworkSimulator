@@ -2,6 +2,7 @@ using System;
 using GNS3.GNSThread;
 using GNS3.ProjectHandling.Exceptions;
 using Newtonsoft.Json;
+using Tasks.Task;
 using UnityEngine;
 using UnityEngine.Networking;
 using ILogger = Interfaces.Logger.ILogger;
@@ -60,6 +61,7 @@ namespace Requests.Tasks
             
             _logger.LogDebug( "Got: " + text);
 
+            Debug.Log(_request.downloadHandler.text);
             if (_request.responseCode is < 200 or >= 300)
             {
                 _noErrorsOccured = false;

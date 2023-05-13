@@ -1,6 +1,7 @@
 using GNS.ProjectHandling.Node;
 using GNS.ProjectHandling.Project;
 using Objects.Common;
+using Objects.Parts.Wire;
 
 namespace Objects.Devices.Common
 {
@@ -14,5 +15,6 @@ namespace Objects.Devices.Common
         }
 
         public abstract void CreateNode(GnsProject parent);
+        public abstract AWire GetWire(int adapterNumber, int portNumber);
     }
 }

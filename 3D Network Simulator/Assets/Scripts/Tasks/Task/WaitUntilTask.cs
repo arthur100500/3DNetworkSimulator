@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using GNS3.GNSThread;
+using Tasks.Task;
 using UnityEngine;
 
 namespace Requests.Tasks

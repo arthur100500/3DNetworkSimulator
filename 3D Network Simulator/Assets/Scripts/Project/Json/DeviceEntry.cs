@@ -1,5 +1,4 @@
 using GNS.ProjectHandling.Node;
-using GNS3.ProjectHandling.Node;
 using Interfaces.Json;
 using Newtonsoft.Json;
 using UnityEngine.Scripting;

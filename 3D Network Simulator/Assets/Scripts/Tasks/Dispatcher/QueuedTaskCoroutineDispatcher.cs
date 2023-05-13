@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using GNS3.ProjectHandling.Exceptions;
+using Tasks.Task;
 using UI.Console;
 using Unity.VisualScripting;
 using UnityEngine;

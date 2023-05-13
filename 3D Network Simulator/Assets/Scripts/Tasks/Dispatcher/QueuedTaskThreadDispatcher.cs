@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using Tasks.Task;
 using UI.Console;
 using Unity.VisualScripting;
 
 namespace GNS3.GNSThread
 {
-    public class QueuedTaskTaskDispatcher : IQueuedTaskDispatcher, ISingleton
+    public class QueuedTaskThreadDispatcher : IQueuedTaskDispatcher, ISingleton
     {
-        private static QueuedTaskTaskDispatcher _queuedTaskTaskDispatcher;
+        private static QueuedTaskThreadDispatcher _queuedTaskThreadDispatcher;
         private static bool _running = true;
         private readonly ConcurrentQueue<Action> _actions = new();
         private bool _started;
@@ -87,9 +88,9 @@ namespace GNS3.GNSThread
             });
         }
 
-        public static QueuedTaskTaskDispatcher GetInstance()
+        public static QueuedTaskThreadDispatcher GetInstance()
         {
-            return _queuedTaskTaskDispatcher ??= new QueuedTaskTaskDispatcher();
+            return _queuedTaskThreadDispatcher ??= new QueuedTaskThreadDispatcher();
         }
 
         private void ThreadWork()

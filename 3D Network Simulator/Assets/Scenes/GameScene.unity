@@ -482,6 +482,7 @@ MonoBehaviour:
   laptopPrefab: {fileID: 8475686634712828776, guid: 6ea708a3ef43ccd459eff9db4cea3b81, type: 3}
   hubPrefab: {fileID: 3425930015767318780, guid: 91af60db2a441394d9587cedb856f376, type: 3}
   tablePrefab: {fileID: 4082927271240524180, guid: 77cb36de47ce9db43a2c3d5b714d2623, type: 3}
+  floor: {fileID: 1873362235}
 --- !u!4 &613073982
 Transform:
   m_ObjectHideFlags: 0
@@ -1404,7 +1405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37cf6b7182da4f4e950b109107826a82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deviceFactory: {fileID: 613073981}
+  deviceFactory: {fileID: 613073981}
 --- !u!4 &1819530172
 Transform:
   m_ObjectHideFlags: 0

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GNS.ProjectHandling.Node;
 using GNS3.GNSThread;
 using GNS3.JsonObjects;
 using GNS3.JsonObjects.Basic;
-using GNS3.ProjectHandling.Node;
 using GNS3.ProjectHandling.Project;
 using Interfaces.Logger;
 using Tasks.Requests;
@@ -20,8 +20,8 @@ namespace GNS.ProjectHandling.Project
         private readonly IQueuedTaskDispatcher _dispatcher;
         private (string, string) _tempRequest;
         private readonly ILogger _logger;
-
-        private string _serverAddress;
+        private readonly List<GnsNode> _gnsNodes;
+        private readonly string _serverAddress;
 
         public GnsProject(
             GnsProjectConfig config,
@@ -36,6 +36,7 @@ namespace GNS.ProjectHandling.Project
             _requests = requests;
             _dispatcher = dispatcher;
             _logger = logger;
+            _gnsNodes = new List<GnsNode>();
 
             _serverAddress = $"http://{config.Address}:{config.Port}/v2/";
 
@@ -46,7 +47,7 @@ namespace GNS.ProjectHandling.Project
         public string Id { get; private set; }
 
 
-        public void CreateNode<T>(string name, string type, Action<T> onCreate) where T : GnsJNode
+        public void CreateNode<T>(string name, string type, Action<T> onCreate, GnsNode self) where T : GnsJNode
         {
             var notification = "Creating node " + name;
             var data = $"{{\"name\": \"{name}\", \"node_type\": \"{type}\", \"compute_id\": \"local\"}}";
@@ -60,17 +61,18 @@ namespace GNS.ProjectHandling.Project
             void AddAndOnCreate(T node)
             {
                 onCreate(node);
+                _gnsNodes.Add(self);
                 _logger.LogDebug($"Created node {node.name}({node.node_id})");
             }
 
             var nodeCreationTask = _requests.CreateTask(
-                GetUrl, 
-                () => data, 
-                () => { }, 
+                GetUrl,
+                () => data,
+                () => { },
                 (Action<T, UnityWebRequest>)((x, _) => AddAndOnCreate(x)),
                 UnityWebRequest.kHttpVerbPOST
             );
-            
+
             _dispatcher.EnqueueActionWithNotification(nodeCreationTask, notification, 4);
         }
 
@@ -104,7 +106,7 @@ namespace GNS.ProjectHandling.Project
                 },
                 UnityWebRequest.kHttpVerbPOST
             );
-            
+
 
             _dispatcher.EnqueueActionWithNotification(getProjectsTask, notification, 4);
             _dispatcher.EnqueueActionWithNotification(createProjectTask, notification, 4);
@@ -116,7 +118,11 @@ namespace GNS.ProjectHandling.Project
                 () => $"{_serverAddress}projects/{_jProject.project_id}/nodes/{node.ID}",
                 () => "{}",
                 () => { },
-                _ => { _logger.LogDebug($"Created node {node.Name}({node.ID})"); },
+                _ =>
+                {
+                    _logger.LogDebug($"Created node {node.Name}({node.ID})");
+                    _gnsNodes.Remove(node);
+                },
                 UnityWebRequest.kHttpVerbDELETE
             );
 
@@ -175,10 +181,7 @@ namespace GNS.ProjectHandling.Project
                 () => url,
                 () => "{}",
                 () => { },
-                _ =>
-                {
-                    _logger.LogDebug($"Unlinking node {self.Name} and {other.Name}");
-                },
+                _ => { },
                 UnityWebRequest.kHttpVerbDELETE
             );
 
@@ -189,19 +192,59 @@ namespace GNS.ProjectHandling.Project
         {
             var notification = "Linking " + self.Name + " and " + other.Name;
             var url = $"{_serverAddress}projects/{_jProject.project_id}/links";
-            
+
             var task = _requests.CreateTask<GnsJLink>(
                 () => url,
                 () => linkJson,
-                () =>
-                {
-                    _logger.LogDebug($"Linking node {self.Name} and {other.Name}");
-                },
+                () => { },
                 (link, _) => callback(link),
                 UnityWebRequest.kHttpVerbPOST
             );
-            
+
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
+        }
+
+        public void RefreshNodeLinks(Action callback)
+        {
+            var notification = "Refreshing links for all nodes";
+
+            var task = _requests.CreateTask<List<GnsJLink>>(
+                () => $"{_serverAddress}projects/{_jProject.project_id}/links",
+                () => "{}",
+                () => { },
+                (links, _) => RefreshNodes(links, callback),
+                UnityWebRequest.kHttpVerbGET
+            );
+
+            _dispatcher.EnqueueActionWithNotification(task, notification, 4);
+        }
+
+        private void RefreshNodes(List<GnsJLink> links, Action callback)
+        {
+            _gnsNodes.ForEach(x => x.Links.Clear());
+
+            foreach (var link in links)
+            {
+                if (link.nodes.Count == 0)
+                    continue;
+
+                var targetNodes = _gnsNodes.Where(
+                    x => x.ID == link.nodes[0].node_id
+                         || x.ID == link.nodes[1].node_id
+                );
+
+                foreach (var node in targetNodes)
+                {
+                    node.Links.Add(link);
+                }
+            }
+
+            callback();
+        }
+
+        public void AddNodeRaw(GnsNode gnsNode)
+        {
+            _gnsNodes.Add(gnsNode);
         }
     }
 }

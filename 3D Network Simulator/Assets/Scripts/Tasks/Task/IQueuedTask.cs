@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
-using UnityEngine;
 
-namespace GNS3.GNSThread
+namespace Tasks.Task
 {
     public interface IQueuedTask<out T>
     {

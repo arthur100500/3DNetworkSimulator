@@ -1,4 +1,6 @@
-﻿namespace GNS3.GNSThread
+﻿using Tasks.Task;
+
+namespace GNS3.GNSThread
 {
     public interface IQueuedTaskDispatcher
     {

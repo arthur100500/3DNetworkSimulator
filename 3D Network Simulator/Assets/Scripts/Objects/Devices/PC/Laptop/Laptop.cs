@@ -1,6 +1,7 @@
+using System;
+using GNS.ProjectHandling.Node;
 using GNS.ProjectHandling.Project;
 using GNS3.GNSConsole;
-using GNS3.ProjectHandling.Node;
 using Objects.Devices.Common;
 using Objects.Devices.Common.ConsoleDevice;
 using Objects.Parts.Wire;
@@ -81,6 +82,14 @@ namespace Objects.Devices.PC.Laptop
         {
             Node = new GnsVpcsNode(parent, "Laptop");
             Node.Start();
+        }
+
+        public override AWire GetWire(int adapterNumber, int portNumber)
+        {
+            if (adapterNumber != 0 || portNumber != 0)
+                throw new ArgumentException("Laptop has only 1 port");
+            
+            return ethernetPort;
         }
     }
 }
