@@ -26,6 +26,7 @@ namespace GNS.ProjectHandling.Project
         public GnsProject(
             GnsProjectConfig config,
             string id,
+            string name,
             IRequestMaker requests,
             IQueuedTaskDispatcher dispatcher,
             ILogger logger
@@ -37,7 +38,8 @@ namespace GNS.ProjectHandling.Project
             _dispatcher = dispatcher;
             _logger = logger;
             _gnsNodes = new List<GnsNode>();
-
+            Name = name;
+            
             _serverAddress = $"http://{config.Address}:{config.Port}/v2/";
 
             EnqueueProjectCreation();
@@ -78,7 +80,7 @@ namespace GNS.ProjectHandling.Project
 
         private void EnqueueProjectCreation()
         {
-            var notification = "Creating project " + Name;
+            var notification = "Opening project " + Name;
 
             var getProjectsTask = _requests.CreateTask<List<GnsJProject>>(
                 () => $"{_serverAddress}projects",

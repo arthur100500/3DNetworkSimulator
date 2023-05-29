@@ -1,45 +1,60 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Text;
-using Menu.Json;
+using Gameplay.MainMenu.ProjectSelect;
+using Gameplay.MainMenu.Register;
 using Menu.ProjectSelect;
-using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-namespace Menu.Auth
+namespace Gameplay.MainMenu.Auth
 {
     public class AuthMenu : MonoBehaviour
     {
         [SerializeField] private TMP_InputField loginInputField;
         [SerializeField] private TMP_InputField passwordInputField;
         [SerializeField] private Button submitButton;
+        [SerializeField] private Button registerButton;
         [SerializeField] private TMP_Text errors;
         [SerializeField] private ProjectSelector selector;
+        [SerializeField] private RegisterMenu register;
 
         private const string RequestUrl = "http://127.0.0.1:10203/login";
-        private const string RequestUrlList = "http://127.0.0.1:10203/ns/projects";
+
+        private string _authCookie;
 
         private void Start()
         {
             submitButton.onClick.AddListener(TryAuth);
+            registerButton.onClick.AddListener(ActivateRegister);
         }
 
-        private void TryAuth()
+        private void ActivateRegister()
         {
-            var loginData = loginInputField.text;
-            var passwordData = passwordInputField.text;
-            var loginJson = $"{{\"Username\": \"{loginData}\", \"Password\": \"{passwordData}\"}}";
+            register.gameObject.SetActive(true);
+            gameObject.SetActive(false);
+        }
 
+        public void TryAuthWithData(string login, string password)
+        {
+            var loginJson = $"{{\"Username\": \"{login}\", \"Password\": \"{password}\"}}";
+            
             var request = new UnityWebRequest(RequestUrl);
             request.uploadHandler = new UploadHandlerRaw(Encoding.ASCII.GetBytes(loginJson));
             request.downloadHandler = new DownloadHandlerBuffer();
             request.method = UnityWebRequest.kHttpVerbPOST;
 
             StartCoroutine(SendRequest(request, OnRequest));
+        }
+
+        private void TryAuth()
+        {
+            var loginData = loginInputField.text;
+            var passwordData = passwordInputField.text;
+            
+            TryAuthWithData(loginData, passwordData);
         }
 
         IEnumerator SendRequest(UnityWebRequest request, Action<UnityWebRequest> callback)
@@ -71,20 +86,14 @@ namespace Menu.Auth
 
         private void Authorize(string cookie)
         {
-            var request = new UnityWebRequest(RequestUrlList);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.method = UnityWebRequest.kHttpVerbGET;
-            request.SetRequestHeader("Cookie", cookie);
-
-            StartCoroutine(SendRequest(request, InitSelector));
+            _authCookie = cookie;
+            InitSelector();
         }
 
-        private void InitSelector(UnityWebRequest request)
+        private void InitSelector()
         {
-            var NsJProjectListJson = request.downloadHandler.text;
-            var NsJProjectList = JsonConvert.DeserializeObject<List<NsJProject>>(NsJProjectListJson);
-
-            selector.Init(NsJProjectList);
+            selector.gameObject.SetActive(true);
+            selector.Init(_authCookie);
 
             gameObject.SetActive(false);
         }
