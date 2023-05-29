@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using Gameplay.MainMenu.InterScene;
-using GNS3.GNSThread;
 using GNS3.ProjectHandling.Project;
 using Logger;
 using Menu.Json;
+using Menu.ProjectSelect;
 using Tasks.Requests;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Menu.ProjectSelect
+namespace Gameplay.MainMenu.ProjectSelect
 {
     public class ProjectSelector : MonoBehaviour
     {
