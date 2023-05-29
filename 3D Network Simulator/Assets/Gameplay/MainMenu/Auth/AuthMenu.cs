@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text;
 using Gameplay.MainMenu.ProjectSelect;
 using Gameplay.MainMenu.Register;
+using Menu.Json;
 using Menu.ProjectSelect;
 using TMPro;
 using UnityEngine;
@@ -59,13 +60,18 @@ namespace Gameplay.MainMenu.Auth
 
         IEnumerator SendRequest(UnityWebRequest request, Action<UnityWebRequest> callback)
         {
+            Debug.Log($"Started sending request to {request.url}");
+
             yield return request.SendWebRequest();
+
+            Debug.Log($"Got {request.downloadHandler.text}");
 
             callback(request);
         }
 
         private void OnRequest(UnityWebRequest request)
         {
+            Debug.Log("Got into OnRequest");
             var code = request.responseCode;
             var errorsArray = request.downloadHandler.text;
 
@@ -74,13 +80,25 @@ namespace Gameplay.MainMenu.Auth
             if (code != 200)
                 return;
 
+            Debug.Log("Retrieving cookie");
             var headers = request.GetResponseHeaders();
 
+            Debug.Log($"Headers null? {headers is null}");
+            Debug.Log($"Contains cookie? {headers.ContainsKey("Set-Cookie")}");
+
+            string authCookie = null;
+
+//#if !UNITY_WEBGL || UNITY_EDITOR
             if (headers is null || !headers.ContainsKey("Set-Cookie"))
+            {
+                Authorize(null);
                 return;
+            }
 
-            var authCookie = headers["Set-Cookie"];
-
+            authCookie = headers["Set-Cookie"];
+            Debug.Log("Authorizing...");
+//#endif
+            
             Authorize(authCookie);
         }
 

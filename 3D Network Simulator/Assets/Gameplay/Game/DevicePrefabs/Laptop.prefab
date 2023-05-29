@@ -218,6 +218,38 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8475686634712828783}
     m_Modifications:
+    - target: {fileID: 825769307708483973, guid: b0a58efa7d0bec540801550118c5ae8a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b4c4d7e9fb2622f448c2019fc412afb0, type: 2}
+    - target: {fileID: 825769307708483973, guid: b0a58efa7d0bec540801550118c5ae8a, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: b4c4d7e9fb2622f448c2019fc412afb0, type: 2}
+    - target: {fileID: 825769307708483973, guid: b0a58efa7d0bec540801550118c5ae8a, type: 3}
+      propertyPath: m_Materials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: 907b3ee568f6151469860439c44032c3, type: 2}
+    - target: {fileID: 825769307708483973, guid: b0a58efa7d0bec540801550118c5ae8a, type: 3}
+      propertyPath: m_Materials.Array.data[4]
+      value: 
+      objectReference: {fileID: 2100000, guid: b4c4d7e9fb2622f448c2019fc412afb0, type: 2}
+    - target: {fileID: 825769307708483973, guid: b0a58efa7d0bec540801550118c5ae8a, type: 3}
+      propertyPath: m_Materials.Array.data[5]
+      value: 
+      objectReference: {fileID: 2100000, guid: b4c4d7e9fb2622f448c2019fc412afb0, type: 2}
+    - target: {fileID: 825769307708483973, guid: b0a58efa7d0bec540801550118c5ae8a, type: 3}
+      propertyPath: m_Materials.Array.data[6]
+      value: 
+      objectReference: {fileID: 2100000, guid: b4c4d7e9fb2622f448c2019fc412afb0, type: 2}
+    - target: {fileID: 825769307708483973, guid: b0a58efa7d0bec540801550118c5ae8a, type: 3}
+      propertyPath: m_Materials.Array.data[9]
+      value: 
+      objectReference: {fileID: 2100000, guid: cfc4bb78bdf22824fb879f1440344df0, type: 2}
+    - target: {fileID: 825769307708483973, guid: b0a58efa7d0bec540801550118c5ae8a, type: 3}
+      propertyPath: m_Materials.Array.data[11]
+      value: 
+      objectReference: {fileID: 2100000, guid: b4c4d7e9fb2622f448c2019fc412afb0, type: 2}
     - target: {fileID: 1278117585314783161, guid: b0a58efa7d0bec540801550118c5ae8a, type: 3}
       propertyPath: m_Name
       value: laptop2_model
