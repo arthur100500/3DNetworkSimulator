@@ -137,7 +137,7 @@ namespace Project
             {
                 Id = _initial.Id,
                 Name = _initial.Name,
-                GnsID = _initial.GnsID,
+                GnsID = _project.Id,
                 JsonAnnotation = data,
                 OwnerId = _initial.OwnerId
             };
