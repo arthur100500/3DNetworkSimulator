@@ -58,12 +58,13 @@ namespace Project
             _config = config;
 
             var id = nsjProject.GnsID;
-
+            var prName = nsjProject.Name;
             _initial = nsjProject;
 
             _project = new GnsProject(
                 config,
                 id,
+                prName,
                 _requests,
                 _dispatcher,
                 _logger
@@ -136,7 +137,7 @@ namespace Project
             {
                 Id = _initial.Id,
                 Name = _initial.Name,
-                GnsID = _initial.GnsID,
+                GnsID = _project.Id,
                 JsonAnnotation = data,
                 OwnerId = _initial.OwnerId
             };
