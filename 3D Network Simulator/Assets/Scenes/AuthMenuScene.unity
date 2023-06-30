@@ -451,7 +451,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Use lcoal GNS
+  m_text: Use local GNS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 21a4c45874232234f86d1bea92dea195, type: 2}
   m_sharedMaterial: {fileID: 2340441903412165070, guid: 21a4c45874232234f86d1bea92dea195, type: 2}
@@ -3563,7 +3563,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1647451920
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3904,7 +3904,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1691416485
 RectTransform:
   m_ObjectHideFlags: 0
