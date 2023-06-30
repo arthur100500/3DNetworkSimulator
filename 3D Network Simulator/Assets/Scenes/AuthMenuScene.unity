@@ -2776,7 +2776,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 75}
+  m_AnchoredPosition: {x: 0, y: 111.5}
   m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1426997038
@@ -2799,7 +2799,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Welcome! Please, log in
+  m_text: Create a new account!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 21a4c45874232234f86d1bea92dea195, type: 2}
   m_sharedMaterial: {fileID: 2340441903412165070, guid: 21a4c45874232234f86d1bea92dea195, type: 2}
@@ -3563,7 +3563,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1647451920
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3609,7 +3609,7 @@ MonoBehaviour:
   registerButton: {fileID: 1314471464}
   errors: {fileID: 800193206}
   selector: {fileID: 1763135368}
-  register: {fileID: 0}
+  register: {fileID: 1691416486}
 --- !u!1 &1661674341
 GameObject:
   m_ObjectHideFlags: 0
@@ -3904,7 +3904,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1691416485
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3949,8 +3949,8 @@ MonoBehaviour:
   passwordInputField: {fileID: 419348651}
   submitButton: {fileID: 2074672864}
   backToLoginButton: {fileID: 1661674343}
-  errors: {fileID: 0}
-  auth: {fileID: 0}
+  errors: {fileID: 576968177}
+  auth: {fileID: 1647451921}
 --- !u!1 &1763135365
 GameObject:
   m_ObjectHideFlags: 0
