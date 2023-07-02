@@ -88,15 +88,17 @@ namespace Gameplay.MainMenu.ProjectSelect
 
             callback(request);
         }
-
-
-        private static void LoadProject(NsJProject proj)
+        
+        private void LoadProject(NsJProject proj)
         {
+            var requestMaker = new WebRequestMaker(new VoidLogger());
+            requestMaker.SetCookies(_authCookie);
+            
             MenuToGameExchanger.UseLocalGns = false;
             MenuToGameExchanger.ProjectConfig = GnsProjectConfig.ProxyGnsProjectConfig();
             MenuToGameExchanger.InitialProject = proj;
-            MenuToGameExchanger.RequestMaker = new WebRequestMaker(new VoidLogger());
-            
+            MenuToGameExchanger.RequestMaker = requestMaker;
+
             SceneManager.LoadScene("GameScene");
         }
     }

@@ -3,7 +3,7 @@
     public class GnsUrl
     {
         private string _url;
-        
+
         /// <summary>
         /// Gets the URL string without the last slash
         /// </summary>
@@ -19,13 +19,13 @@
             _url += "projects/";
             return this;
         }
-        
+
         public GnsUrl Nodes()
         {
             _url += "nodes/";
             return this;
         }
-        
+
         public GnsUrl With(string part)
         {
             _url += $"{part}/";
@@ -37,19 +37,19 @@
             _url += $"projects/{projectId}/";
             return this;
         }
-        
+
         public GnsUrl Node(string nodeId)
         {
-            _url += $"projects/{nodeId}/";
+            _url += $"nodes/{nodeId}/";
             return this;
         }
-        
+
         public GnsUrl Links()
         {
             _url += "links/";
             return this;
         }
-        
+
         public GnsUrl Link(string linkId)
         {
             _url += $"links/{linkId}/";
@@ -61,10 +61,16 @@
             _url += "start/";
             return this;
         }
-        
+
         public GnsUrl Stop()
         {
             _url += "stop/";
+            return this;
+        }
+
+        public GnsUrl Open()
+        {
+            _url += "open/";
             return this;
         }
     }

@@ -18,7 +18,6 @@ namespace GNS.ProjectHandling.Project
     {
         private readonly IRequestMaker _requests;
         public readonly GnsProjectConfig Config;
-        private GnsJProject _jProject;
         private readonly IQueuedTaskDispatcher _dispatcher;
         private (string, string) _tempRequest;
         private readonly ILogger _logger;
@@ -46,7 +45,7 @@ namespace GNS.ProjectHandling.Project
         }
 
         private string Name { get; }
-        public string Id { get; private set; }
+        public string Id { get; }
 
 
         public void CreateNode<T>(string name, string type, Action<T> onCreate, GnsNode self) where T : GnsJNode
@@ -56,7 +55,7 @@ namespace GNS.ProjectHandling.Project
 
             string GetUrl()
             {
-                return new GnsUrl(_serverAddress).Project(_jProject.project_id).Nodes().Url;
+                return new GnsUrl(_serverAddress).Project(Id).Nodes().Url;
             }
 
             void AddAndOnCreate(T node)
@@ -77,10 +76,21 @@ namespace GNS.ProjectHandling.Project
             _dispatcher.EnqueueActionWithNotification(nodeCreationTask, notification, 4);
         }
 
+        public void Open()
+        {
+            var task = _requests.CreateTask(
+                () => new GnsUrl(_serverAddress).Project(Id).Open().Url,
+                () => "{}",
+                () => { },
+                _ => _logger.LogDebug("Project Opened"),
+                UnityWebRequest.kHttpVerbPOST
+            );
+        }
+
         public void DeleteNode(GnsNode node)
         {
             var task = _requests.CreateTask(
-                () => new GnsUrl(_serverAddress).Project(_jProject.project_id).Node(node.ID).Url,
+                () => new GnsUrl(_serverAddress).Project(Id).Node(node.ID).Url,
                 () => "{}",
                 () => { },
                 _ =>
@@ -100,7 +110,7 @@ namespace GNS.ProjectHandling.Project
 
             string GetUrl()
             {
-                return new GnsUrl(_serverAddress).Project(_jProject.project_id).Node(node.ID).Start().Url;
+                return new GnsUrl(_serverAddress).Project(Id).Node(node.ID).Start().Url;
             }
 
             var task = _requests.CreateTask(
@@ -120,7 +130,7 @@ namespace GNS.ProjectHandling.Project
         public void StopNode(GnsNode node)
         {
             var notification = "Stopping node " + node.Name;
-            var url = new GnsUrl(_serverAddress).Project(_jProject.project_id).Node(node.ID).Stop().Url;
+            var url = new GnsUrl(_serverAddress).Project(Id).Node(node.ID).Stop().Url;
 
             var task = _requests.CreateTask(
                 () => url,
@@ -139,7 +149,7 @@ namespace GNS.ProjectHandling.Project
         public void RemoveLink(string linkID, GnsNode self, GnsNode other)
         {
             var notification = $"Unlinking {self.Name} and {other.Name}";
-            var url = new GnsUrl(_serverAddress).Project(_jProject.project_id).Link(linkID).Url;
+            var url = new GnsUrl(_serverAddress).Project(Id).Link(linkID).Url;
 
             var task = _requests.CreateTask(
                 () => url,
@@ -155,7 +165,7 @@ namespace GNS.ProjectHandling.Project
         public void AddLink(string linkJson, GnsNode self, GnsNode other, Action<GnsJLink> callback)
         {
             var notification = "Linking " + self.Name + " and " + other.Name;
-            var url = new GnsUrl(_serverAddress).Project(_jProject.project_id).Links().Url;
+            var url = new GnsUrl(_serverAddress).Project(Id).Links().Url;
 
             var task = _requests.CreateTask<GnsJLink>(
                 () => url,
@@ -173,7 +183,7 @@ namespace GNS.ProjectHandling.Project
             var notification = "Refreshing links for all nodes";
 
             var task = _requests.CreateTask<List<GnsJLink>>(
-                () => new GnsUrl(_serverAddress).Project(_jProject.project_id).Links().Url,
+                () => new GnsUrl(_serverAddress).Project(Id).Links().Url,
             () => "{}",
                 () => { },
                 (links, _) => RefreshNodes(links, callback),
