@@ -10,5 +10,6 @@ namespace Gameplay.MainMenu.InterScene
         public static IRequestMaker RequestMaker;
         public static GnsProjectConfig ProjectConfig;
         public static NsJProject InitialProject;
+        public static bool UseLocalGns;
     }
 }

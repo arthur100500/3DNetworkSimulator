@@ -1,3 +1,4 @@
+using GNS.JsonObjects;
 using GNS.ProjectHandling.Project;
 using GNS3.JsonObjects;
 
@@ -5,7 +6,7 @@ namespace GNS.ProjectHandling.Node
 {
     public class GnsSHubNode : GnsNode
     {
-        private GnsJSHubNode _jNode;
+        private GnsJsHubNode _jNode;
 
         public GnsSHubNode(GnsProject project, string name)
         {
@@ -15,14 +16,14 @@ namespace GNS.ProjectHandling.Node
 
         private void InitializeNode()
         {
-            void AssignNode(GnsJSHubNode jNode)
+            void AssignNode(GnsJsHubNode jNode)
             {
                 _jNode = jNode;
                 ID = _jNode.node_id;
                 IsReady = true;
             }
 
-            Project.CreateNode<GnsJSHubNode>(Name, "ethernet_hub", AssignNode, this);
+            Project.CreateNode<GnsJsHubNode>(Name, "ethernet_hub", AssignNode, this);
         }
     }
 }

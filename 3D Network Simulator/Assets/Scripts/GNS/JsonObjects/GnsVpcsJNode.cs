@@ -2,7 +2,7 @@ using GNS3.JsonObjects.Basic;
 using Newtonsoft.Json;
 using UnityEngine.Scripting;
 
-namespace GNS3.JsonObjects
+namespace GNS.JsonObjects
 {
     [Preserve]
     public class GnsVpcsJNode : GnsJNode

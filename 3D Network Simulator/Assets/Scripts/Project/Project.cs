@@ -13,7 +13,6 @@ using Project.Json;
 using Tasks.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Serialization;
 using ILogger = Interfaces.Logger.ILogger;
 using NsJProject = Menu.Json.NsJProject;
 

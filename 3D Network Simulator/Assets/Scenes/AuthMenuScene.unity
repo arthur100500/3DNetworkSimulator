@@ -3607,6 +3607,7 @@ MonoBehaviour:
   passwordInputField: {fileID: 2090074761}
   submitButton: {fileID: 1444378498}
   registerButton: {fileID: 1314471464}
+  useLocalGnsButton: {fileID: 2095657190}
   errors: {fileID: 800193206}
   selector: {fileID: 1763135368}
   register: {fileID: 1691416486}

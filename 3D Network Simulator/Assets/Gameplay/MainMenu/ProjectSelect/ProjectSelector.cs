@@ -92,6 +92,7 @@ namespace Gameplay.MainMenu.ProjectSelect
 
         private static void LoadProject(NsJProject proj)
         {
+            MenuToGameExchanger.UseLocalGns = false;
             MenuToGameExchanger.ProjectConfig = GnsProjectConfig.ProxyGnsProjectConfig();
             MenuToGameExchanger.InitialProject = proj;
             MenuToGameExchanger.RequestMaker = new WebRequestMaker(new VoidLogger());

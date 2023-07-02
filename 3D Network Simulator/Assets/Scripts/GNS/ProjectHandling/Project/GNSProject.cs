@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GNS.JsonObjects;
 using GNS.ProjectHandling.Node;
+using GNS.ServerCommunication;
 using GNS3.GNSThread;
 using GNS3.JsonObjects;
 using GNS3.JsonObjects.Basic;
@@ -41,8 +43,6 @@ namespace GNS.ProjectHandling.Project
             Name = name;
             
             _serverAddress = $"http://{config.Address}:{config.Port}/v2/";
-
-            EnqueueProjectCreation();
         }
 
         private string Name { get; }
@@ -56,8 +56,7 @@ namespace GNS.ProjectHandling.Project
 
             string GetUrl()
             {
-                var url = $"{_serverAddress}projects/{_jProject.project_id}/nodes";
-                return url;
+                return new GnsUrl(_serverAddress).Project(_jProject.project_id).Nodes().Url;
             }
 
             void AddAndOnCreate(T node)
@@ -78,46 +77,10 @@ namespace GNS.ProjectHandling.Project
             _dispatcher.EnqueueActionWithNotification(nodeCreationTask, notification, 4);
         }
 
-        private void EnqueueProjectCreation()
-        {
-            var notification = "Opening project " + Name;
-
-            var getProjectsTask = _requests.CreateTask<List<GnsJProject>>(
-                () => $"{_serverAddress}projects",
-                () => "{}",
-                () => { },
-                (projectList, _) =>
-                {
-                    var foundProject = projectList.Find(p => p.project_id == Id);
-                    _tempRequest = foundProject is null
-                        ? ($"{_serverAddress}projects", $"{{\"name\": \"{Name}\"}}")
-                        : ($"{_serverAddress}projects/{foundProject.project_id}/open", "{}");
-                },
-                UnityWebRequest.kHttpVerbGET
-            );
-
-            var createProjectTask = _requests.CreateTask<GnsJProject>(
-                () => _tempRequest.Item1,
-                () => _tempRequest.Item2,
-                () => { },
-                (project, _) =>
-                {
-                    _jProject = project;
-                    Id = _jProject.project_id;
-                    _logger.LogDebug($"Created project {Name}({Id})");
-                },
-                UnityWebRequest.kHttpVerbPOST
-            );
-
-
-            _dispatcher.EnqueueActionWithNotification(getProjectsTask, notification, 4);
-            _dispatcher.EnqueueActionWithNotification(createProjectTask, notification, 4);
-        }
-
         public void DeleteNode(GnsNode node)
         {
             var task = _requests.CreateTask(
-                () => $"{_serverAddress}projects/{_jProject.project_id}/nodes/{node.ID}",
+                () => new GnsUrl(_serverAddress).Project(_jProject.project_id).Node(node.ID).Url,
                 () => "{}",
                 () => { },
                 _ =>
@@ -137,8 +100,7 @@ namespace GNS.ProjectHandling.Project
 
             string GetUrl()
             {
-                var url = $"{_serverAddress}projects/{_jProject.project_id}/nodes/{node.ID}/start";
-                return url;
+                return new GnsUrl(_serverAddress).Project(_jProject.project_id).Node(node.ID).Start().Url;
             }
 
             var task = _requests.CreateTask(
@@ -158,7 +120,7 @@ namespace GNS.ProjectHandling.Project
         public void StopNode(GnsNode node)
         {
             var notification = "Stopping node " + node.Name;
-            var url = $"{_serverAddress}projects/{_jProject.project_id}/nodes/{node.ID}/stop";
+            var url = new GnsUrl(_serverAddress).Project(_jProject.project_id).Node(node.ID).Stop().Url;
 
             var task = _requests.CreateTask(
                 () => url,
@@ -177,7 +139,7 @@ namespace GNS.ProjectHandling.Project
         public void RemoveLink(string linkID, GnsNode self, GnsNode other)
         {
             var notification = $"Unlinking {self.Name} and {other.Name}";
-            var url = $"{_serverAddress}projects/{_jProject.project_id}/links/{linkID}";
+            var url = new GnsUrl(_serverAddress).Project(_jProject.project_id).Link(linkID).Url;
 
             var task = _requests.CreateTask(
                 () => url,
@@ -193,7 +155,7 @@ namespace GNS.ProjectHandling.Project
         public void AddLink(string linkJson, GnsNode self, GnsNode other, Action<GnsJLink> callback)
         {
             var notification = "Linking " + self.Name + " and " + other.Name;
-            var url = $"{_serverAddress}projects/{_jProject.project_id}/links";
+            var url = new GnsUrl(_serverAddress).Project(_jProject.project_id).Links().Url;
 
             var task = _requests.CreateTask<GnsJLink>(
                 () => url,
@@ -211,8 +173,8 @@ namespace GNS.ProjectHandling.Project
             var notification = "Refreshing links for all nodes";
 
             var task = _requests.CreateTask<List<GnsJLink>>(
-                () => $"{_serverAddress}projects/{_jProject.project_id}/links",
-                () => "{}",
+                () => new GnsUrl(_serverAddress).Project(_jProject.project_id).Links().Url,
+            () => "{}",
                 () => { },
                 (links, _) => RefreshNodes(links, callback),
                 UnityWebRequest.kHttpVerbGET

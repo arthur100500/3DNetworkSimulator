@@ -3,7 +3,7 @@ using GNS3.JsonObjects.Basic;
 using Newtonsoft.Json;
 using UnityEngine.Scripting;
 
-namespace GNS3.JsonObjects
+namespace GNS.JsonObjects
 {
     [Preserve]
     public class DataLinkTypes
@@ -56,7 +56,7 @@ namespace GNS3.JsonObjects
     }
 
     [Preserve]
-    public class GnsJSHubNode : GnsJNode
+    public class GnsJsHubNode : GnsJNode
     {
         [Preserve] public object command_line { get; set; }
         [Preserve] public string compute_id { get; set; }
@@ -82,6 +82,6 @@ namespace GNS3.JsonObjects
         [Preserve] public int y { get; set; }
         [Preserve] public int z { get; set; }
 
-        [JsonConstructor] public GnsJSHubNode() { }
+        [JsonConstructor] public GnsJsHubNode() { }
     }
 }

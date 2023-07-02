@@ -18,6 +18,7 @@ namespace Gameplay.MainMenu.Auth
         [SerializeField] private TMP_InputField passwordInputField;
         [SerializeField] private Button submitButton;
         [SerializeField] private Button registerButton;
+        [SerializeField] private Button useLocalGnsButton;
         [SerializeField] private TMP_Text errors;
         [SerializeField] private ProjectSelector selector;
         [SerializeField] private RegisterMenu register;
@@ -30,12 +31,18 @@ namespace Gameplay.MainMenu.Auth
         {
             submitButton.onClick.AddListener(TryAuth);
             registerButton.onClick.AddListener(ActivateRegister);
+            useLocalGnsButton.onClick.AddListener(UseLocalGns);
         }
 
         private void ActivateRegister()
         {
             register.gameObject.SetActive(true);
             gameObject.SetActive(false);
+        }
+
+        private void UseLocalGns()
+        {
+            
         }
 
         public void TryAuthWithData(string login, string password)
