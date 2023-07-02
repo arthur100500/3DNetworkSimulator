@@ -11,6 +11,7 @@ using GNS3.ProjectHandling.Project;
 using Interfaces.Logger;
 using Tasks.Requests;
 using UnityEngine.Networking;
+using GlobalProject = global::Project.Project;
 
 namespace GNS.ProjectHandling.Project
 {
@@ -23,6 +24,7 @@ namespace GNS.ProjectHandling.Project
         private readonly ILogger _logger;
         private readonly List<GnsNode> _gnsNodes;
         private readonly string _serverAddress;
+        private readonly GlobalProject _globalProject;
 
         public GnsProject(
             GnsProjectConfig config,
@@ -30,7 +32,8 @@ namespace GNS.ProjectHandling.Project
             string name,
             IRequestMaker requests,
             IQueuedTaskDispatcher dispatcher,
-            ILogger logger
+            ILogger logger,
+            GlobalProject project
         )
         {
             Id = id;
@@ -39,6 +42,7 @@ namespace GNS.ProjectHandling.Project
             _dispatcher = dispatcher;
             _logger = logger;
             _gnsNodes = new List<GnsNode>();
+            _globalProject = project;
             Name = name;
             
             _serverAddress = $"http://{config.Address}:{config.Port}/v2/";
@@ -69,7 +73,7 @@ namespace GNS.ProjectHandling.Project
                 GetUrl,
                 () => data,
                 () => { },
-                (Action<T, UnityWebRequest>)((x, _) => AddAndOnCreate(x)),
+                (Action<T, UnityWebRequest>)((x, _) => { AddAndOnCreate(x); _globalProject.SaveDevices(); }),
                 UnityWebRequest.kHttpVerbPOST
             );
 
@@ -82,7 +86,7 @@ namespace GNS.ProjectHandling.Project
                 () => new GnsUrl(_serverAddress).Project(Id).Open().Url,
                 () => "{}",
                 () => { },
-                _ => _logger.LogDebug("Project Opened"),
+                _ => { _logger.LogDebug("Project Opened"); _globalProject.SaveDevices(); },
                 UnityWebRequest.kHttpVerbPOST
             );
         }
@@ -97,6 +101,7 @@ namespace GNS.ProjectHandling.Project
                 {
                     _logger.LogDebug($"Created node {node.Name}({node.ID})");
                     _gnsNodes.Remove(node);
+                    _globalProject.SaveDevices();
                 },
                 UnityWebRequest.kHttpVerbDELETE
             );
@@ -121,6 +126,7 @@ namespace GNS.ProjectHandling.Project
                 {
                     node.IsStarted = true;
                     _logger.LogDebug($"Started node {node.Name}({node.ID})");
+                    _globalProject.SaveDevices();
                 },
                 UnityWebRequest.kHttpVerbPOST
             );
@@ -140,6 +146,7 @@ namespace GNS.ProjectHandling.Project
                 {
                     node.IsStarted = false;
                     _logger.LogDebug($"Stopped node {node.Name}({node.ID})");
+                    _globalProject.SaveDevices();
                 }, UnityWebRequest.kHttpVerbPOST
             );
 
@@ -155,11 +162,12 @@ namespace GNS.ProjectHandling.Project
                 () => url,
                 () => "{}",
                 () => { },
-                _ => { },
+                _ => _globalProject.SaveDevices(),
                 UnityWebRequest.kHttpVerbDELETE
             );
 
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
+            
         }
 
         public void AddLink(string linkJson, GnsNode self, GnsNode other, Action<GnsJLink> callback)
@@ -171,11 +179,13 @@ namespace GNS.ProjectHandling.Project
                 () => url,
                 () => linkJson,
                 () => { },
-                (link, _) => callback(link),
+                (link, _) => { callback(link); _globalProject.SaveDevices(); },
                 UnityWebRequest.kHttpVerbPOST
             );
 
             _dispatcher.EnqueueActionWithNotification(task, notification, 4);
+            
+            _globalProject.SaveDevices();
         }
 
         public void RefreshNodeLinks(Action callback)
@@ -186,7 +196,7 @@ namespace GNS.ProjectHandling.Project
                 () => new GnsUrl(_serverAddress).Project(Id).Links().Url,
             () => "{}",
                 () => { },
-                (links, _) => RefreshNodes(links, callback),
+                (links, _) => { RefreshNodes(links, callback); _globalProject.SaveDevices(); },
                 UnityWebRequest.kHttpVerbGET
             );
 
