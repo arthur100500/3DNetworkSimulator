@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using UnityEngine.Scripting;
 
-namespace GNS3.JsonObjects
+namespace GNS.JsonObjects
 {
     [Preserve]
     public class GnsJProject

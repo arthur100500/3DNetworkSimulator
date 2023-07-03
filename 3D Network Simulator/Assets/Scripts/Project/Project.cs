@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Gameplay.MainMenu.InterScene;
 using GNS.ProjectHandling.Node;
 using GNS.ProjectHandling.Project;
@@ -10,10 +11,10 @@ using Newtonsoft.Json;
 using Objects.Common;
 using Objects.Devices.Common;
 using Project.Json;
+using Project.ProjectSaver;
 using Tasks.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Serialization;
 using ILogger = Interfaces.Logger.ILogger;
 using NsJProject = Menu.Json.NsJProject;
 
@@ -26,7 +27,7 @@ namespace Project
         private IQueuedTaskDispatcher _dispatcher;
         private GnsProject _project;
         private ILogger _logger;
-        private NsJProject _initial;
+        private IProjectSaver _saver;
 
         [SerializeField] private DeviceFactory deviceFactory;
 
@@ -52,6 +53,15 @@ namespace Project
             ILogger logger
         )
         {
+            // For loading the game scene
+            // Make sure you have "./LocalGnsProjects/Project 1" (or generate it using Auth scene)
+            // GNS3 Should be running on 127.0.0.1:3080 with admin and password 666 (or without auth)
+            request ??= new WebRequestMaker(new VoidLogger());
+            dispatcher ??= QueuedTaskCoroutineDispatcher.GetInstance();
+            config ??= GnsProjectConfig.LocalGnsProjectConfig();
+            nsjProject ??= JsonConvert.DeserializeObject<NsJProject>(File.ReadAllText("./LocalGnsProjects/Project 1"));
+            // End
+            
             _requests = request;
             _dispatcher = dispatcher;
             _logger = logger;
@@ -59,7 +69,7 @@ namespace Project
 
             var id = nsjProject.GnsID;
             var prName = nsjProject.Name;
-            _initial = nsjProject;
+            var initial = nsjProject;
 
             _project = new GnsProject(
                 config,
@@ -67,9 +77,18 @@ namespace Project
                 prName,
                 _requests,
                 _dispatcher,
-                _logger
+                _logger,
+                this
             );
 
+            
+            if (MenuToGameExchanger.UseLocalGns)
+                _saver = new FileProjectSaver(initial);
+            
+            else
+                _saver = new ServerProjectSaver(initial, _project, _requests, _config, _dispatcher);
+            
+            
             InitializeDevices(nsjProject.JsonAnnotation);
         }
 
@@ -80,12 +99,6 @@ namespace Project
             deviceFactory.CreateAll(projectJsonList, _project, gameObject.transform);
         }
 
-        public void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.J))
-                SaveDevices();
-        }
-
         public void AddPlaceable(APlaceable mold)
         {
             mold.gameObject.transform.SetParent(gameObject.transform);
@@ -94,7 +107,7 @@ namespace Project
                 device.CreateNode(_project);
         }
 
-        private void SaveDevices()
+        public void SaveDevices()
         {
             var entries = new List<DeviceEntry>();
 
@@ -113,7 +126,9 @@ namespace Project
             }
 
             var serialized = JsonConvert.SerializeObject(entries);
-            SendUpdateJson(serialized);
+            
+            
+            _saver.Save(serialized);
         }
 
         private static DeviceEntry MakeEntry(Component component, GnsNode node)
@@ -129,30 +144,6 @@ namespace Project
             };
 
             return entry;
-        }
-
-        private void SendUpdateJson(string data)
-        {
-            var nsProj = new NsJProject
-            {
-                Id = _initial.Id,
-                Name = _initial.Name,
-                GnsID = _project.Id,
-                JsonAnnotation = data,
-                OwnerId = _initial.OwnerId
-            };
-
-            var json = JsonConvert.SerializeObject(nsProj);
-
-            var task = _requests.CreateTask(
-                () => $"http://{_config.Address}:{_config.Port}/ns/update",
-                () => json,
-                () => { },
-                _ => { },
-                UnityWebRequest.kHttpVerbPOST
-            );
-
-            _dispatcher.EnqueueActionWithNotification(task, "Saving project", 4);
         }
     }
 }
