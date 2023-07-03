@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Gameplay.MainMenu.InterScene;
 using GNS.ProjectHandling.Node;
 using GNS.ProjectHandling.Project;
@@ -52,6 +53,15 @@ namespace Project
             ILogger logger
         )
         {
+            // For loading the game scene
+            // Make sure you have "./LocalGnsProjects/Project 1" (or generate it using Auth scene)
+            // GNS3 Should be running on 127.0.0.1:3080 with admin and password 666 (or without auth)
+            request ??= new WebRequestMaker(new VoidLogger());
+            dispatcher ??= QueuedTaskCoroutineDispatcher.GetInstance();
+            config ??= GnsProjectConfig.LocalGnsProjectConfig();
+            nsjProject ??= JsonConvert.DeserializeObject<NsJProject>(File.ReadAllText("./LocalGnsProjects/Project 1"));
+            // End
+            
             _requests = request;
             _dispatcher = dispatcher;
             _logger = logger;
