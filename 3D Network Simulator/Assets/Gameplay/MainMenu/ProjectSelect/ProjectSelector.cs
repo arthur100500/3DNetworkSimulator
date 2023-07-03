@@ -42,7 +42,6 @@ namespace Gameplay.MainMenu.ProjectSelect
             _projectEntries.ForEach(Destroy);
             _projectEntries.Clear();
             
-            
             var request = new UnityWebRequest(RequestUrlList);
             request.downloadHandler = new DownloadHandlerBuffer();
             request.method = UnityWebRequest.kHttpVerbGET;

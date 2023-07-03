@@ -21,6 +21,7 @@ namespace Gameplay.MainMenu.Auth
         [SerializeField] private Button useLocalGnsButton;
         [SerializeField] private TMP_Text errors;
         [SerializeField] private ProjectSelector selector;
+        [SerializeField] private LocalProjectSelector localSelector;
         [SerializeField] private RegisterMenu register;
 
         private const string RequestUrl = "http://127.0.0.1:10203/login";
@@ -42,7 +43,10 @@ namespace Gameplay.MainMenu.Auth
 
         private void UseLocalGns()
         {
+            localSelector.gameObject.SetActive(true);
+            localSelector.Init();
             
+            gameObject.SetActive(false);
         }
 
         public void TryAuthWithData(string login, string password)

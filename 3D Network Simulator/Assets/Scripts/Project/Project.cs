@@ -73,7 +73,7 @@ namespace Project
 
             
             if (MenuToGameExchanger.UseLocalGns)
-                _saver = new FileProjectSaver();
+                _saver = new FileProjectSaver(initial);
             
             else
                 _saver = new ServerProjectSaver(initial, _project, _requests, _config, _dispatcher);

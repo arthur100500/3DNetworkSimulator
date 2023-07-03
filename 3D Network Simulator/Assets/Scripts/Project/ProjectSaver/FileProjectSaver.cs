@@ -1,15 +1,32 @@
-﻿namespace Project.ProjectSaver
+﻿using System.IO;
+using Menu.Json;
+using Newtonsoft.Json;
+
+namespace Project.ProjectSaver
 {
     public class FileProjectSaver : IProjectSaver
     {
-        public FileProjectSaver()
+        private const string Path = "./LocalGnsProjects";
+        private readonly NsJProject _initial;
+
+        public FileProjectSaver(NsJProject nsProject)
         {
-            throw new System.NotImplementedException();
+            _initial = nsProject;
         }
         
         public void Save(string data)
         {
-            throw new System.NotImplementedException();
+            var nsProj = new NsJProject
+            {
+                Id = _initial.Id,
+                Name = _initial.Name,
+                GnsID = _initial.GnsID,
+                JsonAnnotation = data,
+                OwnerId = _initial.OwnerId
+            };
+            
+            
+            File.WriteAllText($"{Path}/{_initial.Name}", JsonConvert.SerializeObject(nsProj));
         }
     }
 }
