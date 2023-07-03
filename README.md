@@ -12,5 +12,5 @@ It is possible to connect various devices (currently `VPCS` as a laptop and smal
 Open console and execute `ip`, `ping` etc
 
 # How to use?
-Make sure you have GNS3 running on port 10203 <br>
+Make sure you have GNS3 running on port 3080 <br>
 Run the app
